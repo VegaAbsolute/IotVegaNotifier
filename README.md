@@ -3,11 +3,11 @@ Application to notify IotVegaServer users about an alarm event.
 ## Quick start
 1. Install the docker.io
 
-`sudo apt-get install docker.io`
+- `sudo apt-get install docker.io`
 
-`sudo usermod -aG docker YourUser`
+- `sudo usermod -aG docker YourUser`
 
-`newgrp docker`
+- `newgrp docker`
 
 2. Run Docker IotVegaNotifier `docker run -it -d -p 5060:5060 --restart=always --name iotveganotifier vegaabsolute/iotveganotifier`
 
@@ -27,11 +27,11 @@ To exit the console, press CTRL+B
 
 1. Install the docker.io
 
-`sudo apt-get install docker.io`
+- `sudo apt-get install docker.io`
 
-`sudo usermod -aG docker YourUser`
+- `sudo usermod -aG docker YourUser`
 
-`newgrp docker`
+- `newgrp docker`
 
 2. Make git clone IotVegaNotifier application `git clone https://github.com/VegaAbsolute/IotVegaNotifier.git`
 3. Go to the folder with the application `cd IotVegaNotifier`
