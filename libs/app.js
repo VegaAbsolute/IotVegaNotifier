@@ -173,145 +173,144 @@ function rx(obj)
       console.log('channel '+numChannel);
       if(validBetweenTime)
       {
-        console.log('data from device');
-        // switch (dev.type)
-        // {
-        //   case 1:
-        //     if(validNumChannel)
-        //     {
-        //       let channel = dev.get_channel(numChannel);
-        //       let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
-        //       if(validChannel&&dataDevice.type_package==2)
-        //       {
-        //         dev.lastDateSMS = currentDate;
-        //         wasAlarm(timeServerMs,channel);
-        //       }
-        //     }
-        //     if(config.debugMOD) console.log('data from device SI11');
-        //     break;
-        //   case 2:
-        //     if(config.debugMOD) console.log('data from device SI12');
-        //     break;
-        //   case 3:
-        //     if(config.debugMOD) console.log('data from device SI13');
-        //     break;
-        //   case 4:
-        //     let channel = dev.get_channel(1);
-        //     let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
-        //     if(validChannel)
-        //     {
-        //       let checkEvent = dataDevice.reason!==0;
-        //       let t = parseInt(dataDevice.temperature);
-        //       let t_max = channel.max_t;
-        //       let t_min = channel.min_t;
-        //       let checkTemperature = t<=t_min||t>=t_max;
-        //       if(checkEvent||checkTemperature)
-        //       {
-        //         dev.lastDateSMS = currentDate;
-        //         wasAlarm(timeServerMs,channel);
-        //       }
-        //     }
-        //     if(config.debugMOD) console.log('data from device TD11');
-        //     break;
-        //   case 5:
-        //     let channel = dev.get_channel(1);
-        //     let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
-        //     if(validChannel)
-        //     {
-        //       var s = parseFloat(dataDevice.sensorTP);
-        //       var dangerEvent = dataDevice.sensor_danger_1||dataDevice.sensor_danger_2?true:false;
-        //       var validValue = s!==undefined&&typeof s === 'number';
-        //       var sensorEvent = false;
-        //       var min = parseFloat(channel.min_normal_v);
-        //       var max = parseFloat(channel.max_normal_v);
-        //       var min_v = parseFloat(channel.min_v);
-        //       var max_v = parseFloat(channel.max_v);
-        //       if(validValue&&!isNaN(min)&&!isNaN(max)&&!isNaN(min_v)&&!isNaN(max_v))
-        //       {
-        //           if(s===0)
-        //           {
-        //               sensorEvent = true;
-        //           }
-        //           else if(s<=20&&s>=4)
-        //           {
-        //               var newvalue = min_v+(((max_v-min_v)*(s-4))/16);
-        //               if(typeof newvalue === 'number')
-        //               {
-        //                   if(newvalue<=min||newvalue>=max)
-        //                   {
-        //                       sensorEvent = true;
-        //                   }
-        //               }
-        //           }
-        //           else
-        //           {
-        //              sensorEvent = true;
-        //           }
-        //       }
-        //       if(sensorEvent||dangerEvent)
-        //       {
-        //           dev.lastDateSMS = currentDate;
-        //           wasAlarm(timeServerMs,channel);
-        //       }
-        //     }
-        //     if(config.debugMOD) console.log('data from device TP11');
-        //     break;
-        //   case 6:
-        //     if(config.debugMOD) console.log('data from device MC');
-        //     // if(dataDevice.reason==1)
-        //     // {
-        //     //     dev.lastDateSMS = currentDate;
-        //     //     wasAlarm(timeServerMs,dev.get_channel(1));
-        //     // }
-        //     break;
-        //   case 7:
-        //     if(dataDevice.reason==1)
-        //     {
-        //         dev.lastDateSMS = currentDate;
-        //         wasAlarm(timeServerMs,dev.get_channel(1));
-        //     }
-        //     if(config.debugMOD) console.log('data from device AS');
-        //     break;
-        //   case 8:
-        //     if(dataDevice.reason==1)
-        //     {
-        //         dev.lastDateSMS = currentDate;
-        //         wasAlarm(timeServerMs,dev.get_channel(1));
-        //     }
-        //     if(config.debugMOD) console.log('data from device MS');
-        //     break;
-        //   case 9:
-        //
-        //     if(config.debugMOD) console.log('data from device СВЭ-1');
-        //     break;
-        //   case 10:
-        //     if(config.debugMOD) console.log('data from device SS ');
-        //     if(dataDevice.reason==1)
-        //     {
-        //         dev.lastDateSMS = currentDate;
-        //         wasAlarm(timeServerMs,dev.get_channel(1));
-        //     }
-        //     break;
-        //   case 11:
-        //     if(validNumChannel)
-        //     {
-        //       let channel = dev.get_channel(numChannel);
-        //       let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
-        //       if(validChannel&&dataDevice.type_package==2)
-        //       {
-        //         dev.lastDateSMS = currentDate;
-        //         wasAlarm(timeServerMs,dev.get_channel(numChannel));
-        //       }
-        //     }
-        //     if(config.debugMOD) console.log('data from device SI21');
-        //     break;
-        //   case 12:
-        //     if(config.debugMOD) console.log('data from device УЭ');
-        //     break;
-        //   default:
-        //     if(config.debugMOD) console.log('data from device unknown');
-        //     break;
-        // }
+        switch (dev.type)
+        {
+          // case 1:
+          //   if(validNumChannel)
+          //   {
+          //     let channel = dev.get_channel(numChannel);
+          //     let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+          //     if(validChannel&&dataDevice.type_package==2)
+          //     {
+          //       dev.lastDateSMS = currentDate;
+          //       wasAlarm(timeServerMs,channel);
+          //     }
+          //   }
+          //   if(config.debugMOD) console.log('data from device SI11');
+          //   break;
+          // case 2:
+          //   if(config.debugMOD) console.log('data from device SI12');
+          //   break;
+          // case 3:
+          //   if(config.debugMOD) console.log('data from device SI13');
+          //   break;
+          // case 4:
+          //   let channel = dev.get_channel(1);
+          //   let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+          //   if(validChannel)
+          //   {
+          //     let checkEvent = dataDevice.reason!==0;
+          //     let t = parseInt(dataDevice.temperature);
+          //     let t_max = channel.max_t;
+          //     let t_min = channel.min_t;
+          //     let checkTemperature = t<=t_min||t>=t_max;
+          //     if(checkEvent||checkTemperature)
+          //     {
+          //       dev.lastDateSMS = currentDate;
+          //       wasAlarm(timeServerMs,channel);
+          //     }
+          //   }
+          //   if(config.debugMOD) console.log('data from device TD11');
+          //   break;
+          // case 5:
+          //   let channel = dev.get_channel(1);
+          //   let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+          //   if(validChannel)
+          //   {
+          //     var s = parseFloat(dataDevice.sensorTP);
+          //     var dangerEvent = dataDevice.sensor_danger_1||dataDevice.sensor_danger_2?true:false;
+          //     var validValue = s!==undefined&&typeof s === 'number';
+          //     var sensorEvent = false;
+          //     var min = parseFloat(channel.min_normal_v);
+          //     var max = parseFloat(channel.max_normal_v);
+          //     var min_v = parseFloat(channel.min_v);
+          //     var max_v = parseFloat(channel.max_v);
+          //     if(validValue&&!isNaN(min)&&!isNaN(max)&&!isNaN(min_v)&&!isNaN(max_v))
+          //     {
+          //         if(s===0)
+          //         {
+          //             sensorEvent = true;
+          //         }
+          //         else if(s<=20&&s>=4)
+          //         {
+          //             var newvalue = min_v+(((max_v-min_v)*(s-4))/16);
+          //             if(typeof newvalue === 'number')
+          //             {
+          //                 if(newvalue<=min||newvalue>=max)
+          //                 {
+          //                     sensorEvent = true;
+          //                 }
+          //             }
+          //         }
+          //         else
+          //         {
+          //            sensorEvent = true;
+          //         }
+          //     }
+          //     if(sensorEvent||dangerEvent)
+          //     {
+          //         dev.lastDateSMS = currentDate;
+          //         wasAlarm(timeServerMs,channel);
+          //     }
+          //   }
+          //   if(config.debugMOD) console.log('data from device TP11');
+          //   break;
+          case 6:
+            if(config.debugMOD) console.log('data from device MC');
+            // if(dataDevice.reason==1)
+            // {
+            //     dev.lastDateSMS = currentDate;
+            //     wasAlarm(timeServerMs,dev.get_channel(1));
+            // }
+            break;
+          // case 7:
+          //   if(dataDevice.reason==1)
+          //   {
+          //       dev.lastDateSMS = currentDate;
+          //       wasAlarm(timeServerMs,dev.get_channel(1));
+          //   }
+          //   if(config.debugMOD) console.log('data from device AS');
+          //   break;
+          // case 8:
+          //   if(dataDevice.reason==1)
+          //   {
+          //       dev.lastDateSMS = currentDate;
+          //       wasAlarm(timeServerMs,dev.get_channel(1));
+          //   }
+          //   if(config.debugMOD) console.log('data from device MS');
+          //   break;
+          // case 9:
+          //
+          //   if(config.debugMOD) console.log('data from device СВЭ-1');
+          //   break;
+          // case 10:
+          //   if(config.debugMOD) console.log('data from device SS ');
+          //   if(dataDevice.reason==1)
+          //   {
+          //       dev.lastDateSMS = currentDate;
+          //       wasAlarm(timeServerMs,dev.get_channel(1));
+          //   }
+          //   break;
+          // case 11:
+          //   if(validNumChannel)
+          //   {
+          //     let channel = dev.get_channel(numChannel);
+          //     let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+          //     if(validChannel&&dataDevice.type_package==2)
+          //     {
+          //       dev.lastDateSMS = currentDate;
+          //       wasAlarm(timeServerMs,dev.get_channel(numChannel));
+          //     }
+          //   }
+          //   if(config.debugMOD) console.log('data from device SI21');
+          //   break;
+          // case 12:
+          //   if(config.debugMOD) console.log('data from device УЭ');
+          //   break;
+          default:
+            if(config.debugMOD) console.log('data from device unknown');
+            break;
+        }
       }
       else
       {
