@@ -195,21 +195,21 @@ function rx(obj)
             if(config.debugMOD) console.log('data from device SI13');
             break;
           case 4:
-             let channel = dev.get_channel(1);
-             let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
-            // if(validChannel)
-            // {
-            //   let checkEvent = dataDevice.reason!==0;
-            //   let t = parseInt(dataDevice.temperature);
-            //   let t_max = channel.max_t;
-            //   let t_min = channel.min_t;
-            //   let checkTemperature = t<=t_min||t>=t_max;
-            //   if(checkEvent||checkTemperature)
-            //   {
-            //     dev.lastDateSMS = currentDate;
-            //     wasAlarm(timeServerMs,dev.get_channel(numChannel));
-            //   }
-            // }
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
+            {
+              let checkEvent = dataDevice.reason!==0;
+              let t = parseInt(dataDevice.temperature);
+              let t_max = channel.max_t;
+              let t_min = channel.min_t;
+              let checkTemperature = t<=t_min||t>=t_max;
+              if(checkEvent||checkTemperature)
+              {
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,dev.get_channel(1));
+              }
+            }
             if(config.debugMOD) console.log('data from device TD11');
             break;
           case 5:
