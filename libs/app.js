@@ -22,7 +22,7 @@ let ws = {};
 function wasAlarm(time,channel)
 {
   if(!channel.enable_danger) return;
-  console.log('Хочу делать рассылку на '+channel.name);
+  console.log('МОИ 9 ho4u delat rassilku '+channel.name);
   sendSMS(time,channel);
   sendVoiceMessage(time,channel);
 }
@@ -173,15 +173,14 @@ function rx(obj)
         switch (dev.type)
         {
           case 1:
-            console.log('Поступили данные си');
             if(validNumChannel)
             {
-              console.log('Номер канала валидный');
+              console.log('МОИ pravilnij numer kanala');
               let channel = dev.get_channel(numChannel);
               let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel&&dataDevice.type_package==2)
               {
-                console.log('Отправляю тревогу');
+                console.log('МОИ otpravil trwvogu');
                 dev.lastDateSMS = currentDate;
                 wasAlarm(timeServerMs,dev.get_channel(numChannel));
               }
