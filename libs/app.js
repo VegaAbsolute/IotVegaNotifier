@@ -183,7 +183,7 @@ function rx(obj)
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,dev.get_channel(numChannel));
+                wasAlarm(timeServerMs,channel);
               }
             }
             if(config.debugMOD) console.log('data from device SI11');
@@ -207,7 +207,7 @@ function rx(obj)
               if(checkEvent||checkTemperature)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,dev.get_channel(1));
+                wasAlarm(timeServerMs,channel);
               }
             }
             if(config.debugMOD) console.log('data from device TD11');
@@ -250,18 +250,18 @@ function rx(obj)
               if(sensorEvent||dangerEvent)
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,dev.get_channel(1));
+                  wasAlarm(timeServerMs,channel);
               }
             }
             if(config.debugMOD) console.log('data from device TP11');
             break;
           case 6:
             if(config.debugMOD) console.log('data from device MC');
-            if(dataDevice.reason==1)
-            {
-                dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,dev.get_channel(1));
-            }
+            // if(dataDevice.reason==1)
+            // {
+            //     dev.lastDateSMS = currentDate;
+            //     wasAlarm(timeServerMs,dev.get_channel(1));
+            // }
             break;
           case 7:
             if(dataDevice.reason==1)
@@ -280,7 +280,7 @@ function rx(obj)
             if(config.debugMOD) console.log('data from device MS');
             break;
           case 9:
-            
+
             if(config.debugMOD) console.log('data from device СВЭ-1');
             break;
           case 10:
