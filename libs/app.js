@@ -213,58 +213,46 @@ function rx(obj)
             if(config.debugMOD) console.log('data from device TD11');
             break;
           case 5:
-            // let channel = dev.get_channel(1);
-            // let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
-            // if(validChannel)
-            // {
-            // //  var s = parseFloat(res.sensorTP);
-            //                                     // var dangerEvent = res.sensor_danger_1||res.sensor_danger_2?true:false;
-            //                                     // var validValue = s!==undefined&&typeof s === 'number';
-            //                                     // var sensorEvent = false;
-            //                                     // var min = parseFloat(channel.min_normal_v);
-            //                                     // var max = parseFloat(channel.max_normal_v);
-            //                                     // var min_v = parseFloat(channel.min_v);
-            //                                     // var max_v = parseFloat(channel.max_v);
-            //                                     // if(validValue&&!isNaN(min)&&!isNaN(max)&&!isNaN(min_v)&&!isNaN(max_v))
-            //                                     // {
-            //                                     //     if(s===0)
-            //                                     //     {
-            //                                     //         sensorEvent = true;
-            //                                     //     }
-            //                                     //     else if(s<=20&&s>=4)
-            //                                     //     {
-            //                                     //         var newvalue = scope.my_converter.parse4_20mA(s,min_v,max_v);
-            //                                     //         if(typeof newvalue === 'number')
-            //                                     //         {
-            //                                     //             if(newvalue<=min||newvalue>=max)
-            //                                     //             {
-            //                                     //                 sensorEvent = true;
-            //                                     //             }
-            //                                     //         }
-            //                                     //     }
-            //                                     //     else
-            //                                     //     {
-            //                                     //        sensorEvent = true;
-            //                                     //     }
-            //                                     //     var resVal = scope.get_value4_20mA(s);
-            //                                     //     if(resVal!=='Неизвестно')
-            //                                     //     {
-            //                                     //         if(resVal<=min||resVal>=max)
-            //                                     //         {
-            //                                     //             sensorEvent = true;
-            //                                     //         }
-            //                                     //     }
-            //                                     // }
-            //                                     // if(sensorEvent||dangerEvent)
-            //                                     // {
-            //                                     //     if(channel.enable_danger)
-            //                                     //     {
-            //                                     //         storage.map_nav.set_history_danger(storage.devices.devices_list[i].devEui,1,channel.name_level_1,channel.address_level_1,channel.level_2);
-            //                                     //         channel.danger = true;
-            //                                     //     }
-            //                                     //     send_vega.logs.set_log('Сработала тревога',channel.name_level_1+' -> '+channel.level_2+' -> '+channel.name);
-            //                                     // }
-            // }
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
+            {
+              var s = parseFloat(dataDevice.sensorTP);
+              var dangerEvent = dataDevice.sensor_danger_1||dataDevice.sensor_danger_2?true:false;
+              var validValue = s!==undefined&&typeof s === 'number';
+              var sensorEvent = false;
+              var min = parseFloat(channel.min_normal_v);
+              var max = parseFloat(channel.max_normal_v);
+              var min_v = parseFloat(channel.min_v);
+              var max_v = parseFloat(channel.max_v);
+              if(validValue&&!isNaN(min)&&!isNaN(max)&&!isNaN(min_v)&&!isNaN(max_v))
+              {
+                  if(s===0)
+                  {
+                      sensorEvent = true;
+                  }
+                  else if(s<=20&&s>=4)
+                  {
+                      var newvalue = min_v+(((max_v-min_v)*(s-4))/16);
+                      if(typeof newvalue === 'number')
+                      {
+                          if(newvalue<=min||newvalue>=max)
+                          {
+                              sensorEvent = true;
+                          }
+                      }
+                  }
+                  else
+                  {
+                     sensorEvent = true;
+                  }
+              }
+              if(sensorEvent||dangerEvent)
+              {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,dev.get_channel(1));
+              }
+            }
             if(config.debugMOD) console.log('data from device TP11');
             break;
           case 6:
@@ -276,12 +264,23 @@ function rx(obj)
             }
             break;
           case 7:
+            if(dataDevice.reason==1)
+            {
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,dev.get_channel(1));
+            }
             if(config.debugMOD) console.log('data from device AS');
             break;
           case 8:
+            if(dataDevice.reason==1)
+            {
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,dev.get_channel(1));
+            }
             if(config.debugMOD) console.log('data from device MS');
             break;
           case 9:
+            
             if(config.debugMOD) console.log('data from device СВЭ-1');
             break;
           case 10:
