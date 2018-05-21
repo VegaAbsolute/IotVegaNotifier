@@ -165,12 +165,12 @@ function rx(obj)
     if(dev.valid)
     {
       console.log('data from device');
-      // let dataDevice = new Parser(dev.type,data);
-      // let currentDate = new Date().getTime();
-      // let lastDateSMS = dev.lastDateSMS;
-      // let validBetweenTime =  (dev.lastDateSMS===undefined||(currentDate-lastDateSMS)>config.devices_betweenTimeSMS);
-      // let validNumChannel = dataDevice.num_channel!==undefined;
-      // let numChannel = validNumChannel?parseInt(dataDevice.num_channel):1;
+      let dataDevice = new Parser(dev.type,data);
+      let currentDate = new Date().getTime();
+      let lastDateSMS = dev.lastDateSMS;
+      let validBetweenTime =  (dev.lastDateSMS===undefined||(currentDate-lastDateSMS)>config.devices_betweenTimeSMS);
+      let validNumChannel = dataDevice.num_channel!==undefined;
+      let numChannel = validNumChannel?parseInt(dataDevice.num_channel):1;
       // console.log('channel '+numChannel);
       // if(validBetweenTime)
       // {
