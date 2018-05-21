@@ -324,23 +324,5 @@ setInterval(()=>{
     get_device_appdata_req();
   }
 }, 30000);
-
-
-
-// new CronJob({
-//   cronTime: '*/1 * * * *',
-//   onTick: function() {
-//     exec('"git" pool', (err, stdout, stderr) => {
-//
-//     });
-//   },
-//   start: true,
-// });
-// exec('"git" pool', (err, stdout, stderr) => {
-//   console.log()Already up to date.
-//   git reset --hard HEAD
-// });
-
-
 module.exports.config = config;
 module.exports.run = run;
