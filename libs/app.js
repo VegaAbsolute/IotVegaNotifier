@@ -195,8 +195,8 @@ function rx(obj)
             if(config.debugMOD) console.log('data from device SI13');
             break;
           case 4:
-            // let channel = dev.get_channel(1);
-            // let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+             let channel = dev.get_channel(1);
+             let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             // if(validChannel)
             // {
             //   let checkEvent = dataDevice.reason!==0;
