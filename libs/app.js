@@ -217,7 +217,7 @@ function rx(obj)
             let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
-              var s = parseFloat(res.sensorTP);
+            //  var s = parseFloat(res.sensorTP);
                                                 // var dangerEvent = res.sensor_danger_1||res.sensor_danger_2?true:false;
                                                 // var validValue = s!==undefined&&typeof s === 'number';
                                                 // var sensorEvent = false;
