@@ -205,7 +205,7 @@ function rx(obj)
             if(dataDevice.reason==1)
             {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,dev.get_channel(numChannel));
+                wasAlarm(timeServerMs,dev.get_channel(1));
             }
             break;
           case 7:
@@ -222,7 +222,7 @@ function rx(obj)
             if(dataDevice.reason==1)
             {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,dev.get_channel(numChannel));
+                wasAlarm(timeServerMs,dev.get_channel(1));
             }
             break;
           case 11:
