@@ -19,6 +19,13 @@ let ws = {};
 //------------------------------------------------------------------------------
 //Логика
 //------------------------------------------------------------------------------
+function wasAlarm(time,channel)
+{
+  if(!channel.enable_danger) return;
+  console.log('Хочу делать рассылку на '+channel.name);
+  sendSMS(time,channel);
+  sendVoiceMessage(time,channel);
+}
 function sendVoiceMessage(time,channel)
 {
   let telephones = [];
@@ -159,72 +166,76 @@ function rx(obj)
       let currentDate = new Date().getTime();
       let lastDateSMS = dev.lastDateSMS;
       let validBetweenTime =  (dev.lastDateSMS===undefined||(currentDate-lastDateSMS)>config.devices_betweenTimeSMS);
-      switch (dev.type) {
-        case 1:
-          if(config.debugMOD) console.log('data from device SI11');
-          break;
-        case 2:
-          if(config.debugMOD) console.log('data from device SI12');
-          break;
-        case 3:
-          if(config.debugMOD) console.log('data from device SI13');
-          break;
-        case 4:
-          if(config.debugMOD) console.log('data from device TD11');
-          break;
-        case 5:
-          if(config.debugMOD) console.log('data from device TP11');
-          break;
-        case 6:
-          if(config.debugMOD) console.log('data from device MC');
-          if(dataDevice.reason==1)
-          {
-            if(validBetweenTime)
+      let validNumChannel = dataDevice.num_channel!==undefined;
+      let numChannel = validNumChannel?parseInt(dataDevice.num_channel):1;
+      if(validBetweenTime)
+      {
+        switch (dev.type)
+        {
+          case 1:
+            if(validNumChannel)
             {
-              dev.lastDateSMS = currentDate;
-              sendVoiceMessage(timeServerMs,dev.get_channel(1));
-              sendSMS(timeServerMs,dev.get_channel(1));
+              let channel = dev.get_channel(numChannel);
+              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              if(validChannel&&dataDevice.type_package==2)
+              {
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,dev.get_channel(numChannel));
+              }
             }
-            else
+            if(config.debugMOD) console.log('data from device SI11');
+            break;
+          case 2:
+            if(config.debugMOD) console.log('data from device SI12');
+            break;
+          case 3:
+            if(config.debugMOD) console.log('data from device SI13');
+            break;
+          case 4:
+            if(config.debugMOD) console.log('data from device TD11');
+            break;
+          case 5:
+            if(config.debugMOD) console.log('data from device TP11');
+            break;
+          case 6:
+            if(config.debugMOD) console.log('data from device MC');
+            if(dataDevice.reason==1)
             {
-              if(config.debugMOD) console.log('Do not put in the queue');
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,dev.get_channel(numChannel));
             }
-          }
-          break;
-        case 7:
-          if(config.debugMOD) console.log('data from device AS');
-          break;
-        case 8:
-          if(config.debugMOD) console.log('data from device MS');
-          break;
-        case 9:
-          if(config.debugMOD) console.log('data from device СВЭ-1');
-          break;
-        case 10:
-          if(config.debugMOD) console.log('data from device SS ');
-          if(dataDevice.reason==1)
-          {
-            if(validBetweenTime)
+            break;
+          case 7:
+            if(config.debugMOD) console.log('data from device AS');
+            break;
+          case 8:
+            if(config.debugMOD) console.log('data from device MS');
+            break;
+          case 9:
+            if(config.debugMOD) console.log('data from device СВЭ-1');
+            break;
+          case 10:
+            if(config.debugMOD) console.log('data from device SS ');
+            if(dataDevice.reason==1)
             {
-              dev.lastDateSMS = currentDate;
-              sendSMS(timeServerMs,dev.get_channel(1));
-              sendVoiceMessage(timeServerMs,dev.get_channel(1));
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,dev.get_channel(numChannel));
             }
-            else
-            {
-              if(config.debugMOD) console.log('Do not put in the queue');
-            }
-          }
-          break;
-        case 11:
-          if(config.debugMOD) console.log('data from device SI21');
-          break;
-        case 12:
-          if(config.debugMOD) console.log('data from device УЭ');
-          break;
-        default:
-          if(config.debugMOD) console.log('data from device unknown');
-          break;
+            break;
+          case 11:
+            if(config.debugMOD) console.log('data from device SI21');
+            break;
+          case 12:
+            if(config.debugMOD) console.log('data from device УЭ');
+            break;
+          default:
+            if(config.debugMOD) console.log('data from device unknown');
+            break;
+        }
+      }
+      else
+      {
+        if(config.debugMOD) console.log('Do not put in the queue');
       }
     }
   }
