@@ -21,6 +21,7 @@ let ws = {};
 //------------------------------------------------------------------------------
 function wasAlarm(time,channel)
 {
+  console.log(channel);
   if(!channel.enable_danger) return;
   console.log('МОИ 9 ho4u delat rassilku '+channel.name);
   sendSMS(time,channel);
