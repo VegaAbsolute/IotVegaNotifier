@@ -155,8 +155,7 @@ function rx(obj)
     let dev = devices.find(devEui);
     if(dev.valid)
     {
-      let dataDevice = new Parser(dev.type);
-      dataDevice.set_data(data);
+      let dataDevice = new Parser(dev.type,data);
       let currentDate = new Date().getTime();
       let lastDateSMS = dev.lastDateSMS;
       let validBetweenTime =  (dev.lastDateSMS===undefined||(currentDate-lastDateSMS)>config.devices_betweenTimeSMS);
