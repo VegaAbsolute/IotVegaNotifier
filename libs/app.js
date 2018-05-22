@@ -41,40 +41,43 @@ function sendVoiceMessage(time,channel)
   {
      voiceMessage = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
   }
-  if(smsc.active)
+  if(voiceMess)
   {
-    if(voiceMess&&telephones.length>0)
+    if(smsc.active)
     {
-      for (let i = 0 ; i < telephones.length; i++)
+      if(telephones.length>0)
       {
-        let telephone = telephones[i];
-        if(telephone&&telephone.length>0)
+        for (let i = 0 ; i < telephones.length; i++)
         {
-          smsc.pushVoiceMessage(voiceMessage,telephone);
+          let telephone = telephones[i];
+          if(telephone&&telephone.length>0)
+          {
+            smsc.pushVoiceMessage(voiceMessage,telephone);
+          }
         }
       }
-    }
-    if(config.debugMOD&&config.telephoneAdministrator)
-    {
-      smsc.pushVoiceMessage(voiceMessage,config.telephoneAdministrator);
-    }
-  }
-  if(linphone.active)
-  {
-    if(voiceMess&&telephones.length>0)
-    {
-      for (let i = 0 ; i < telephones.length; i++)
+      if(config.debugMOD&&config.telephoneAdministrator)
       {
-        let telephone = telephones[i];
-        if(telephone&&telephone.length>0)
-        {
-          linphone.pushVoiceMessage(voiceMessage,telephone);
-        }
+        smsc.pushVoiceMessage(voiceMessage,config.telephoneAdministrator);
       }
     }
-    if(config.debugMOD&&config.telephoneAdministrator)
+    if(linphone.active)
     {
-      linphone.pushVoiceMessage(voiceMessage,config.telephoneAdministrator);
+      if(telephones.length>0)
+      {
+        for (let i = 0 ; i < telephones.length; i++)
+        {
+          let telephone = telephones[i];
+          if(telephone&&telephone.length>0)
+          {
+            linphone.pushVoiceMessage(voiceMessage,telephone);
+          }
+        }
+      }
+      if(config.debugMOD&&config.telephoneAdministrator)
+      {
+        linphone.pushVoiceMessage(voiceMessage,config.telephoneAdministrator);
+      }
     }
   }
 }
@@ -96,20 +99,23 @@ function sendSMS(time,channel)
     {
        messageSMS = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
     }
-    if(sms&&telephones.length>0)
+    if(sms)
     {
-      for (let i = 0 ; i < telephones.length; i++)
+      if(telephones.length>0)
       {
-        let telephone = telephones[i];
-        if(telephone&&telephone.length>0)
+        for (let i = 0 ; i < telephones.length; i++)
         {
-          smpp.pushSMS(messageSMS,telephone);
+          let telephone = telephones[i];
+          if(telephone&&telephone.length>0)
+          {
+            smpp.pushSMS(messageSMS,telephone);
+          }
         }
       }
-    }
-    else if(config.debugMOD&&config.telephoneAdministrator)
-    {
-      smpp.pushSMS(messageSMS,config.telephoneAdministrator);
+      if(config.debugMOD&&config.telephoneAdministrator)
+      {
+        smpp.pushSMS(messageSMS,config.telephoneAdministrator);
+      }
     }
   }
 }
