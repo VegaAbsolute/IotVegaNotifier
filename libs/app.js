@@ -214,7 +214,7 @@ function rx(obj)
             break;
           case 5:
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            //let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             // if(validChannel)
             // {
             //   var s = parseFloat(dataDevice.sensorTP);
