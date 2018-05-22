@@ -42,7 +42,7 @@ function sendVoiceMessage(time,channel)
   {
      voiceMessage = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
   }
-  let voiceMessage_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
+  voiceMessage_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
   if(voiceMess)
   {
     if(smsc.active)
