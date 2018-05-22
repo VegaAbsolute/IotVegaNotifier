@@ -177,7 +177,7 @@ function rx(obj)
           case 1:
             if(validNumChannel)
             {
-              let channel = dev.get_channel(numChannel);
+              var channel = dev.get_channel(numChannel);
               let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel&&dataDevice.type_package==2)
               {
@@ -194,7 +194,7 @@ function rx(obj)
             if(config.debugMOD) console.log('data from device SI13');
             break;
           case 4:
-            let channel = dev.get_channel(1);
+            var channel = dev.get_channel(1);
             let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
@@ -214,46 +214,46 @@ function rx(obj)
           case 5:
             console.log('ya tut !!!!!');
           //  console.log(dev);
-            var hu = dev.get_channel(1);
-            //let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
-            // if(validChannel)
-            // {
-            //   var s = parseFloat(dataDevice.sensorTP);
-            //   var dangerEvent = dataDevice.sensor_danger_1||dataDevice.sensor_danger_2?true:false;
-            //   var validValue = s!==undefined&&typeof s === 'number';
-            //   var sensorEvent = false;
-            //   var min = parseFloat(channel.min_normal_v);
-            //   var max = parseFloat(channel.max_normal_v);
-            //   var min_v = parseFloat(channel.min_v);
-            //   var max_v = parseFloat(channel.max_v);
-            //   if(validValue&&!isNaN(min)&&!isNaN(max)&&!isNaN(min_v)&&!isNaN(max_v))
-            //   {
-            //       if(s===0)
-            //       {
-            //           sensorEvent = true;
-            //       }
-            //       else if(s<=20&&s>=4)
-            //       {
-            //           var newvalue = min_v+(((max_v-min_v)*(s-4))/16);
-            //           if(typeof newvalue === 'number')
-            //           {
-            //               if(newvalue<=min||newvalue>=max)
-            //               {
-            //                   sensorEvent = true;
-            //               }
-            //           }
-            //       }
-            //       else
-            //       {
-            //          sensorEvent = true;
-            //       }
-            //   }
-            //   if(sensorEvent||dangerEvent)
-            //   {
-            //       dev.lastDateSMS = currentDate;
-            //       wasAlarm(timeServerMs,channel);
-            //   }
-            // }
+            var channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
+            {
+              var s = parseFloat(dataDevice.sensorTP);
+              var dangerEvent = dataDevice.sensor_danger_1||dataDevice.sensor_danger_2?true:false;
+              var validValue = s!==undefined&&typeof s === 'number';
+              var sensorEvent = false;
+              var min = parseFloat(channel.min_normal_v);
+              var max = parseFloat(channel.max_normal_v);
+              var min_v = parseFloat(channel.min_v);
+              var max_v = parseFloat(channel.max_v);
+              if(validValue&&!isNaN(min)&&!isNaN(max)&&!isNaN(min_v)&&!isNaN(max_v))
+              {
+                  if(s===0)
+                  {
+                      sensorEvent = true;
+                  }
+                  else if(s<=20&&s>=4)
+                  {
+                      var newvalue = min_v+(((max_v-min_v)*(s-4))/16);
+                      if(typeof newvalue === 'number')
+                      {
+                          if(newvalue<=min||newvalue>=max)
+                          {
+                              sensorEvent = true;
+                          }
+                      }
+                  }
+                  else
+                  {
+                     sensorEvent = true;
+                  }
+              }
+              if(sensorEvent||dangerEvent)
+              {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+              }
+            }
             if(config.debugMOD) console.log('data from device TP11');
             break;
           case 6:
@@ -295,7 +295,7 @@ function rx(obj)
           case 11:
             if(validNumChannel)
             {
-              let channel = dev.get_channel(numChannel);
+              var channel = dev.get_channel(numChannel);
               let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel&&dataDevice.type_package==2)
               {
