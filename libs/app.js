@@ -54,7 +54,7 @@ function sendVoiceMessage(time,channel)
         }
       }
     }
-    else if(config.debugMOD&&config.telephoneAdministrator)
+    if(config.debugMOD&&config.telephoneAdministrator)
     {
       smsc.pushVoiceMessage(voiceMessage,config.telephoneAdministrator);
     }
@@ -72,7 +72,7 @@ function sendVoiceMessage(time,channel)
         }
       }
     }
-    else if(config.debugMOD&&config.telephoneAdministrator)
+    if(config.debugMOD&&config.telephoneAdministrator)
     {
       linphone.pushVoiceMessage(voiceMessage,config.telephoneAdministrator);
     }
@@ -246,41 +246,19 @@ function rx(obj)
                       {
                           if(newvalue<=min||newvalue>=max)
                           {
-                              console.log('------------------');
-                              console.log('sensorEvent===true');
-                              console.log('s=',s);
-                              console.log('newvalue=',newvalue);
-                              console.log('min=',min);
-                              console.log('max=',max);
-                              console.log('------------------');
                               sensorEvent = true;
                           }
                       }
                   }
                   else
                   {
-                    console.log('dataDevice',dataDevice);
-                    console.log('sensorEvent===true s='+s);
                      sensorEvent = true;
                   }
-                  // var resVal = get_value4_20mA(s);
-                  // if(resVal!=='Неизвестно')
-                  // {
-                  //     if(resVal<=min||resVal>=max)
-                  //     {
-                  //         sensorEvent = true;
-                  //     }
-                  // }
               }
               if(sensorEvent||dangerEvent)
               {
-                  console.log('dangerEvent=',dangerEvent);
                   dev.lastDateSMS = currentDate;
                   wasAlarm(timeServerMs,channel);
-              }
-              else
-              {
-                console.log('NO DANGER tp11');
               }
             }
             if(config.debugMOD) console.log('data from device TP11');
