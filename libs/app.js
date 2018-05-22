@@ -376,6 +376,7 @@ function initWS()
   ws.on('run',auth_req);
   ws.on('auth_resp',auth_resp);
   ws.on('rx',rx);
+  ws.on('alter_user_resp',get_device_appdata_req);
   ws.on('get_device_appdata_resp',get_device_appdata_resp);
 }
 function run(conf)
