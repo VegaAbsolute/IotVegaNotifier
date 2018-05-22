@@ -154,7 +154,7 @@ function get_device_appdata_resp(obj)
   let validDevicesList = typeof devices_list==='object'&&devices_list.length>0;
   if(validDevicesList)
   {
-    console.log('devices list updated');
+    if(config.debugMOD) console.log('devices list updated');
     devices.list = devices_list;
   }
 }

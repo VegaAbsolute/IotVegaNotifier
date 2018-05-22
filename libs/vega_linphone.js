@@ -316,12 +316,10 @@ class VegaLinphone extends RHvoice
   }
   checkStatusRegistration()
   {
-    console.log('check status register');
     let _self = this;
     this.last_time_checkStatusRegistration = new Date().getTime();
     exec('"linphonecsh" status register', (err, stdout, stderr) => {
       _self.last_time_response_linphone = new Date().getTime();
-      console.log('out status register');
       if(stdout)
       {
         let sipAcc = this._user_name+'@'+this._host;
@@ -367,7 +365,6 @@ class VegaLinphone extends RHvoice
   {
     let _self = this;
     if(_self._debugMOD) console.log('SIP: Progress registration');
-    console.log('DEVELOPER: '+'"linphonecsh" register --host '+this._host+' --username '+this._user_name+' --password '+this._user_password);
     exec('"linphonecsh" register --host '+this._host+' --username '+this._user_name+' --password '+this._user_password, (err, stdout, stderr) => {
       this.last_time_response_linphone = new Date().getTime();
       this.last_time_reconnect = new Date().getTime();

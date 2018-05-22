@@ -21,7 +21,7 @@ Application to notify IotVegaServer users about an alarm event.
 
 - Restart the application  IotVegaNotifier `pm2 restart 0`
 
-To exit the console, press CTRL+B
+To exit the console, press CTRL+D
 
 ## Self-build docker
 
@@ -47,4 +47,4 @@ To exit the console, press CTRL+B
 
 - Restart the application  IotVegaNotifier `pm2 restart 0`
 
-To exit the console, press CTRL+B
+To exit the console, press CTRL+D
