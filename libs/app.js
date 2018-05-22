@@ -33,6 +33,7 @@ function sendVoiceMessage(time,channel)
   let room = channel.level_2;
   let name = channel.name;
   let voiceMessage = channel.voice_message;
+  let voiceMessage_admin = 'undefined';
   if(channel.telephones)
   {
     telephones = channel.telephones.split(',');
@@ -41,6 +42,7 @@ function sendVoiceMessage(time,channel)
   {
      voiceMessage = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
   }
+  let voiceMessage_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
   if(voiceMess)
   {
     if(smsc.active)
@@ -91,6 +93,7 @@ function sendSMS(time,channel)
     let room = channel.level_2;
     let name = channel.name;
     let messageSMS = channel.message_sms;
+    let messageSMS_admin = 'undefined';
     if(channel.telephones)
     {
       telephones = channel.telephones.split(',');
@@ -99,6 +102,7 @@ function sendSMS(time,channel)
     {
        messageSMS = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
     }
+    messageSMS_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
     if(sms)
     {
       if(telephones.length>0)
