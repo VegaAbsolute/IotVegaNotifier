@@ -60,7 +60,7 @@ function sendVoiceMessage(time,channel)
       }
       if(config.debugMOD&&config.telephoneAdministrator)
       {
-        smsc.pushVoiceMessage(voiceMessage,config.telephoneAdministrator);
+        smsc.pushVoiceMessage(voiceMessage_admin,config.telephoneAdministrator);
       }
     }
     if(linphone.active)
@@ -78,7 +78,7 @@ function sendVoiceMessage(time,channel)
       }
       if(config.debugMOD&&config.telephoneAdministrator)
       {
-        linphone.pushVoiceMessage(voiceMessage,config.telephoneAdministrator);
+        linphone.pushVoiceMessage(voiceMessage_admin,config.telephoneAdministrator);
       }
     }
   }
@@ -118,7 +118,7 @@ function sendSMS(time,channel)
       }
       if(config.debugMOD&&config.telephoneAdministrator)
       {
-        smpp.pushSMS(messageSMS,config.telephoneAdministrator);
+        smpp.pushSMS(messageSMS_admin,config.telephoneAdministrator);
       }
     }
   }
