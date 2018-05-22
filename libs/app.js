@@ -214,7 +214,7 @@ function rx(obj)
           case 5:
 
           //  console.log(dev);
-            let channel = dev.get_channel(1);
+            var channel = dev.get_channel(1);
             //let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             // if(validChannel)
             // {
