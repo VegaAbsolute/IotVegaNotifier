@@ -150,6 +150,7 @@ function get_device_appdata_resp(obj)
 }
 function rx(obj)
 {
+  if(!(obj.type&&(obj.type.indexOf('UNCONF_UP')>-1||obj.type.indexOf('CONF_UP')>-1))) return;
   try
   {
     //cmd      gatewayId   data       rssi
