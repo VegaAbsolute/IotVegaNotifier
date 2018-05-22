@@ -44,6 +44,7 @@ class VegaLinphone extends RHvoice
         let timeCheckRegistration = currentDate-lastDateCheckRegistration;
         if(timeCheckRegistration==0||timeCheckRegistration>10000)
         {
+
           this.checkStatusRegistration();
         }
         if(!this._status)
@@ -304,9 +305,11 @@ class VegaLinphone extends RHvoice
   }
   checkStatusRegistration()
   {
+    console.log('check status register');
     let _self = this;
     this.last_time_checkStatusRegistration = new Date().getTime();
     exec('"linphonecsh" status register', (err, stdout, stderr) => {
+      console.log('out status register');
       if(stdout)
       {
         let sipAcc = this._user_name+'@'+this._host;
