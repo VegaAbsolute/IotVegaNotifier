@@ -24,7 +24,15 @@ class Devices extends EventEmitter
   }
   find(devEui)
   {
-    return this._list[devEui];
+    let device = this._list[devEui];
+    if(device!==undefined&&device.valid)
+    {
+      return this._list[devEui];
+    }
+    else
+    {
+      return {valid:false};
+    }
   }
 }
 module.exports = Devices;

@@ -170,7 +170,6 @@ function rx(obj)
       let validBetweenTime =  (dev.lastDateSMS===undefined||(currentDate-lastDateSMS)>config.devices_betweenTimeSMS);
       let validNumChannel = dataDevice.num_channel!==undefined;
       let numChannel = validNumChannel?parseInt(dataDevice.num_channel):1;
-      console.log('channel '+numChannel);
       if(validBetweenTime)
       {
         switch (dev.type)
@@ -213,8 +212,9 @@ function rx(obj)
             if(config.debugMOD) console.log('data from device TD11');
             break;
           case 5:
-            console.log(dev);
-          //  let channel = dev.get_channel(1);
+
+          //  console.log(dev);
+            let channel = dev.get_channel(1);
             //let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             // if(validChannel)
             // {
