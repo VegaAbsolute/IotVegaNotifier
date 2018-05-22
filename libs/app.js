@@ -212,9 +212,9 @@ function rx(obj)
             if(config.debugMOD) console.log('data from device TD11');
             break;
           case 5:
-
+            console.log('ya tut !!!!!');
           //  console.log(dev);
-            var channel = dev.get_channel(1);
+          //  var channel = dev.get_channel(1);
             //let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             // if(validChannel)
             // {
