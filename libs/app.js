@@ -245,12 +245,20 @@ function rx(obj)
                       {
                           if(newvalue<=min||newvalue>=max)
                           {
+                              console.log('------------------');
+                              console.log('sensorEvent===true');
+                              console.log('s=',s);
+                              console.log('newvalue=',newvalue);
+                              console.log('min=',min);
+                              console.log('max=',max);
+                              console.log('------------------');
                               sensorEvent = true;
                           }
                       }
                   }
                   else
                   {
+                    console.log('sensorEvent===true s='+s);
                      sensorEvent = true;
                   }
                   // var resVal = get_value4_20mA(s);
@@ -264,6 +272,7 @@ function rx(obj)
               }
               if(sensorEvent||dangerEvent)
               {
+                  console.log('dangerEvent=',dangerEvent);
                   dev.lastDateSMS = currentDate;
                   wasAlarm(timeServerMs,channel);
               }
