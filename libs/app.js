@@ -252,11 +252,24 @@ function rx(obj)
                   {
                      sensorEvent = true;
                   }
+                  // var resVal = get_value4_20mA(s);
+                  // if(resVal!=='Неизвестно')
+                  // {
+                  //     if(resVal<=min||resVal>=max)
+                  //     {
+                  //         sensorEvent = true;
+                  //     }
+                  // }
               }
               if(sensorEvent||dangerEvent)
               {
+                  console.log('DANGER tp11');
                   dev.lastDateSMS = currentDate;
                   wasAlarm(timeServerMs,channel);
+              }
+              else
+              {
+                console.log('NO DANGER tp11');
               }
             }
             if(config.debugMOD) console.log('data from device TP11');
