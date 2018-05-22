@@ -21,9 +21,6 @@ let ws = {};
 //------------------------------------------------------------------------------
 function wasAlarm(time,channel)
 {
-  console.log('wasAlarm --------------',channel.name);
-  console.log('channel ',channel);
-  console.log('enable_danger ',channel.enable_danger);
   if(!channel.enable_danger) return;
   sendSMS(time,channel);
   sendVoiceMessage(time,channel);
@@ -222,7 +219,6 @@ function rx(obj)
           }
           case 5:
           {
-            console.log('ya tut !!!!!');
             let channel = dev.get_channel(1);
             let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
