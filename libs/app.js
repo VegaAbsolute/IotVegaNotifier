@@ -258,6 +258,7 @@ function rx(obj)
                   }
                   else
                   {
+                    console.log('dataDevice',dataDevice);
                     console.log('sensorEvent===true s='+s);
                      sensorEvent = true;
                   }
