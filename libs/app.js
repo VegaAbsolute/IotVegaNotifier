@@ -178,7 +178,7 @@ function rx(obj)
             if(validNumChannel)
             {
               var channel = dev.get_channel(numChannel);
-              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              var validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
@@ -195,7 +195,7 @@ function rx(obj)
             break;
           case 4:
             var channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            var validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               let checkEvent = dataDevice.reason!==0;
@@ -215,7 +215,7 @@ function rx(obj)
             console.log('ya tut !!!!!');
           //  console.log(dev);
             var channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            var validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               var s = parseFloat(dataDevice.sensorTP);
@@ -296,7 +296,7 @@ function rx(obj)
             if(validNumChannel)
             {
               var channel = dev.get_channel(numChannel);
-              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              var validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
