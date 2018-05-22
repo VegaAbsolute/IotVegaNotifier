@@ -121,7 +121,7 @@ function sendSMS(time,channel)
 //------------------------------------------------------------------------------
 function auth_req()
 {
-  var message = {
+  let message = {
       cmd:'auth_req',
       login:config.loginWS,
       password:config.passwordWS
@@ -131,7 +131,7 @@ function auth_req()
 }
 function get_device_appdata_req()
 {
-  var message = {
+  let message = {
     cmd:'get_device_appdata_req',
     keyword:['add_data_info']
   };
@@ -175,10 +175,11 @@ function rx(obj)
         switch (dev.type)
         {
           case 1:
+          {
             if(validNumChannel)
             {
-              var channel = dev.get_channel(numChannel);
-              var validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              let channel = dev.get_channel(numChannel);
+              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
@@ -187,15 +188,22 @@ function rx(obj)
             }
             if(config.debugMOD) console.log('data from device SI11');
             break;
+          }
           case 2:
+          {
             if(config.debugMOD) console.log('data from device SI12');
             break;
+          }
+
           case 3:
-            if(config.debugMOD) console.log('data from device SI13');
-            break;
+          {
+              if(config.debugMOD) console.log('data from device SI13');
+              break;
+          }
           case 4:
-            var channel = dev.get_channel(1);
-            var validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+          {
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               let checkEvent = dataDevice.reason!==0;
@@ -211,21 +219,22 @@ function rx(obj)
             }
             if(config.debugMOD) console.log('data from device TD11');
             break;
+          }
           case 5:
+          {
             console.log('ya tut !!!!!');
-          //  console.log(dev);
-            var channel = dev.get_channel(1);
-            var validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
-              var s = parseFloat(dataDevice.sensorTP);
-              var dangerEvent = dataDevice.sensor_danger_1||dataDevice.sensor_danger_2?true:false;
-              var validValue = s!==undefined&&typeof s === 'number';
-              var sensorEvent = false;
-              var min = parseFloat(channel.min_normal_v);
-              var max = parseFloat(channel.max_normal_v);
-              var min_v = parseFloat(channel.min_v);
-              var max_v = parseFloat(channel.max_v);
+              let s = parseFloat(dataDevice.sensorTP);
+              let dangerEvent = dataDevice.sensor_danger_1||dataDevice.sensor_danger_2?true:false;
+              let validValue = s!==undefined&&typeof s === 'number';
+              let sensorEvent = false;
+              let min = parseFloat(channel.min_normal_v);
+              let max = parseFloat(channel.max_normal_v);
+              let min_v = parseFloat(channel.min_v);
+              let max_v = parseFloat(channel.max_v);
               if(validValue&&!isNaN(min)&&!isNaN(max)&&!isNaN(min_v)&&!isNaN(max_v))
               {
                   if(s===0)
@@ -234,7 +243,7 @@ function rx(obj)
                   }
                   else if(s<=20&&s>=4)
                   {
-                      var newvalue = min_v+(((max_v-min_v)*(s-4))/16);
+                      let newvalue = min_v+(((max_v-min_v)*(s-4))/16);
                       if(typeof newvalue === 'number')
                       {
                           if(newvalue<=min||newvalue>=max)
@@ -256,7 +265,9 @@ function rx(obj)
             }
             if(config.debugMOD) console.log('data from device TP11');
             break;
+          }
           case 6:
+          {
             if(config.debugMOD) console.log('data from device MC');
             if(dataDevice.reason==1)
             {
@@ -264,7 +275,9 @@ function rx(obj)
                 wasAlarm(timeServerMs,dev.get_channel(1));
             }
             break;
+          }
           case 7:
+          {
             if(dataDevice.reason==1)
             {
                 dev.lastDateSMS = currentDate;
@@ -272,7 +285,9 @@ function rx(obj)
             }
             if(config.debugMOD) console.log('data from device AS');
             break;
+          }
           case 8:
+          {
             if(dataDevice.reason==1)
             {
                 dev.lastDateSMS = currentDate;
@@ -280,11 +295,14 @@ function rx(obj)
             }
             if(config.debugMOD) console.log('data from device MS');
             break;
+          }
           case 9:
-
+          {
             if(config.debugMOD) console.log('data from device СВЭ-1');
             break;
+          }
           case 10:
+          {
             if(config.debugMOD) console.log('data from device SS ');
             if(dataDevice.reason==1)
             {
@@ -292,11 +310,13 @@ function rx(obj)
                 wasAlarm(timeServerMs,dev.get_channel(1));
             }
             break;
+          }
           case 11:
+          {
             if(validNumChannel)
             {
-              var channel = dev.get_channel(numChannel);
-              var validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              let channel = dev.get_channel(numChannel);
+              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
@@ -305,12 +325,17 @@ function rx(obj)
             }
             if(config.debugMOD) console.log('data from device SI21');
             break;
+          }
           case 12:
+          {
             if(config.debugMOD) console.log('data from device УЭ');
             break;
+          }
           default:
+          {
             if(config.debugMOD) console.log('data from device unknown');
             break;
+          }
         }
       }
       else
