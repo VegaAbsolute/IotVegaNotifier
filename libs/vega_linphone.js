@@ -34,6 +34,7 @@ class VegaLinphone extends RHvoice
     if(this._active)
     {
       setInterval(()=>{
+        if(this.last_time_response_linphone===undefined) this.last_time_response_linphone = new Date().getTime();
         let _activeCall = this.activeCall;
         let currentDate = new Date().getTime();
         let validLastTimeReconnect = this.last_time_reconnect!==undefined;
@@ -42,9 +43,14 @@ class VegaLinphone extends RHvoice
         let validLastTimeCheckRegistration = this.last_time_checkStatusRegistration!==undefined;
         let lastDateCheckRegistration = validLastTimeCheckRegistration?this.last_time_checkStatusRegistration:currentDate;
         let timeCheckRegistration = currentDate-lastDateCheckRegistration;
+        let timeCheckTimeResponse = currentDate-this.last_time_response_linphone;
+        if(timeCheckTimeResponse>30000)
+        {
+          console.error('SIP: Hang, Force reload');
+          this.reload();
+        }
         if(timeCheckRegistration==0||timeCheckRegistration>10000)
         {
-
           this.checkStatusRegistration();
         }
         if(!this._status)
@@ -148,6 +154,7 @@ class VegaLinphone extends RHvoice
       {
         exec('"pkill" -9 linphone*', (err, stdout, stderr) => {
           exec('"linphonecsh" init', (err, stdout, stderr) => {
+            _self.last_time_response_linphone = new Date().getTime();
             if(_self._debugMOD) console.log('SIP: Initialization linphone',stdout);
             resolve(true);
           });
@@ -166,6 +173,7 @@ class VegaLinphone extends RHvoice
       try
       {
         exec('"linphonecsh" soundcard use files', (err, stdout, stderr) => {
+          _self.last_time_response_linphone = new Date().getTime();
           if(_self._debugMOD) console.log('SIP: Soundcard use files',stdout);
           resolve(true);
         });
@@ -231,6 +239,7 @@ class VegaLinphone extends RHvoice
     try
     {
       exec('"linphonecsh" generic calls', (err, stdout, stderr) => {
+        this.last_time_response_linphone = new Date().getTime();
         let callsList = {};
         if(stdout)
         {
@@ -275,6 +284,7 @@ class VegaLinphone extends RHvoice
     {
       let _self = this;
       exec(`"linphonecsh" generic 'play ${file}'`, (err, stdout, stderr) => {
+        _self.last_time_response_linphone = new Date().getTime();
         if(_self._debugMOD) console.log('LINPHONE: play '+file);
       });
     }
@@ -300,6 +310,7 @@ class VegaLinphone extends RHvoice
   {
     let _self = this;
     exec(`"linphonecsh" generic 'terminate ${id}'`, (err, stdout, stderr) => {
+      _self.last_time_response_linphone = new Date().getTime();
       if(_self._debugMOD) console.log('SIP: Terminate '+id);
     });
   }
@@ -309,6 +320,7 @@ class VegaLinphone extends RHvoice
     let _self = this;
     this.last_time_checkStatusRegistration = new Date().getTime();
     exec('"linphonecsh" status register', (err, stdout, stderr) => {
+      _self.last_time_response_linphone = new Date().getTime();
       console.log('out status register');
       if(stdout)
       {
@@ -357,6 +369,7 @@ class VegaLinphone extends RHvoice
     if(_self._debugMOD) console.log('SIP: Progress registration');
     console.log('DEVELOPER: '+'"linphonecsh" register --host '+this._host+' --username '+this._user_name+' --password '+this._user_password);
     exec('"linphonecsh" register --host '+this._host+' --username '+this._user_name+' --password '+this._user_password, (err, stdout, stderr) => {
+      this.last_time_response_linphone = new Date().getTime();
       this.last_time_reconnect = new Date().getTime();
     });
   }
@@ -467,6 +480,7 @@ class VegaLinphone extends RHvoice
       try
       {
         exec('"linphonecsh" dial '+phone, (err, stdout, stderr) => {
+          this.last_time_response_linphone = new Date().getTime();
           if(!err&&!stderr&&stdout)
           {
             let temp = stdout.split(',');
