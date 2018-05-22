@@ -145,7 +145,7 @@ class VegaLinphone extends RHvoice
     return new Promise((resolve, reject)=>{
       try
       {
-        exec('"linphonecsh" exit', (err, stdout, stderr) => {
+        exec('"pkill" -9 linphone*', (err, stdout, stderr) => {
           exec('"linphonecsh" init', (err, stdout, stderr) => {
             if(_self._debugMOD) console.log('SIP: Initialization linphone',stdout);
             resolve(true);
