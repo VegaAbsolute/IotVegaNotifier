@@ -170,10 +170,11 @@ function rx(obj)
     let timeServerMs = obj.ts;
     let data = obj.data;
     let devEui = obj.devEui;
+    let port = obj.port;
     let dev = devices.find(devEui);
     if(dev.valid)
     {
-      let dataDevice = new Parser(dev.type,data);
+      let dataDevice = new Parser(dev.type,data,port);
       let currentDate = new Date().getTime();
       let lastDateSMS = dev.lastDateSMS;
       let validBetweenTime =  (dev.lastDateSMS===undefined||(currentDate-lastDateSMS)>config.devices_betweenTimeSMS);
@@ -337,6 +338,17 @@ function rx(obj)
           case 12:
           {
             if(config.debugMOD) console.log('data from device УЭ');
+            break;
+          }
+          case 10:
+          {
+            if(config.debugMOD) console.log('data from device SS ');
+            let reason = dataDevice.reason!==undefined?parseInt(dataDevice.reason):NaN;
+            if(!isNaN(reason)&&reason>0)
+            {
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,dev.get_channel(1));
+            }
             break;
           }
           default:
