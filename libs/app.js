@@ -340,7 +340,7 @@ function rx(obj)
             if(config.debugMOD) console.log('data from device УЭ');
             break;
           }
-          case 10:
+          case 13:
           {
             if(config.debugMOD) console.log('data from device SS ');
             let reason = dataDevice.reason!==undefined?parseInt(dataDevice.reason):NaN;
