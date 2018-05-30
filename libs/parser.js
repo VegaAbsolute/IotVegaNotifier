@@ -34,6 +34,19 @@ class Parser
         this.sensor_rate_3;
         this.sensor_rate_4;
         this.sensor_rate_sum;
+
+        this.in_move;
+        this.angle;
+        this.coord_status;
+        this.lat;
+        this.lon;
+        this.dir;
+        this.speed;
+        this.alt;
+        this.sat_visible;
+        this.sat_used;
+        this.alarm;
+
         this.date_1;
         this.date_2;
         this.period_avg_1;
@@ -248,9 +261,6 @@ class Parser
     {
         try
         {
-//            this.reason=parseInt(this.hex_array[5],16).toString(2).split('').reverse().splice(0,6);
-//            this.reason=this.hex_array[5];
-//            console.log(this.reason);
             switch (this.hex_array[b]) {
                 case '00':
                     this.reason=0
@@ -283,7 +293,6 @@ class Parser
         try
         {
             var status=parseInt(this.hex_array[6],16).toString(2).split('').reverse().splice(0,6);
-            //console.log(status)
             if(status[0]==1)
             {
                 this.state_sensor_0 = true;
@@ -305,7 +314,6 @@ class Parser
         try
         {
             var status=parseInt(this.hex_array[6],16).toString(2).split('').reverse().splice(0,6);
-           // console.log(status)
             if(status[0]==1)
             {
                 //размокнут
@@ -778,7 +786,6 @@ class Parser
         {
             var sensorTP = this.hex_array[7].toString()+this.hex_array[6].toString();
             this.sensorTP = parseInt(sensorTP,16)/100;
-         //   console.log(this.sensorTP);
             return true;
         }
         catch(err)
@@ -1664,6 +1671,25 @@ class Parser
 //        res=res&&this._set_universal_boolean(6,'result');
         return res;
     }
+    lm_package_1()
+    {
+        var res = true;
+        res=res&&this._set_universal_int([1],'charge');
+        res=res&&this._set_time(2,3,4,5);
+        res=res&&this._set_temperature(6);
+        res=res&&this._set_universal_boolean(7,'in_move');
+        res=res&&this._set_universal_float([8,9],10,'angle');
+        res=res&&this._set_universal_boolean(10,'coord_status');
+        res=res&&this._set_universal_float([11,12,13,14],1000000,'lat');
+        res=res&&this._set_universal_float([15,16,17,18],1000000,'lon');
+        res=res&&this._set_universal_int([19,20],'dir');
+        res=res&&this._set_universal_int([21,22],'speed');
+        res=res&&this._set_universal_int([23,24],'alt');
+        res=res&&this._set_universal_int([25],'sat_visible');
+        res=res&&this._set_universal_int([26],'sat_used');
+        res=res&&this._set_universal_boolean([27],'alarm');
+        return res;
+    }
     ug_package_1()
     {
         var res = true;
@@ -1689,57 +1715,49 @@ class Parser
     }
     sve_1_package_1()
     {
-      //  console.log('sve_1_package_1');
         if(this._set_charge())
         {
             if(this._set_temperature(2))
             {
-//                if(this._set_tamper())
-//                {
-                    if(this._set_hall_1())
-                    {
-                        if(this._set_display())
-                        {
-                            if(this._set_time(5,6,7,8))
-                            {
-                                if(this._set_leaking())
-                                {
-                                    if(this._set_breakthrough())
-                                    {
-                                        if(!this._set_sensorKB())
-                                        {
-                                            return false;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        return false;
-                                    }
-                                }
-                                else
-                                {
-                                    return false;
-                                }
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                           return false;
-                        }
-                    }
-                    else
-                    {
-                       return false;
-                    }
-//                }
-//                else
-//                {
-//                   return false;
-//                }
+              if(this._set_hall_1())
+              {
+                  if(this._set_display())
+                  {
+                      if(this._set_time(5,6,7,8))
+                      {
+                          if(this._set_leaking())
+                          {
+                              if(this._set_breakthrough())
+                              {
+                                  if(!this._set_sensorKB())
+                                  {
+                                      return false;
+                                  }
+                              }
+                              else
+                              {
+                                  return false;
+                              }
+                          }
+                          else
+                          {
+                              return false;
+                          }
+                      }
+                      else
+                      {
+                          return false;
+                      }
+                  }
+                  else
+                  {
+                     return false;
+                  }
+              }
+              else
+              {
+                 return false;
+              }
             }
             else
             {
@@ -1754,7 +1772,6 @@ class Parser
     }
     tp_11_package_5()
     {
-       // console.log('tp_11_package_5');
         if(this._set_charge())
          {
              if(!this._set_status_sensor_out())
@@ -1770,7 +1787,6 @@ class Parser
     }
     tp_11_package_1()
     {
-       // console.log('tp_11_package_1');
         if(this._set_charge())
          {
              if(this._set_switch_device_tp11())
@@ -1816,7 +1832,6 @@ class Parser
 
     smart_package_1()
     {
-       // console.log('smart_package_1');
         if(this._set_charge())
          {
              if(this._set_switch_device_smart())
@@ -1854,7 +1869,6 @@ class Parser
     }
     td_11_package_1()
     {
-      //  console.log('td_11_package_1');
         if(this._set_charge())
          {
              if(this._set_switch_device())
@@ -1927,7 +1941,6 @@ class Parser
         //step 3
         switch (this.device_type) {
             case 1:
-             //   console.log('Данные си11');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -1937,8 +1950,7 @@ class Parser
                         case 2:
                            return this.si_11_package_2();
                         break;
-                        case 3:
-                           console.log('Нам третий пакет не нужен');
+                        case 3:  
                            return true;
                         break;
                         default:
@@ -1952,7 +1964,6 @@ class Parser
                  }
                 break;
             case 11:
-              //  console.log('Данные си11');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -1963,7 +1974,6 @@ class Parser
                            return this.si_11_package_2();
                         break;
                         case 3:
-                           console.log('Нам третий пакет не нужен');
                            return true;
                         break;
                         default:
@@ -1977,7 +1987,6 @@ class Parser
                  }
                 break;
             case 3:
-             //   console.log('Данные си13');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -2181,6 +2190,23 @@ class Parser
                     switch(this.port) {
                         case 2:
                            return this.ug_package_1();
+                        break;
+                        default:
+                            return false;
+                        break;
+                     }
+                }
+                else
+                {
+                   return false;
+                }
+                break;
+            case 14:
+                if(this._set_hex(hex))
+                {
+                    switch(this.port) {
+                        case 2:
+                           return this.lm_package_1();
                         break;
                         default:
                             return false;

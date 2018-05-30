@@ -351,6 +351,16 @@ function rx(obj)
             }
             break;
           }
+          case 14:
+          {
+            if(config.debugMOD) console.log('data from device LM-1 ');
+            if(dataDevice.alarm)
+            {
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,dev.get_channel(1));
+            }
+            break;
+          }
           default:
           {
             if(config.debugMOD) console.log('data from device unknown');
