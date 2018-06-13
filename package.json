@@ -1,7 +1,7 @@
 {
   "name": "IotVegaNotifier",
   "version": "1.0.0",
-  "description": "IotVega Server Notifier",
+  "description": "Iot Vega Notifier application to send notifications to Iot Vega server users",
   "author": "Vega-Absolute",
   "main": "index.js",
   "repository": "https://github.com/VegaAbsolute/IotVegaNotifier.git",
