@@ -268,7 +268,7 @@ class VegaLinphone extends RHvoice
           }
           else
           {
-          //  this.activeCall.state = 'StreamsNo';
+            this.activeCall.state = 'StreamsNo';
             console.log('SIP: No active calls');
           }
         }
@@ -406,10 +406,6 @@ class VegaLinphone extends RHvoice
       {
         this.refreshMessage(item.uuid,item.state);
         continue;
-      }
-      else
-      {
-        console.log('Тут нужно наверное подчистить статус');
       }
       if(typeof item.message !== 'string') continue;
       this.textToSpeech(item.message)
