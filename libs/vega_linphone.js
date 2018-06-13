@@ -268,6 +268,7 @@ class VegaLinphone extends RHvoice
           }
           else
           {
+            console.log('activeCall=',this.activeCall);
             console.log('SIP: No active calls');
           }
         }
