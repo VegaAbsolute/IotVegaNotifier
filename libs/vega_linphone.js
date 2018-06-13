@@ -297,7 +297,7 @@ class VegaLinphone extends RHvoice
   }
   stopCall()
   {
-    console.log('!!!stopCall',this.activeCall);
+    //console.log('!!!stopCall',this.activeCall);
     this._stack.active = undefined;
     for (var key in this._stack)
     {
@@ -401,6 +401,7 @@ class VegaLinphone extends RHvoice
     {
       if(i==='active') continue;
       let item = this._stack[i];
+      console.log(item);
       if (item.state)
       {
         this.refreshMessage(item.uuid,item.state);
