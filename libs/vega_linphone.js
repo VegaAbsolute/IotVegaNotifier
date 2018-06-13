@@ -241,10 +241,12 @@ class VegaLinphone extends RHvoice
     try
     {
       exec('"linphonecsh" generic calls', (err, stdout, stderr) => {
+        console.log('response calls');
         this.last_time_response_linphone = new Date().getTime();
         let callsList = {};
         if(stdout)
         {
+          console.log(stdout);
           let arrTMP = stdout.split('------------------------------------------------------------------------');
           if(arrTMP.length>1)
           {
