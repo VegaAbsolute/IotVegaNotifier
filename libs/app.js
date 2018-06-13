@@ -25,6 +25,30 @@ function wasAlarm(time,channel)
   sendSMS(time,channel);
   sendVoiceMessage(time,channel);
 }
+function getValidTelephone(num)
+{
+  try
+  {
+    let validNum = num&&num.length>0?true:false;
+    if(!validNum) return false;
+    telephone = num.replace(/[^-0-9]/gim,'');
+    let validTelephone = telephone&&telephone.length>0?true:false;
+    if(!validTelephone) return false;
+    if(telephone.length === 10)
+    {
+      telephone = '7' + telephone;
+    }
+    else if(telephone.length === 11 && telephone[0] == 8)
+    {
+      telephone = telephone.replace(8,7);
+    }
+    return telephone;
+  }
+  catch (e)
+  {
+    return false;
+  }
+}
 function sendVoiceMessage(time,channel)
 {
   let telephones = [];
@@ -51,8 +75,8 @@ function sendVoiceMessage(time,channel)
       {
         for (let i = 0 ; i < telephones.length; i++)
         {
-          let telephone = telephones[i];
-          if(telephone&&telephone.length>0)
+          let telephone = getValidTelephone(telephones[i]);
+          if(telephone!==false)
           {
             smsc.pushVoiceMessage(voiceMessage,telephone);
           }
@@ -69,8 +93,8 @@ function sendVoiceMessage(time,channel)
       {
         for (let i = 0 ; i < telephones.length; i++)
         {
-          let telephone = telephones[i];
-          if(telephone&&telephone.length>0)
+          let telephone = getValidTelephone(telephones[i]);
+          if(telephone!==false)
           {
             linphone.pushVoiceMessage(voiceMessage,telephone);
           }
@@ -109,8 +133,8 @@ function sendSMS(time,channel)
       {
         for (let i = 0 ; i < telephones.length; i++)
         {
-          let telephone = telephones[i];
-          if(telephone&&telephone.length>0)
+          let telephone = getValidTelephone(telephones[i]);
+          if(telephone!==false)
           {
             smpp.pushSMS(messageSMS,telephone);
           }
