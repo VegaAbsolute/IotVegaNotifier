@@ -268,7 +268,7 @@ class VegaLinphone extends RHvoice
           }
           else
           {
-            console.log('activeCall=',this.activeCall);
+          //  this.activeCall.state = 'StreamsNo';
             console.log('SIP: No active calls');
           }
         }
@@ -297,6 +297,7 @@ class VegaLinphone extends RHvoice
   }
   stopCall()
   {
+    console.log('!!!stopCall',this.activeCall);
     this._stack.active = undefined;
     for (var key in this._stack)
     {
