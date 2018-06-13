@@ -202,9 +202,8 @@ class VegaLinphone extends RHvoice
             let timePassed = currentTime-lastPlayTime;
             if(_activeCall.countPlay===undefined) _activeCall.countPlay = 0;
             let wav = this.wavList[_activeCall.hash];
-            let durationWav = typeof wav ==='object'&&wav.status&&wav.info.duration?wav.info.duration*1000:30000;
+            let durationWav = typeof wav === 'object'&&wav.status&&wav.info.duration?wav.info.duration*1000:30000;
             let checkNewPlay = timePassed>durationWav;
-            console.log('_activeCall.state=',_activeCall.state);
             if(_activeCall.state=='StreamsRunning'&&checkNewPlay&&_activeCall.countPlay<2)
             {
               if(_activeCall.taking)
@@ -237,16 +236,13 @@ class VegaLinphone extends RHvoice
 
   calls()
   {
-    console.log('get calls');
     try
     {
       exec('"linphonecsh" generic calls', (err, stdout, stderr) => {
-        console.log('response calls');
         this.last_time_response_linphone = new Date().getTime();
         let callsList = {};
         if(stdout)
         {
-          console.log(stdout);
           let arrTMP = stdout.split('------------------------------------------------------------------------');
           if(arrTMP.length>1)
           {
@@ -300,7 +296,6 @@ class VegaLinphone extends RHvoice
   }
   stopCall()
   {
-    //console.log('!!!stopCall',this.activeCall);
     this._stack.active = undefined;
     for (var key in this._stack)
     {
