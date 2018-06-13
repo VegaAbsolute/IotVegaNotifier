@@ -204,6 +204,7 @@ class VegaLinphone extends RHvoice
             let wav = this.wavList[_activeCall.hash];
             let durationWav = typeof wav ==='object'&&wav.status&&wav.info.duration?wav.info.duration*1000:30000;
             let checkNewPlay = timePassed>durationWav;
+            console.log('_activeCall.state=',_activeCall.state);
             if(_activeCall.state=='StreamsRunning'&&checkNewPlay&&_activeCall.countPlay<2)
             {
               if(_activeCall.taking)
