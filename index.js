@@ -5,8 +5,6 @@ const ini = require('ini');
 let config = new Config();
 let myConfig = {};
 let path = './config.ini';
-//var rn = require('random-number');
-//console.log(rn());
 if(!fs.existsSync(path))
 {
   console.error('Error accessing config.ini file');
