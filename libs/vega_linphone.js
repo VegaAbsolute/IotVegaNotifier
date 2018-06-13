@@ -237,6 +237,7 @@ class VegaLinphone extends RHvoice
 
   calls()
   {
+    console.log('get calls');
     try
     {
       exec('"linphonecsh" generic calls', (err, stdout, stderr) => {
@@ -396,13 +397,11 @@ class VegaLinphone extends RHvoice
   }
   checkStack()
   {
-    console.log('checkStack');
     let _self = this;
     for(let i in this._stack)
     {
       if(i==='active') continue;
       let item = this._stack[i];
-      console.log('item=',item.state);
       if (item.state)
       {
         this.refreshMessage(item.uuid,item.state);
