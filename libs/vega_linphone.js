@@ -401,11 +401,15 @@ class VegaLinphone extends RHvoice
     {
       if(i==='active') continue;
       let item = this._stack[i];
-      console.log(item);
+
       if (item.state)
       {
         this.refreshMessage(item.uuid,item.state);
         continue;
+      }
+      else
+      {
+        console.log('Тут нужно наверное подчистить статус');
       }
       if(typeof item.message !== 'string') continue;
       this.textToSpeech(item.message)
