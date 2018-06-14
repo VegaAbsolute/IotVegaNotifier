@@ -34,7 +34,7 @@ class SMSCru extends EventEmitter
   }
   checkStackEmptiness()
   {
-    if(this.employment) this._self.emit('free');
+    if(this.employment) this.emit('free');
   }
   pushVoiceMessage(message,telephone,time)
   {
