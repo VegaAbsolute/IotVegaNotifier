@@ -111,7 +111,13 @@ class VegaSMPP
                  _self._stack[j].status = false;
                  let tmp = _self._stack[j];
                  _self._stack.splice(j,1);
-                 _self.pushSMS(tmp.message,tmp.telephone,tmp.firstTime);
+                 let firstTime = tmp.firstTime;
+                 let currentTime = new Date().getTime();
+                 let timePassed = firstTime?(currentTime-firstTime):0;
+                 let lifeTime = timePassed<86400000;
+                 {
+                   _self.pushSMS(tmp.message,tmp.telephone,tmp.firstTime);
+                 }
                  console.log('failed to send  sms message '+tmp.telephone);
                }
              }
