@@ -6,6 +6,7 @@ class VegaSMPP
   {
     this._debugMOD = debugMOD;
     this._active = status;
+    this._stack = [];
     if(status)
     {
       this._address = address;
@@ -14,7 +15,6 @@ class VegaSMPP
       this._connect = {
         _status:false
       };
-      this._stack = [];
       if(info)
       {
         this._info = info;

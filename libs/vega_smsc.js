@@ -8,12 +8,12 @@ class SMSCru
   {
     this._debugMOD = debugMOD;
     this._active = status;
+    this._stack = [];
     if(status)
     {
       this._login = system.login;
       this._password = system.password;
       this._settings = settings;
-      this._stack = [];
       setInterval(()=>{
         if(this.employment)
         {
