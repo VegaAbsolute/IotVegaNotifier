@@ -16,6 +16,7 @@ let smpp = {};
 let smsc = {};
 let linphone = {};
 let ws = {};
+let waitingReboot = false;
 //------------------------------------------------------------------------------
 //Логика
 //------------------------------------------------------------------------------
@@ -408,15 +409,19 @@ function rx(obj)
     return;
   }
 }
+function free()
+{
+  if(waitingReboot)
+  {
+    emergencyExit();
+  }
+}
 function emergencyExit()
 {
-  console.log('emergencyExit!');
   if(smpp.employment||smsc.employment||linphone.employment)
   {
-    console.log('emergency !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     return;
   }
-  console.log('FREE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
   process.exit(1);
 }
 function auth_resp(obj)
@@ -469,6 +474,9 @@ function run(conf)
       smpp = new VegaSMPP(config.address_smpp,config.system_smpp,config.smpp_info,config.smpp,config.debugMOD);
       smsc = new SMSCru(config.smsc_auth,config.smsc,config.smsc_settings,config.debugMOD);
       linphone = new VegaLinphone(config.sipHost,config.sipLogin,config.sipPassword,config.sipOtherSettings,config.sipCron,config.sipRHvoice,config.sip,config.debugMOD);
+      smpp.on('free',free);
+      smsc.on('free',free);
+      linphone.on('free',free);
     }
     catch (e)
     {
@@ -497,6 +505,7 @@ function updating()
     else
     {
       if(config.debugMOD) console.log('The IotVegaNotifier is updated, restart',stdout);
+
       emergencyExit();
     }
   });

@@ -1,6 +1,7 @@
 const SMPP = require('smpp');
 const uuidv4 = require('uuid/v4');
-class VegaSMPP
+const EventEmitter = require('events');
+class VegaSMPP extends EventEmitter
 {
   constructor(address,system,info,status,debugMOD)
   {
@@ -103,6 +104,7 @@ class VegaSMPP
                {
                  console.log('Success to send sms message '+_self._stack[j].telephone);
                  _self._stack.splice(j,1);
+                 _self.checkStackEmptiness();
                }
              }
            }
@@ -122,6 +124,7 @@ class VegaSMPP
                  {
                    _self.pushSMS(tmp.message,tmp.telephone,tmp.firstTime);
                  }
+                 _self.checkStackEmptiness();
                  console.log('failed to send  sms message '+tmp.telephone);
                }
              }
@@ -137,6 +140,10 @@ class VegaSMPP
         }
       }
     }
+  }
+  checkStackEmptiness()
+  {
+    if(this.employment) this._self.emit('free');
   }
   reload()
   {

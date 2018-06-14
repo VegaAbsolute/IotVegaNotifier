@@ -2,7 +2,8 @@
 var request = require('request');
 var http = require('http');
 const uuidv4 = require('uuid/v4');
-class SMSCru
+const EventEmitter = require('events');
+class SMSCru extends EventEmitter
 {
   constructor(system,status,settings,debugMOD)
   {
@@ -29,6 +30,10 @@ class SMSCru
   get active()
   {
     return this._active;
+  }
+  checkStackEmptiness()
+  {
+    if(this.employment) this._self.emit('free');
   }
   pushVoiceMessage(message,telephone,time)
   {
@@ -78,6 +83,7 @@ class SMSCru
                  {
                    console.log('Success to send voice message '+_self._stack[j].telephone);
                    _self._stack.splice(j,1);
+                   _self.checkStackEmptiness();
                  }
                }
              }
@@ -98,6 +104,7 @@ class SMSCru
                    {
                      _self.pushVoiceMessage(tmp.message,tmp.telephone,tmp.firstTime);
                    }
+                   _self.checkStackEmptiness();
                    console.log('failed to send  voice message '+tmp.telephone);
                  }
                }

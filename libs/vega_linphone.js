@@ -79,6 +79,10 @@ class VegaLinphone extends RHvoice
     let _activeCall = activeItem!==undefined;
     return _activeCall?activeItem:false;
   }
+  checkStackEmptiness()
+  {
+    if(this.employment) this._self.emit('free');
+  }
   clearTrash()
   {
     var tmpFileList = {};
@@ -308,6 +312,7 @@ class VegaLinphone extends RHvoice
       {
         this.terminate(this._stack[key].id);
         delete this._stack[key];
+        this.checkStackEmptiness();
       }
     }
   }
@@ -439,6 +444,7 @@ class VegaLinphone extends RHvoice
     {
       this.pushVoiceMessage(mess,tel,firstTime);
     }
+    this.checkStackEmptiness();
   }
   call(item)
   {
