@@ -431,7 +431,8 @@ class VegaLinphone extends RHvoice
     let timePassed = firstTime?(currentTime-firstTime):0;
     console.log('timePassed = ',timePassed);
     delete this._stack[uuid];
-    let lifeTime = timePassed<86400000;
+    // let lifeTime = timePassed<86400000;
+    let lifeTime = timePassed<120000;
     if(type == 'voicemessage' && lifeTime)
     {
       this.pushVoiceMessage(mess,tel,firstTime);
