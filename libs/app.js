@@ -110,7 +110,7 @@ function sendVoiceMessage(time,channel)
   }
 }
 function sendSMS(time,channel)
-{ 
+{
   if(smpp.active)
   {
     let telephones = [];
@@ -505,7 +505,7 @@ function updating()
     else
     {
       if(config.debugMOD) console.log('The IotVegaNotifier is updated, restart',stdout);
-
+      waitingReboot = true;
       emergencyExit();
     }
   });
