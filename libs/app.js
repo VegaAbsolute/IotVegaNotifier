@@ -79,13 +79,13 @@ function sendVoiceMessage(time,channel)
           let telephone = getValidTelephone(telephones[i]);
           if(telephone!==false)
           {
-            smsc.pushVoiceMessage(voiceMessage,telephone);
+            smsc.pushVoiceMessage(voiceMessage,telephone,new Date().getTime());
           }
         }
       }
       if(config.debugMOD&&config.telephoneAdministrator)
       {
-        smsc.pushVoiceMessage(voiceMessage_admin,config.telephoneAdministrator);
+        smsc.pushVoiceMessage(voiceMessage_admin,config.telephoneAdministrator,new Date().getTime());
       }
     }
     if(linphone.active)
@@ -97,13 +97,13 @@ function sendVoiceMessage(time,channel)
           let telephone = getValidTelephone(telephones[i]);
           if(telephone!==false)
           {
-            linphone.pushVoiceMessage(voiceMessage,telephone);
+            linphone.pushVoiceMessage(voiceMessage,telephone,new Date().getTime());
           }
         }
       }
       if(config.debugMOD&&config.telephoneAdministrator)
       {
-        linphone.pushVoiceMessage(voiceMessage_admin,config.telephoneAdministrator);
+        linphone.pushVoiceMessage(voiceMessage_admin,config.telephoneAdministrator,new Date().getTime());
       }
     }
   }
@@ -137,13 +137,13 @@ function sendSMS(time,channel)
           let telephone = getValidTelephone(telephones[i]);
           if(telephone!==false)
           {
-            smpp.pushSMS(messageSMS,telephone);
+            smpp.pushSMS(messageSMS,telephone,new Date().getTime());
           }
         }
       }
       if(config.debugMOD&&config.telephoneAdministrator)
       {
-        smpp.pushSMS(messageSMS_admin,config.telephoneAdministrator);
+        smpp.pushSMS(messageSMS_admin,config.telephoneAdministrator,new Date().getTime());
       }
     }
   }

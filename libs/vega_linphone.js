@@ -379,7 +379,7 @@ class VegaLinphone extends RHvoice
   {
     console.log('SIP: MAMONT');
   }
-  pushVoiceMessage(message,telephone)
+  pushVoiceMessage(message,telephone,time)
   {
     if(this._debugMOD) console.log('SIP: Push voice message '+telephone);
     let uuid = uuidv4();
@@ -389,6 +389,7 @@ class VegaLinphone extends RHvoice
       telephone:telephone,
       uuid:uuid,
       hash:hash,
+      firstTime:time,
       type:'voicemessage'
     };
   }
@@ -425,10 +426,15 @@ class VegaLinphone extends RHvoice
     let tel = tmp.telephone;
     let type = tmp.type;
     let hash = tmp.hash;
+    let firstTime = tmp.firstTime;
+    let currentTime = new Date().getTime();
+    let timePassed = firstTime?(currentTime-firstTime):0;
+    console.log('timePassed = ',timePassed);
     delete this._stack[uuid];
-    if(type == 'voicemessage')
+    let lifeTime = timePassed<86400000;
+    if(type == 'voicemessage' && lifeTime)
     {
-      this.pushVoiceMessage(mess,tel);
+      this.pushVoiceMessage(mess,tel,firstTime);
     }
   }
   call(item)

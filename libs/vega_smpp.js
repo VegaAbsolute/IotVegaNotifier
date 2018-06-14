@@ -70,9 +70,9 @@ class VegaSMPP
   {
     return this._active;
   }
-  pushSMS(message,telephone)
+  pushSMS(message,telephone,time)
   {
-    this._stack.push({message:message,telephone:telephone,uuid:uuidv4(),status:false});
+    this._stack.push({message:message,telephone:telephone,uuid:uuidv4(),status:false,firstTime:time});
   }
   checkStackSMS()
   {
@@ -111,7 +111,7 @@ class VegaSMPP
                  _self._stack[j].status = false;
                  let tmp = _self._stack[j];
                  _self._stack.splice(j,1);
-                 _self.pushSMS(tmp.message,tmp.telephone);
+                 _self.pushSMS(tmp.message,tmp.telephone,tmp.firstTime);
                  console.log('failed to send  sms message '+tmp.telephone);
                }
              }

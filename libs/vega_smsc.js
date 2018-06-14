@@ -26,7 +26,7 @@ class SMSCru
   {
     return this._active;
   }
-  pushVoiceMessage(message,telephone)
+  pushVoiceMessage(message,telephone,time)
   {
     let settings={
       call:1,
@@ -34,7 +34,7 @@ class SMSCru
       charset:'utf-8',
       sender:this._settings.sender,
     };
-    this._stack.push({message:message,telephone:telephone,settings:settings,uuid:uuidv4(),status:false});
+    this._stack.push({message:message,telephone:telephone,settings:settings,uuid:uuidv4(),status:false,firstTime:time});
   }
   checkStack()
   {
@@ -86,7 +86,7 @@ class SMSCru
                    _self._stack[j].status = false;
                    let tmp = _self._stack[j];
                    _self._stack.splice(j,1);
-                   _self.pushVoiceMessage(tmp.message,tmp.telephone);
+                   _self.pushVoiceMessage(tmp.message,tmp.telephone,tmp.firstTime);
                    console.log('failed to send  voice message '+tmp.telephone);
                  }
                }
