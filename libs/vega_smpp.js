@@ -10,7 +10,7 @@ class VegaSMPP extends EventEmitter
     this._active = status;
     this._stack = [];
     if(status)
-    {
+    { 
       this._address = address;
       this._system = system;
       this._info = {};
