@@ -433,7 +433,7 @@ class VegaLinphone extends RHvoice
     let tmp = this._stack[uuid];
     let mess = tmp.message;
     let tel = tmp.telephone;
-    let type = tmp.type;
+    let type = tmp.type; 
     let hash = tmp.hash;
     let firstTime = tmp.firstTime;
     let currentTime = new Date().getTime();
