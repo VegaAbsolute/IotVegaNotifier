@@ -76,11 +76,13 @@ class VegaWS extends EventEmitter
   {
     console.log('WS error');
     this._status = false;
+    this._self.emit('no_connect');
   }
   _close(code)
   {
     console.log('WS close');
     this._status = false;
+    this._self.emit('no_connect');
   }
   _open()
   {
