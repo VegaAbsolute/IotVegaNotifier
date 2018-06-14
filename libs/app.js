@@ -34,11 +34,12 @@ function getValidTelephone(num)
     telephone = num.replace(/[^-0-9]/gim,'');
     let validTelephone = telephone&&telephone.length>0?true:false;
     if(!validTelephone) return false;
-    if(telephone.length === 10)
-    {
-      telephone = '7' + telephone;
-    }
-    else if(telephone.length === 11 && telephone[0] == 8)
+    // if(telephone.length === 10)
+    // {
+    //   telephone = '7' + telephone;
+    // }
+    // else
+    if(telephone.length === 11 && telephone[0] == 8)
     {
       telephone = telephone.replace(8,7);
     }
