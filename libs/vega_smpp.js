@@ -5,6 +5,7 @@ class VegaSMPP extends EventEmitter
 {
   constructor(address,system,info,status,debugMOD)
   {
+    super();
     this._debugMOD = debugMOD;
     this._active = status;
     this._stack = [];

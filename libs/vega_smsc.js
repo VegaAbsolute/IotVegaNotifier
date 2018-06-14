@@ -7,6 +7,7 @@ class SMSCru extends EventEmitter
 {
   constructor(system,status,settings,debugMOD)
   {
+    super();
     this._debugMOD = debugMOD;
     this._active = status;
     this._stack = [];
