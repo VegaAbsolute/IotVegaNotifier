@@ -66,7 +66,7 @@ class VegaSMPP
       },100);
     }
   }
-  get statusEmployment()
+  get employment()
   {
     return  this._stack.length>0;
   }

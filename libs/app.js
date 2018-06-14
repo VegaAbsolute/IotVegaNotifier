@@ -410,6 +410,7 @@ function rx(obj)
 }
 function emergencyExit()
 {
+  if(smpp.employment||smsc.employment||linphone.employment) return;
   process.exit(1);
 }
 function auth_resp(obj)

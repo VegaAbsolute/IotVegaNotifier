@@ -61,14 +61,14 @@ class VegaLinphone extends RHvoice
         {
           this.calls();
         }
-        else if(this.statusEmployment)
+        else if(this.employment)
         {
           this.checkStack();
         }
       },2000);
     }
   }
-  get statusEmployment()
+  get employment()
   {
     return  Object.keys(this._stack).length>1;
   }
