@@ -408,6 +408,10 @@ function rx(obj)
     return;
   }
 }
+function emergencyExit()
+{
+  process.exit(1);
+}
 function auth_resp(obj)
 {
   if(obj.status)
@@ -423,6 +427,7 @@ function auth_resp(obj)
   else
   {
     console.log('Not successful authorization on server iotvega');
+    emergencyExit();
   //  process.exit(1);
   }
 }
@@ -463,7 +468,7 @@ function run(conf)
     {
       console.log('Initializing the application was a mistake');
       console.error(e);
-      process.exit(1);
+      emergencyExit();
     }
   }
   return;
@@ -480,13 +485,13 @@ function updating()
       console.log(err);
       exec('"git" reset --hard HEAD', (err, stdout, stderr) => {
         if(config.debugMOD) console.log('Error updating IotVegaNotifier, restart',err);
-        process.exit(0);
+        emergencyExit();
       });
     }
     else
     {
       if(config.debugMOD) console.log('The IotVegaNotifier is updated, restart',stdout);
-      process.exit(0);
+      emergencyExit();
     }
   });
 }
