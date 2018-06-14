@@ -436,8 +436,8 @@ function auth_resp(obj)
 //------------------------------------------------------------------------------
 function initWS()
 {
-  //ws = new VegaWS(config.ws);
-  ws = new VegaWS('ws://WrongWSaddress.com');
+  ws = new VegaWS(config.ws);
+  //ws = new VegaWS('ws://WrongWSaddress.com');
   ws.on('run',auth_req);
   ws.on('auth_resp',auth_resp);
   ws.on('rx',rx);
