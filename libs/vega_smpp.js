@@ -144,7 +144,7 @@ class VegaSMPP extends EventEmitter
   }
   checkStackEmptiness()
   {
-    if(this.employment) this.emit('free');
+    if(!this.employment) this.emit('free');
   }
   reload()
   {

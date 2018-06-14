@@ -81,12 +81,7 @@ class VegaLinphone extends RHvoice
   }
   checkStackEmptiness()
   {
-    console.log('checkStackEmptiness ');
-    if(this.employment)
-    {
-      console.log('linphone free');
-      this.emit('free');
-    }
+    if(!this.employment) this.emit('free');
   }
   clearTrash()
   {
