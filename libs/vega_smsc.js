@@ -15,12 +15,16 @@ class SMSCru
       this._settings = settings;
       this._stack = [];
       setInterval(()=>{
-        if(this._stack.length>0)
+        if(this.statusEmployment)
         {
           this.checkStack();
         }
       },1000);
     }
+  }
+  get statusEmployment()
+  {
+    return  this._stack.length>0;
   }
   get active()
   {

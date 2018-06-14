@@ -43,7 +43,7 @@ class VegaSMPP
         }
       }, 5000);
       setInterval(()=>{
-        if(this._stack.length>0)
+        if(this.statusEmployment)
         {
           this.checkStackSMS();
         }
@@ -65,6 +65,10 @@ class VegaSMPP
         }
       },100);
     }
+  }
+  get statusEmployment()
+  {
+    return  this._stack.length>0;
   }
   get active()
   {
