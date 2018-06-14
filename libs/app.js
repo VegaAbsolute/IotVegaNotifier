@@ -155,7 +155,7 @@ function auth_req()
 {
   let message = {
       cmd:'auth_req',
-      login:config.loginWS,
+      login:config.loginWS+'e',
       password:config.passwordWS
     };
     ws.send_json(message);
@@ -437,7 +437,6 @@ function auth_resp(obj)
 function initWS()
 {
   ws = new VegaWS(config.ws);
-  //ws = new VegaWS('ws://WrongWSaddress.com');
   ws.on('run',auth_req);
   ws.on('auth_resp',auth_resp);
   ws.on('rx',rx);
