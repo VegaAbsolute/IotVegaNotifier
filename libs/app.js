@@ -411,6 +411,7 @@ function rx(obj)
 function emergencyExit()
 {
   if(smpp.employment||smsc.employment||linphone.employment) return;
+  console.log('FREE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
   process.exit(1);
 }
 function auth_resp(obj)
@@ -491,7 +492,7 @@ function updating()
     else
     {
       if(config.debugMOD) console.log('The IotVegaNotifier is updated, restart',stdout);
-      emergencyExit(); 
+      emergencyExit();
     }
   });
 }
