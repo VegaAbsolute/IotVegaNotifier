@@ -410,7 +410,7 @@ function rx(obj)
 }
 function emergencyExit()
 {
-  console.log('emergencyExit!'); 
+  console.log('emergencyExit!');
   if(smpp.employment||smsc.employment||linphone.employment)
   {
     console.log('emergency !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
