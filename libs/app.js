@@ -491,7 +491,7 @@ function updating()
     else
     {
       if(config.debugMOD) console.log('The IotVegaNotifier is updated, restart',stdout);
-      emergencyExit();
+      emergencyExit(); 
     }
   });
 }
