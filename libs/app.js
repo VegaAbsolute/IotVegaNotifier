@@ -155,7 +155,7 @@ function auth_req()
 {
   let message = {
       cmd:'auth_req',
-      login:config.loginWS+'e',
+      login:config.loginWS,
       password:config.passwordWS
     };
     ws.send_json(message);
