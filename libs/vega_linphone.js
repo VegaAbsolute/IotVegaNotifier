@@ -137,7 +137,7 @@ class VegaLinphone extends RHvoice
         {
           console.error('SIP: error clearTrash',e);
         }
-    });
+    }); 
   }
   reload()
   {
