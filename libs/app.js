@@ -411,6 +411,7 @@ function rx(obj)
 }
 function free()
 {
+  console.log('app free');
   if(waitingReboot)
   {
     emergencyExit();

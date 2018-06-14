@@ -81,7 +81,11 @@ class VegaLinphone extends RHvoice
   }
   checkStackEmptiness()
   {
-    if(this.employment) this.emit('free');
+    if(this.employment) 
+    {
+      console.log('linphone free');
+      this.emit('free');
+    }
   }
   clearTrash()
   {
@@ -433,7 +437,7 @@ class VegaLinphone extends RHvoice
     let tmp = this._stack[uuid];
     let mess = tmp.message;
     let tel = tmp.telephone;
-    let type = tmp.type; 
+    let type = tmp.type;
     let hash = tmp.hash;
     let firstTime = tmp.firstTime;
     let currentTime = new Date().getTime();
