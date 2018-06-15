@@ -8,6 +8,7 @@ class VegaLinphone extends RHvoice
   constructor(host,name,password,otherSettings,cronCmd,rhvoiceSettings,active,debugMOD)
   {
     super(rhvoiceSettings,debugMOD);
+    this._last_time_reload;
     this._otherSettings = otherSettings;
     this._host = host;
     this._user_name = name;
@@ -142,17 +143,24 @@ class VegaLinphone extends RHvoice
   reload()
   {
     if(this._debugMOD) console.log('SIP: Reload linphone');
-    let _self = this;
-    this._status = false;
-    this.init()
-    .then((res)=>{
-      if(res)
-      {
-      }
-    })
-    .catch((e)=>{
-      console.error('SIP: Error initialization linphone',e);
-    });
+    let last_time_reload = this._last_time_reload?this._last_time_reload:0;
+    let currentTime = new Date().getTime();
+    let timePassed = currentTime-last_time_reload;
+    if(timePassed>500)
+    {
+      this._last_time_reload = currentTime;
+      let _self = this;
+      this._status = false;
+      this.init()
+      .then((res)=>{
+        if(res)
+        {
+        }
+      })
+      .catch((e)=>{
+        console.error('SIP: Error initialization linphone',e);
+      });
+    }
   }
   init()
   {
