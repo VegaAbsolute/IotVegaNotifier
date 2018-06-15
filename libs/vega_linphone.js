@@ -142,10 +142,11 @@ class VegaLinphone extends RHvoice
   }
   reload()
   {
-    if(this._debugMOD) console.log('SIP: Reload linphone');
+
     let last_time_reload = this._last_time_reload?this._last_time_reload:0;
     let currentTime = new Date().getTime();
     let timePassed = currentTime-last_time_reload;
+    if(this._debugMOD) console.log('SIP: Reload linphone '+timePassed);
     if(timePassed>500)
     {
       this._last_time_reload = currentTime;
