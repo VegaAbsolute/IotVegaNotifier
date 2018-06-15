@@ -363,12 +363,12 @@ function rx(obj)
           }
           case 12:
           {
-            if(config.debugMOD) console.log('data from device УЭ');
+            if(config.debugMOD) console.log('data from device UE');
             break;
           }
           case 13:
           {
-            if(config.debugMOD) console.log('data from device SS ');
+            if(config.debugMOD) console.log('data from device UG ');
             let reason = dataDevice.reason!==undefined?parseInt(dataDevice.reason):NaN;
             if(!isNaN(reason)&&reason>0)
             {
