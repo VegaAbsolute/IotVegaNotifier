@@ -160,6 +160,7 @@ class VegaSMPP extends EventEmitter
   _connectSMPP()
   {
     var _self = this;
+    console.log(this._system,'system');
     this.bind_transceiver(this._system, function(pdu) {
       if (pdu.command_status == 0)
       {
