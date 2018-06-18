@@ -139,7 +139,7 @@ class Config
   }
   set other_between_time(val)
   {
-    this._debugMOD.settings.telephone = val;
+    this._devices.betweenTimeSMS = val;
   }
   set other_debug_enabled(val)
   {
