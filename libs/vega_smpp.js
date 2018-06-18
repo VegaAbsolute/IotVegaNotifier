@@ -148,7 +148,8 @@ class VegaSMPP extends EventEmitter
   }
   reload()
   {
-    this._connect = new SMPP.Session(this._address);
+
+    this._connect = new SMPP.Session(this._address+'test');
     this._connect._system = this._system;
     this._connect._last_time_reconnect = new Date().getTime();
     this._connect.on('close',this._close);
