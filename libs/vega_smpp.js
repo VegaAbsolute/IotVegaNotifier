@@ -83,9 +83,6 @@ class VegaSMPP extends EventEmitter
   }
   checkStackSMS()
   {
-    console.log('---------------------------------');
-    console.dir(this._connect._status);
-    console.log('---------------------------------');
     let _self = this;
     if(this._connect._status)
     {
