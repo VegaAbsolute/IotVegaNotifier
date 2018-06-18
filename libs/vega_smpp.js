@@ -84,7 +84,7 @@ class VegaSMPP extends EventEmitter
   checkStackSMS()
   {
     let _self = this;
-    console.log(this._connect._status);
+    console.log(this._connect.test);
     if(this._connect._status)
     {
       for(let i = 0; i < this._stack.length; i++)
@@ -160,12 +160,18 @@ class VegaSMPP extends EventEmitter
   {
     var _self = this;
     this.bind_transceiver(this._system, function(pdu) {
-      console.log(pdu.command_status);
+      if(_self.test===undefined)
+      {
+        _self.test = 0;
+      }
+      else
+      {
+        _self.test++;
+      }
       if (pdu.command_status == 0 || pdu.command_status == 5)
       {
           _self._status = true;
-          console.log(_self._status,'_self');
-          console.log('Successful connection on SMPP');
+          console.log('Successful connection on SMPP '+_self.test);
       }
       else
       {
