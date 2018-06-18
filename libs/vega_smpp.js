@@ -86,6 +86,7 @@ class VegaSMPP extends EventEmitter
     let _self = this;
     if(this._connect._status)
     {
+      console.log('checkStackSMS!!!!!!');
       for(let i = 0; i < this._stack.length; i++)
       {
         var item = this._stack[i];
