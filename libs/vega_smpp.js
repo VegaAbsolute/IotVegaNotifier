@@ -148,7 +148,6 @@ class VegaSMPP extends EventEmitter
   }
   reload()
   {
-
     this._connect = new SMPP.Session(this._address);
     this._connect._system = this._system;
     this._connect._last_time_reconnect = new Date().getTime();
@@ -161,8 +160,8 @@ class VegaSMPP extends EventEmitter
   _connectSMPP()
   {
     var _self = this;
-    console.log(this._system,'system');
     this.bind_transceiver(this._system, function(pdu) {
+      console.log(pdu,'pdu');
       if (pdu.command_status == 0)
       {
           _self._status = true;
