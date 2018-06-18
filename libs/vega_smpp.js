@@ -78,6 +78,7 @@ class VegaSMPP extends EventEmitter
   }
   pushSMS(message,telephone,time)
   {
+    console.log('pushSMS '+telephone+' '+message);
     this._stack.push({message:message,telephone:telephone,uuid:uuidv4(),status:false,firstTime:time});
   }
   checkStackSMS()
