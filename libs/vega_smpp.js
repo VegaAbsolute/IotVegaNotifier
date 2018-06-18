@@ -45,7 +45,7 @@ class VegaSMPP extends EventEmitter
         }
       }, 5000);
       setInterval(()=>{
-        if(this.statusEmployment)
+        if(this.employment)
         {
           this.checkStackSMS();
         }
