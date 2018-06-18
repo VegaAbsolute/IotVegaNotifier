@@ -164,7 +164,7 @@ class VegaSMPP extends EventEmitter
           console.log('Successful connection on SMPP ');
       }
       else if(pdu.command_status == 5) {
-        _self._status = true;
+        _self._status = false;
         _self.unbind();
       }
       else
