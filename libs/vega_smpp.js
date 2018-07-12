@@ -171,7 +171,7 @@ class VegaSMPP extends EventEmitter
       else
       {
         _self._status = false;
-        console.log('Not successful connection on SMPP');
+        console.log('Not successful connection on SMPP, status ='+pdu.command_status);
       }
     });
     this._self.checkStackSMS();
@@ -180,16 +180,23 @@ class VegaSMPP extends EventEmitter
   {
     if (pdu.command == 'deliver_sm')
     {
-      var fromNumber = pdu.source_addr.toString();
-      var toNumber = pdu.destination_addr.toString();
-      var text = '';
-      if (pdu.short_message && pdu.short_message.message)
+      try
       {
-        text = pdu.short_message.message;
+        var fromNumber = pdu.source_addr.toString();
+        var toNumber = pdu.destination_addr.toString();
+        var text = '';
+        if (pdu.short_message && pdu.short_message.message)
+        {
+          text = pdu.short_message.message;
+        }
+        console.log('SMS ' + from + ' -> ' + to + ': ' + text);
+        // Reply to SMSC that we received and processed the SMS
+        this.deliver_sm_resp({ sequence_number: pdu.sequence_number });
       }
-      console.log('SMS ' + from + ' -> ' + to + ': ' + text);
-      // Reply to SMSC that we received and processed the SMS
-      this._connect.deliver_sm_resp({ sequence_number: pdu.sequence_number });
+      catch(err)
+      {
+        console.log('Error event pdu deliver_sm, ',err);
+      }
     }
   }
   _close()
