@@ -189,13 +189,14 @@ class VegaSMPP extends EventEmitter
         {
           text = pdu.short_message.message;
         }
-        console.log('SMS ' + from + ' -> ' + to + ': ' + text);
+        console.log('SMS ' + fromNumber + ' -> ' + toNumber + ': ' + text);
         // Reply to SMSC that we received and processed the SMS
         this.deliver_sm_resp({ sequence_number: pdu.sequence_number });
       }
       catch(err)
       {
         console.log('Error event pdu deliver_sm, ',err);
+        console.dir('pdu',pdu);
       }
     }
   }
