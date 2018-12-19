@@ -7,7 +7,7 @@ class Parser
         this.hex;
         this.hex_array;
         this.charge;
-        this.switch_device=[];
+        this.switch_device = new Array();
         this.time;
         this.temperature;
         this.temperature_2;
@@ -17,7 +17,7 @@ class Parser
         this.type_archive;
         this.last_time;
         this.reason;
-        this.archive=[];
+        this.archive = new Array();
         this.device_type = parseInt(dt);
         this.count_rate_active;
         this.rate_active;
@@ -39,7 +39,7 @@ class Parser
         this.angle;
         this.coord_status;
         this.lat;
-        this.lon;
+        this.lng;
         this.dir;
         this.speed;
         this.alt;
@@ -119,7 +119,7 @@ class Parser
     _set_hex(hex)
      {
         this.hex = hex;
-        this.hex_array=[];
+        this.hex_array = new Array();
         for (var i =0;i<this.hex.length-1;i=i+2)
         {
            this.hex_array.push( this.hex.substring(i, i+2) );
@@ -227,14 +227,31 @@ class Parser
             return false;
         }
     }
-    _set_sensors_opt()
+    _set_sensors_opt(IndexByteBegin)
     {
         try
         {
-            this.sensors.sensor_1=parseInt(this.hex_array[7]+this.hex_array[6]+this.hex_array[5]+this.hex_array[4],16);
-            this.sensors.sensor_2=parseInt(this.hex_array[11]+this.hex_array[10]+this.hex_array[9]+this.hex_array[8],16);
-            this.sensors.sensor_3=parseInt(this.hex_array[15]+this.hex_array[14]+this.hex_array[13]+this.hex_array[12],16);
-            this.sensors.sensor_4=parseInt(this.hex_array[19]+this.hex_array[18]+this.hex_array[17]+this.hex_array[16],16);
+            if(IndexByteBegin!==undefined)
+            {
+                for(var i=1; i<=4; i++)
+                {
+                    var hex = '';
+                    for(var j=1; j<=4; j++)
+                    {
+                       if(this.hex_array[IndexByteBegin]===undefined) return false;
+                       hex = this.hex_array[IndexByteBegin]+hex;
+                       IndexByteBegin++;
+                    }
+                    this.sensors['sensor_'+i] = parseInt(hex);
+                }
+            }
+            else
+            {
+                this.sensors.sensor_1=parseInt(this.hex_array[7]+this.hex_array[6]+this.hex_array[5]+this.hex_array[4],16);
+                this.sensors.sensor_2=parseInt(this.hex_array[11]+this.hex_array[10]+this.hex_array[9]+this.hex_array[8],16);
+                this.sensors.sensor_3=parseInt(this.hex_array[15]+this.hex_array[14]+this.hex_array[13]+this.hex_array[12],16);
+                this.sensors.sensor_4=parseInt(this.hex_array[19]+this.hex_array[18]+this.hex_array[17]+this.hex_array[16],16);
+            }
             return true;
         }
         catch(err)
@@ -1442,8 +1459,10 @@ class Parser
         var res = true;
         res=res&&this._set_switch_device();
         res=res&&this._set_temperature(7);
-        res=res&&this._set_universal_int([8,9,10,11],'sensor_1');
-        res=res&&this._set_universal_int([12,13,14,15],'sensor_2');
+        res=res&&this._set_universal_int([8,9,10,11],'sensor_7');
+        res=res&&this._set_universal_int([12,13,14,15],'sensor_8');
+        this.sensors.sensor_7=this.sensor_7;
+        this.sensors.sensor_8=this.sensor_8;
         return res;
     }
     si_13_package_2()
@@ -1451,8 +1470,10 @@ class Parser
         var res = true;
         res=res&&this._set_switch_device();
         res=res&&this._set_num_channel();
-        res=res&&this._set_universal_int([4,5,6,7],'sensor_1');
-        res=res&&this._set_universal_int([8,9,10,11],'sensor_2');
+        res=res&&this._set_universal_int([4,5,6,7],'sensor_7');
+        res=res&&this._set_universal_int([8,9,10,11],'sensor_8');
+        this.sensors.sensor_7=this.sensor_7;
+        this.sensors.sensor_8=this.sensor_8;
         return res;
     }
     si_13_package_3()
@@ -1608,7 +1629,7 @@ class Parser
         res=res&&this._set_universal_float([8,9],10,'angle');
         res=res&&this._set_universal_boolean(10,'coord_status');
         res=res&&this._set_universal_float([11,12,13,14],1000000,'lat');
-        res=res&&this._set_universal_float([15,16,17,18],1000000,'lon');
+        res=res&&this._set_universal_float([15,16,17,18],1000000,'lng');
         res=res&&this._set_universal_int([19,20],'dir');
         res=res&&this._set_universal_int([21,22],'speed');
         res=res&&this._set_universal_int([23,24],'alt');
@@ -1636,7 +1657,7 @@ class Parser
     }
     sve_1_package_1()
     {
-      //  console.log(new Date(),'sve_1_package_1');
+      //  console.log('sve_1_package_1');
         if(this._set_charge())
         {
             if(this._set_temperature(2))
@@ -1694,7 +1715,7 @@ class Parser
     }
     tp_11_package_5()
     {
-       // console.log(new Date(),'tp_11_package_5');
+       // console.log('tp_11_package_5');
         if(this._set_charge())
          {
              if(!this._set_status_sensor_out())
@@ -1710,7 +1731,7 @@ class Parser
     }
     tp_11_package_1()
     {
-       // console.log(new Date(),'tp_11_package_1');
+       // console.log('tp_11_package_1');
         if(this._set_charge())
          {
              if(this._set_switch_device_tp11())
@@ -1756,7 +1777,7 @@ class Parser
 
     smart_package_1()
     {
-       // console.log(new Date(),'smart_package_1');
+       // console.log('smart_package_1');
         if(this._set_charge())
          {
              if(this._set_switch_device_smart())
@@ -1805,7 +1826,7 @@ class Parser
     }
     td_11_package_1()
     {
-      //  console.log(new Date(),'td_11_package_1');
+      //  console.log('td_11_package_1');
         if(this._set_charge())
          {
              if(this._set_switch_device())
@@ -1843,6 +1864,7 @@ class Parser
     }
     si_11_package_2()
     {
+        //tut
         if(this._set_charge())
         {
             if(this._set_switch_device())
@@ -1850,7 +1872,15 @@ class Parser
                 if(this._set_num_channel())
                 {
                        this.comment=JSON.stringify(this);
-                       this._set_sensors_opt();
+                       if(this.hex_array.length==20)
+                       {
+                           this._set_sensors_opt();
+                       }
+                       else
+                       {
+                           this._set_time(4,5,6,7);
+                           this._set_sensors_opt(8);
+                       }
                 }
                 else
                 {
@@ -1887,7 +1917,7 @@ class Parser
                            return this.si_11_package_2();
                         break;
                         case 3:
-                           console.log(new Date(),'3 package is no longer used');
+                           console.log('3 package is no longer used');
                            return true;
                         break;
                         default:
@@ -1901,7 +1931,7 @@ class Parser
                  }
                 break;
             case 11:
-              //  console.log(new Date(),'Данные си11');
+              //  console.log('Данные си11');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -1912,7 +1942,7 @@ class Parser
                            return this.si_11_package_2();
                         break;
                         case 3:
-                           console.log(new Date(),'3 package is no longer used');
+                           console.log('3 package is no longer used');
                            return true;
                         break;
                         default:
@@ -1926,7 +1956,7 @@ class Parser
                  }
                 break;
             case 3:
-             //   console.log(new Date(),'Данные си13');
+             //   console.log('Данные си13');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -1956,7 +1986,7 @@ class Parser
                  }
                 break;
             case 4:
-              //  console.log(new Date(),'Данные td-11');
+              //  console.log('Данные td-11');
                 if(this._set_hex(hex))
                 {
                     switch(this.type_package) {
@@ -1974,7 +2004,7 @@ class Parser
                 }
                 break;
             case 5:
-            //    console.log(new Date(),'Данные тп11');
+            //    console.log('Данные тп11');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -1995,7 +2025,7 @@ class Parser
                  }
                 break;
             case 6:
-             //   console.log(new Date(),'Данные MC');
+             //   console.log('Данные MC');
                 if(this._set_hex(hex))
                 {
                     switch(this.type_package) {
@@ -2013,7 +2043,7 @@ class Parser
                 }
                 break;
             case 7:
-              //  console.log(new Date(),'Данные AS');
+              //  console.log('Данные AS');
                 if(this._set_hex(hex))
                 {
                     switch(this.type_package) {
@@ -2031,7 +2061,7 @@ class Parser
                 }
                 break;
             case 8:
-              //  console.log(new Date(),'Данные MS');
+              //  console.log('Данные MS');
                 if(this._set_hex(hex))
                 {
                     switch(this.type_package) {
@@ -2050,7 +2080,7 @@ class Parser
                 break;
 
             case 9:
-             //   console.log(new Date(),'Данные sve1');
+             //   console.log('Данные sve1');
                 if(this._set_hex(hex))
                 {
                     switch(this.type_package) {
@@ -2068,7 +2098,7 @@ class Parser
                 }
                 break;
             case 10:
-              //  console.log(new Date(),'Данные SS');
+              //  console.log('Данные SS');
                 if(this._set_hex(hex))
                 {
                     switch(this.type_package) {
@@ -2086,7 +2116,7 @@ class Parser
                 }
                 break;
             case 12:
-               // console.log(new Date(),'Данные УЭ');
+               // console.log('Данные УЭ');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -2175,7 +2205,7 @@ class Parser
                 }
                 break;
             default:
-                console.log(new Date(),'Данные неизвестного для типа');
+                console.log('Данные неизвестного для типа');
                 return false;
                 break;
         }

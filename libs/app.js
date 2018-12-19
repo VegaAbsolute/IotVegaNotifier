@@ -22,7 +22,6 @@ let waitingReboot = false;
 //------------------------------------------------------------------------------
 function wasAlarm(time,channel)
 {
-  console.log(channel);
   if(!channel.enable_danger) return;
   sendSMS(time,channel);
   sendVoiceMessage(time,channel);
