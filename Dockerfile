@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:disco
 MAINTAINER Vega Absolute
 RUN useradd -ms /bin/bash vega
 WORKDIR /home/vega
