@@ -8,13 +8,13 @@ function refreshConfig()
     copyFile('./default.config', './config.ini', (err) => {
         if (err)
         {
-          console.log('error',err);
+          console.log(new Date(),'error',err);
         }
     });
   }
   catch (e)
   {
-    console.error(e)
+    console.error(new Date(),e)
   }
 }
 if(!fs.existsSync('./config.ini'))
@@ -29,7 +29,7 @@ else if(process.argv[2]=='refresh')
   }
   catch (e)
   {
-    console.error(e)
+    console.error(new Date(),e)
   }
   finally
   {

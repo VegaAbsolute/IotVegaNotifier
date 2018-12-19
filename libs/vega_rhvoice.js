@@ -27,9 +27,9 @@ class VegaRHvoice extends EventEmitter
     }
     catch (e)
     {
-      console.log('RHVOICE: Error accessing the directory, perhaps the directory does not exist or insufficient access rights',this._directory);
+      console.log(new Date(),'RHVOICE: Error accessing the directory, perhaps the directory does not exist or insufficient access rights',this._directory);
       this.statusDir = false;
-      console.error(e);
+      console.error(new Date(),e);
     }
   }
   getInfoWav(dir)
@@ -40,11 +40,11 @@ class VegaRHvoice extends EventEmitter
         if(err)
         {
           reject(err);
-          if(_self._debugMOD) console.log('RHVOICE: File status error');
+          if(_self._debugMOD) console.log(new Date(),'RHVOICE: File status error');
           return;
         }
         resolve(info);
-        if(_self._debugMOD) console.log('RHVOICE: File status success');
+        if(_self._debugMOD) console.log(new Date(),'RHVOICE: File status success');
         return;
       });
     });
@@ -60,11 +60,11 @@ class VegaRHvoice extends EventEmitter
         wav.info = res;
         wav.status = 'success';
         wav.time = new Date().getTime();
-        if(_self._debugMOD) console.log('RHVOICE: Success read wav file '+wav.directory);
+        if(_self._debugMOD) console.log(new Date(),'RHVOICE: Success read wav file '+wav.directory);
         return;
       })
       .catch((e)=>{
-        console.error('RHVOICE: ',e);
+        console.error(new Date(),'RHVOICE: ',e);
         return;
       });
     }
@@ -100,16 +100,16 @@ class VegaRHvoice extends EventEmitter
                 time:new Date().getTime(),
                 status:'recordingFile'
               };
-              if(_self._debugMOD) console.log('RHVOICE: Recording wav file '+dir);
+              if(_self._debugMOD) console.log(new Date(),'RHVOICE: Recording wav file '+dir);
               exec(cmd, (err, stdout, stderr) => {
                 if(err)
                 {
-                  console.error('RHVOICE: ',err);
+                  console.error(new Date(),'RHVOICE: ',err);
                   resolve({status:false,hash:hash});
                 }
                 _self.wavList[hash].status = 'waitingInfoFile';
                 _self.wavList[hash].time = new Date().getTime();
-                if(_self._debugMOD) console.log('RHVOICE: Waiting info wav file '+dir);
+                if(_self._debugMOD) console.log(new Date(),'RHVOICE: Waiting info wav file '+dir);
 
                 this.getInfoWav(dir)
                 .then((res)=>{
@@ -119,7 +119,7 @@ class VegaRHvoice extends EventEmitter
                   resolve({status:true,hash:hash});
                 })
                 .catch((e)=>{
-                  console.error('RHVOICE: ',e);
+                  console.error(new Date(),'RHVOICE: ',e);
                   resolve({status:false,hash:hash});
                 });
 
@@ -135,7 +135,7 @@ class VegaRHvoice extends EventEmitter
                 resolve({status:true,hash:hash});
               })
               .catch((e)=>{
-                console.error('RHVOICE: ',e);
+                console.error(new Date(),'RHVOICE: ',e);
                 resolve({status:false,hash:hash});
               });
               resolve({status:false,hash:hash});
@@ -143,13 +143,13 @@ class VegaRHvoice extends EventEmitter
           }
           else
           {
-            if(_self._debugMOD) console.log('RHVOICE: Wav file is found '+dir);
+            if(_self._debugMOD) console.log(new Date(),'RHVOICE: Wav file is found '+dir);
             resolve({status:true,hash:hash});
           }
         }
         else
         {
-          if(_self._debugMOD) console.log('RHVOICE: File directory is not available '+this._directory);
+          if(_self._debugMOD) console.log(new Date(),'RHVOICE: File directory is not available '+this._directory);
           resolve({status:false,hash:hash});
           return;
         }

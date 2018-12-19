@@ -180,7 +180,7 @@ function get_device_appdata_resp(obj)
   let validDevicesList = typeof devices_list==='object'&&devices_list.length>0;
   if(validDevicesList)
   {
-    if(config.debugMOD) console.log('devices list updated');
+    if(config.debugMOD) console.log(new Date(),'devices list updated');
     devices.list = devices_list;
   }
 }
@@ -222,18 +222,18 @@ function rx(obj)
                 wasAlarm(timeServerMs,channel);
               }
             }
-            if(config.debugMOD) console.log('data from device SI11');
+            if(config.debugMOD) console.log(new Date(),'data from device SI11');
             break;
           }
           case 2:
           {
-            if(config.debugMOD) console.log('data from device SI12');
+            if(config.debugMOD) console.log(new Date(),'data from device SI12');
             break;
           }
 
           case 3:
           {
-              if(config.debugMOD) console.log('data from device SI13');
+              if(config.debugMOD) console.log(new Date(),'data from device SI13');
               break;
           }
           case 4:
@@ -253,7 +253,7 @@ function rx(obj)
                 wasAlarm(timeServerMs,channel);
               }
             }
-            if(config.debugMOD) console.log('data from device TD11');
+            if(config.debugMOD) console.log(new Date(),'data from device TD11');
             break;
           }
           case 5:
@@ -298,12 +298,12 @@ function rx(obj)
                   wasAlarm(timeServerMs,channel);
               }
             }
-            if(config.debugMOD) console.log('data from device TP11');
+            if(config.debugMOD) console.log(new Date(),'data from device TP11');
             break;
           }
           case 6:
           {
-            if(config.debugMOD) console.log('data from device MC');
+            if(config.debugMOD) console.log(new Date(),'data from device MC');
             if(dataDevice.reason==1)
             {
                 dev.lastDateSMS = currentDate;
@@ -318,7 +318,7 @@ function rx(obj)
                 dev.lastDateSMS = currentDate;
                 wasAlarm(timeServerMs,dev.get_channel(1));
             }
-            if(config.debugMOD) console.log('data from device AS');
+            if(config.debugMOD) console.log(new Date(),'data from device AS');
             break;
           }
           case 8:
@@ -328,17 +328,17 @@ function rx(obj)
                 dev.lastDateSMS = currentDate;
                 wasAlarm(timeServerMs,dev.get_channel(1));
             }
-            if(config.debugMOD) console.log('data from device MS');
+            if(config.debugMOD) console.log(new Date(),'data from device MS');
             break;
           }
           case 9:
           {
-            if(config.debugMOD) console.log('data from device СВЭ-1');
+            if(config.debugMOD) console.log(new Date(),'data from device СВЭ-1');
             break;
           }
           case 10:
           {
-            if(config.debugMOD) console.log('data from device SS ');
+            if(config.debugMOD) console.log(new Date(),'data from device SS ');
             if(dataDevice.reason==1)
             {
                 dev.lastDateSMS = currentDate;
@@ -358,17 +358,17 @@ function rx(obj)
                 wasAlarm(timeServerMs,dev.get_channel(numChannel));
               }
             }
-            if(config.debugMOD) console.log('data from device SI21');
+            if(config.debugMOD) console.log(new Date(),'data from device SI21');
             break;
           }
           case 12:
           {
-            if(config.debugMOD) console.log('data from device UE');
+            if(config.debugMOD) console.log(new Date(),'data from device UE');
             break;
           }
           case 13:
           {
-            if(config.debugMOD) console.log('data from device UG ');
+            if(config.debugMOD) console.log(new Date(),'data from device UG ');
             let reason = dataDevice.reason!==undefined?parseInt(dataDevice.reason):NaN;
             if(!isNaN(reason)&&reason>0)
             {
@@ -379,7 +379,7 @@ function rx(obj)
           }
           case 14:
           {
-            if(config.debugMOD) console.log('data from device LM-1 ');
+            if(config.debugMOD) console.log(new Date(),'data from device LM-1 ');
             if(dataDevice.alarm)
             {
                 dev.lastDateSMS = currentDate;
@@ -406,25 +406,25 @@ function rx(obj)
                 wasAlarm(timeServerMs,channel);
               }
             }
-            if(config.debugMOD) console.log('data from device TL-11');
+            if(config.debugMOD) console.log(new Date(),'data from device TL-11');
             break;
           }
           default:
           {
-            if(config.debugMOD) console.log('data from device unknown');
+            if(config.debugMOD) console.log(new Date(),'data from device unknown');
             break;
           }
         }
       }
       else
       {
-        if(config.debugMOD) console.log('Do not put in the queue');
+        if(config.debugMOD) console.log(new Date(),'Do not put in the queue');
       }
     }
   }
   catch (e)
   {
-    console.error(e);
+    console.error(new Date(),e);
   }
   finally
   {
@@ -456,11 +456,11 @@ function auth_resp(obj)
     }
     statusAuth = true;
     get_device_appdata_req();
-    console.log('Success authorization on server iotvega');
+    console.log(new Date(),'Success authorization on server iotvega');
   }
   else
   {
-    console.log('Not successful authorization on server iotvega');
+    console.log(new Date(),'Not successful authorization on server iotvega');
     emergencyExit();
   //  process.exit(1);
   }
@@ -502,8 +502,8 @@ function run(conf)
     }
     catch (e)
     {
-      console.log('Initializing the application was a mistake');
-      console.error(e);
+      console.log(new Date(),'Initializing the application was a mistake');
+      console.error(new Date(),e);
       emergencyExit();
     }
   }
@@ -515,18 +515,18 @@ function updating()
   exec('"git" pull', (err, stdout, stderr) => {
     if(stdout&&(stdout.indexOf('Already up to date')>-1||stdout.indexOf('Already up-to-date')>-1)||stdout.indexOf('Уже обновлено')>-1)
     {
-      if(config.debugMOD) console.log('Updates not detected');
+      if(config.debugMOD) console.log(new Date(),'Updates not detected');
     }
     else if (err) {
-      console.log(err);
+      console.log(new Date(),err);
       exec('"git" reset --hard HEAD', (err, stdout, stderr) => {
-        if(config.debugMOD) console.log('Error updating IotVegaNotifier, restart',err);
+        if(config.debugMOD) console.log(new Date(),'Error updating IotVegaNotifier, restart',err);
         emergencyExit();
       });
     }
     else
     {
-      if(config.debugMOD) console.log('The IotVegaNotifier is updated, restart',stdout);
+      if(config.debugMOD) console.log(new Date(),'The IotVegaNotifier is updated, restart',stdout);
       waitingReboot = true;
       emergencyExit();
     }

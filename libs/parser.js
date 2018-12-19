@@ -1636,7 +1636,7 @@ class Parser
     }
     sve_1_package_1()
     {
-      //  console.log('sve_1_package_1');
+      //  console.log(new Date(),'sve_1_package_1');
         if(this._set_charge())
         {
             if(this._set_temperature(2))
@@ -1694,7 +1694,7 @@ class Parser
     }
     tp_11_package_5()
     {
-       // console.log('tp_11_package_5');
+       // console.log(new Date(),'tp_11_package_5');
         if(this._set_charge())
          {
              if(!this._set_status_sensor_out())
@@ -1710,7 +1710,7 @@ class Parser
     }
     tp_11_package_1()
     {
-       // console.log('tp_11_package_1');
+       // console.log(new Date(),'tp_11_package_1');
         if(this._set_charge())
          {
              if(this._set_switch_device_tp11())
@@ -1756,7 +1756,7 @@ class Parser
 
     smart_package_1()
     {
-       // console.log('smart_package_1');
+       // console.log(new Date(),'smart_package_1');
         if(this._set_charge())
          {
              if(this._set_switch_device_smart())
@@ -1805,7 +1805,7 @@ class Parser
     }
     td_11_package_1()
     {
-      //  console.log('td_11_package_1');
+      //  console.log(new Date(),'td_11_package_1');
         if(this._set_charge())
          {
              if(this._set_switch_device())
@@ -1887,7 +1887,7 @@ class Parser
                            return this.si_11_package_2();
                         break;
                         case 3:
-                           console.log('3 package is no longer used');
+                           console.log(new Date(),'3 package is no longer used');
                            return true;
                         break;
                         default:
@@ -1901,7 +1901,7 @@ class Parser
                  }
                 break;
             case 11:
-              //  console.log('Данные си11');
+              //  console.log(new Date(),'Данные си11');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -1912,7 +1912,7 @@ class Parser
                            return this.si_11_package_2();
                         break;
                         case 3:
-                           console.log('3 package is no longer used');
+                           console.log(new Date(),'3 package is no longer used');
                            return true;
                         break;
                         default:
@@ -1926,7 +1926,7 @@ class Parser
                  }
                 break;
             case 3:
-             //   console.log('Данные си13');
+             //   console.log(new Date(),'Данные си13');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -1956,7 +1956,7 @@ class Parser
                  }
                 break;
             case 4:
-              //  console.log('Данные td-11');
+              //  console.log(new Date(),'Данные td-11');
                 if(this._set_hex(hex))
                 {
                     switch(this.type_package) {
@@ -1974,7 +1974,7 @@ class Parser
                 }
                 break;
             case 5:
-            //    console.log('Данные тп11');
+            //    console.log(new Date(),'Данные тп11');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -1995,7 +1995,7 @@ class Parser
                  }
                 break;
             case 6:
-             //   console.log('Данные MC');
+             //   console.log(new Date(),'Данные MC');
                 if(this._set_hex(hex))
                 {
                     switch(this.type_package) {
@@ -2013,7 +2013,7 @@ class Parser
                 }
                 break;
             case 7:
-              //  console.log('Данные AS');
+              //  console.log(new Date(),'Данные AS');
                 if(this._set_hex(hex))
                 {
                     switch(this.type_package) {
@@ -2031,7 +2031,7 @@ class Parser
                 }
                 break;
             case 8:
-              //  console.log('Данные MS');
+              //  console.log(new Date(),'Данные MS');
                 if(this._set_hex(hex))
                 {
                     switch(this.type_package) {
@@ -2050,7 +2050,7 @@ class Parser
                 break;
 
             case 9:
-             //   console.log('Данные sve1');
+             //   console.log(new Date(),'Данные sve1');
                 if(this._set_hex(hex))
                 {
                     switch(this.type_package) {
@@ -2068,7 +2068,7 @@ class Parser
                 }
                 break;
             case 10:
-              //  console.log('Данные SS');
+              //  console.log(new Date(),'Данные SS');
                 if(this._set_hex(hex))
                 {
                     switch(this.type_package) {
@@ -2086,7 +2086,7 @@ class Parser
                 }
                 break;
             case 12:
-               // console.log('Данные УЭ');
+               // console.log(new Date(),'Данные УЭ');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -2175,7 +2175,7 @@ class Parser
                 }
                 break;
             default:
-                console.log('Данные неизвестного для типа');
+                console.log(new Date(),'Данные неизвестного для типа');
                 return false;
                 break;
         }

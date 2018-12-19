@@ -25,11 +25,11 @@ class VegaSMPP extends EventEmitter
       setInterval(()=>{
         if(this._connect._status)
         {
-        //  console.log(this._connect._status);
+        //  console.log(new Date(),this._connect._status);
         }
         else
         {
-        //  console.log(this._connect._status);
+        //  console.log(new Date(),this._connect._status);
           var currentDate = new Date().getTime();
           var validLastTimeReconnect = this._connect._last_time_reconnect!==undefined&&typeof this._connect._last_time_reconnect==='number';
           var lastDate = validLastTimeReconnect?this._connect._last_time_reconnect:currentDate;
@@ -100,7 +100,7 @@ class VegaSMPP extends EventEmitter
              {
                if(_self._stack[j].uuid === res.uuid)
                {
-                 console.log('Success to send sms message '+_self._stack[j].telephone);
+                 console.log(new Date(),'Success to send sms message '+_self._stack[j].telephone);
                  _self._stack.splice(j,1);
                  _self.checkStackEmptiness();
                }
@@ -123,7 +123,7 @@ class VegaSMPP extends EventEmitter
                    _self.pushSMS(tmp.message,tmp.telephone,tmp.firstTime);
                  }
                  _self.checkStackEmptiness();
-                 console.log('failed to send  sms message '+tmp.telephone);
+                 console.log(new Date(),'failed to send  sms message '+tmp.telephone);
                }
              }
 
@@ -131,8 +131,8 @@ class VegaSMPP extends EventEmitter
          })
          .catch((e)=>{
            item.status = false;
-           console.log('failed to send  sms message. Error 1');
-           console.log(e);
+           console.log(new Date(),'failed to send  sms message. Error 1');
+           console.log(new Date(),e);
          });
          break;
         }
@@ -161,17 +161,17 @@ class VegaSMPP extends EventEmitter
       if (pdu.command_status == 0)
       {
           _self._status = true;
-          console.log('Successful connection on SMPP ');
+          console.log(new Date(),'Successful connection on SMPP ');
       }
       else if(pdu.command_status == 5) {
         _self._status = false;
         _self.unbind();
-        console.log('Not successful connection on SMPP, status = 5');
+        console.log(new Date(),'Not successful connection on SMPP, status = 5');
       }
       else
       {
         _self._status = false;
-        console.log('Not successful connection on SMPP');
+        console.log(new Date(),'Not successful connection on SMPP');
       }
     });
     this._self.checkStackSMS();
@@ -187,19 +187,19 @@ class VegaSMPP extends EventEmitter
       {
         text = pdu.short_message.message;
       }
-      console.log('SMS ' + from + ' -> ' + to + ': ' + text);
+      console.log(new Date(),'SMS ' + from + ' -> ' + to + ': ' + text);
       // Reply to SMSC that we received and processed the SMS
       this._connect.deliver_sm_resp({ sequence_number: pdu.sequence_number });
     }
   }
   _close()
   {
-    console.log('smpp disconnected');
+    console.log(new Date(),'smpp disconnected');
     this._status = false;
   }
   _error(error)
   {
-    console.log('smpp error', error);
+    console.log(new Date(),'smpp error', error);
     this._status = false;
   }
   lookupPDUStatusKey(status)
@@ -241,7 +241,7 @@ class VegaSMPP extends EventEmitter
             }
             else
             {
-              console.log(pdu.command_status);
+              console.log(new Date(),pdu.command_status);
               resolve({status:false,uuid:uuid});
             }
         });

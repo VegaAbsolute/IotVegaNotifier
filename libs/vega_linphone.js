@@ -47,7 +47,7 @@ class VegaLinphone extends RHvoice
         let timeCheckTimeResponse = currentDate-this.last_time_response_linphone;
         if(timeCheckTimeResponse>30000)
         {
-          console.error('SIP: Hang, Force reload');
+          console.error(new Date(),'SIP: Hang, Force reload');
           this.reload();
         }
         if(timeCheckRegistration==0||timeCheckRegistration>10000)
@@ -128,14 +128,14 @@ class VegaLinphone extends RHvoice
             if(validFile)
             {
               let filePath = _self._directory+'/'+item.nameFile;
-              if(_self._debugMOD) console.log('SIP: Delete file '+filePath);
+              if(_self._debugMOD) console.log(new Date(),'SIP: Delete file '+filePath);
               fs.unlinkSync(filePath);
             }
           }
         }
         catch (e)
         {
-          console.error('SIP: error clearTrash',e);
+          console.error(new Date(),'SIP: error clearTrash',e);
         }
     });
   }
@@ -146,7 +146,7 @@ class VegaLinphone extends RHvoice
     let timePassed = currentTime-last_time_reload;
     if(timePassed>500)
     {
-      if(this._debugMOD) console.log('SIP: Reload linphone ');
+      if(this._debugMOD) console.log(new Date(),'SIP: Reload linphone ');
       this._last_time_reload = currentTime;
       let _self = this;
       this._status = false;
@@ -157,7 +157,7 @@ class VegaLinphone extends RHvoice
         }
       })
       .catch((e)=>{
-        console.error('SIP: Error initialization linphone',e);
+        console.error(new Date(),'SIP: Error initialization linphone',e);
       });
     }
   }
@@ -170,7 +170,7 @@ class VegaLinphone extends RHvoice
         exec('"pkill" -9 linphone*', (err, stdout, stderr) => {
           exec('"linphonecsh" init', (err, stdout, stderr) => {
             _self.last_time_response_linphone = new Date().getTime();
-            if(_self._debugMOD) console.log('SIP: Initialization linphone',stdout);
+            if(_self._debugMOD) console.log(new Date(),'SIP: Initialization linphone',stdout);
             resolve(true);
           });
         });
@@ -189,7 +189,7 @@ class VegaLinphone extends RHvoice
       {
         exec('"linphonecsh" soundcard use files', (err, stdout, stderr) => {
           _self.last_time_response_linphone = new Date().getTime();
-          if(_self._debugMOD) console.log('SIP: Soundcard use files',stdout);
+          if(_self._debugMOD) console.log(new Date(),'SIP: Soundcard use files',stdout);
           resolve(true);
         });
       }
@@ -226,7 +226,7 @@ class VegaLinphone extends RHvoice
             {
               if(_activeCall.taking)
               {
-                if(this._debugMOD) console.log('SIP: Success call '+_activeCall.telephone);
+                if(this._debugMOD) console.log(new Date(),'SIP: Success call '+_activeCall.telephone);
                 _activeCall.countPlay++;
                 _activeCall.lastPlay = currentTime;
                 let dir = wav.directory;
@@ -236,7 +236,7 @@ class VegaLinphone extends RHvoice
             }
             else if(_activeCall.countPlay>=2&&checkNewPlay)
             {
-              if(this._debugMOD) console.log('SIP: Ended call '+_activeCall.telephone);
+              if(this._debugMOD) console.log(new Date(),'SIP: Ended call '+_activeCall.telephone);
               this.stopCall();
             }
             return;
@@ -244,7 +244,7 @@ class VegaLinphone extends RHvoice
         }
         else if(_activeCall.type=='dialup')
         {
-          console.log('SIP: NLO');
+          console.log(new Date(),'SIP: NLO');
           return;
         }
       }
@@ -286,7 +286,7 @@ class VegaLinphone extends RHvoice
           else
           {
             this.activeCall.state = 'StreamsNo';
-            console.log('SIP: No active calls');
+            console.log(new Date(),'SIP: No active calls');
           }
         }
         this.updateStatusCalls(callsList)
@@ -294,7 +294,7 @@ class VegaLinphone extends RHvoice
     }
     catch (e)
     {
-      console.error('SIP: Fatal error calls',e)
+      console.error(new Date(),'SIP: Fatal error calls',e)
     }
   }
   play(file)
@@ -304,12 +304,12 @@ class VegaLinphone extends RHvoice
       let _self = this;
       exec(`"linphonecsh" generic 'play ${file}'`, (err, stdout, stderr) => {
         _self.last_time_response_linphone = new Date().getTime();
-        if(_self._debugMOD) console.log('LINPHONE: play '+file);
+        if(_self._debugMOD) console.log(new Date(),'LINPHONE: play '+file);
       });
     }
     catch (e)
     {
-      console.error('SIP: ',e);
+      console.error(new Date(),'SIP: ',e);
     }
   }
   stopCall()
@@ -331,7 +331,7 @@ class VegaLinphone extends RHvoice
     let _self = this;
     exec(`"linphonecsh" generic 'terminate ${id}'`, (err, stdout, stderr) => {
       _self.last_time_response_linphone = new Date().getTime();
-      if(_self._debugMOD) console.log('SIP: Terminate '+id);
+      if(_self._debugMOD) console.log(new Date(),'SIP: Terminate '+id);
     });
   }
   checkStatusRegistration()
@@ -345,7 +345,7 @@ class VegaLinphone extends RHvoice
         let sipAcc = this._user_name+'@'+this._host;
         if(stdout.indexOf('registered=0')>-1)
         {
-          if(_self._debugMOD) console.log('SIP: No registration');
+          if(_self._debugMOD) console.log(new Date(),'SIP: No registration');
           _self._status = false;
           _self.registration();
         }
@@ -353,22 +353,22 @@ class VegaLinphone extends RHvoice
         {
           if(_self._status === false)
           {
-            if(_self._debugMOD) console.log('SIP: Good registration');
+            if(_self._debugMOD) console.log(new Date(),'SIP: Good registration');
             _self.useFilesSoundcart()
             .then((res)=>{
-            //  if(_self._debugMOD) console.log('SIP: Success useFilesSoundcart');
+            //  if(_self._debugMOD) console.log(new Date(),'SIP: Success useFilesSoundcart');
             })
             .catch((e)=>{
-              console.error('SIP: Error useFilesSoundcart',e);
+              console.error(new Date(),'SIP: Error useFilesSoundcart',e);
             });
           }
-          //if(_self._debugMOD) console.log('SIP: Good registration');
+          //if(_self._debugMOD) console.log(new Date(),'SIP: Good registration');
           _self._status = true;
         }
         else
         {
           //stdout.indexOf('registered=-1')
-          if(_self._debugMOD) console.log('SIP: Bad registration');
+          if(_self._debugMOD) console.log(new Date(),'SIP: Bad registration');
           _self._status = false;
           _self.reload();
         }
@@ -384,7 +384,7 @@ class VegaLinphone extends RHvoice
   registration()
   {
     let _self = this;
-    if(_self._debugMOD) console.log('SIP: Progress registration');
+    if(_self._debugMOD) console.log(new Date(),'SIP: Progress registration');
     exec('"linphonecsh" register --host '+this._host+' --username '+this._user_name+' --password '+this._user_password, (err, stdout, stderr) => {
       this.last_time_response_linphone = new Date().getTime();
       this.last_time_reconnect = new Date().getTime();
@@ -396,11 +396,11 @@ class VegaLinphone extends RHvoice
   }
   pushDialUp(message,telephones,UUID,other)
   {
-    console.log('SIP: MAMONT');
+    console.log(new Date(),'SIP: MAMONT');
   }
   pushVoiceMessage(message,telephone,time)
   {
-    if(this._debugMOD) console.log('SIP: Push voice message '+telephone);
+    if(this._debugMOD) console.log(new Date(),'SIP: Push voice message '+telephone);
     let uuid = uuidv4();
     let hash = this.md5(message);
     this._stack[uuid] = {
@@ -433,7 +433,7 @@ class VegaLinphone extends RHvoice
          }
       })
       .catch((e)=>{
-        console.error('SIP: ',e);
+        console.error(new Date(),'SIP: ',e);
       });
       break;
     }
@@ -471,7 +471,7 @@ class VegaLinphone extends RHvoice
            _self._stack.active = res.uuid;
            item.state = undefined;
            item.id = res.id;
-           if(_self._debugMOD) console.log('SIP: Success dial '+item.telephone);
+           if(_self._debugMOD) console.log(new Date(),'SIP: Success dial '+item.telephone);
           }
         }
         else
@@ -483,17 +483,17 @@ class VegaLinphone extends RHvoice
           else
           {
             _self.refreshMessage(res.uuid);
-            if(_self._debugMOD) console.log('SIP: Bad dial '+item.telephone);
+            if(_self._debugMOD) console.log(new Date(),'SIP: Bad dial '+item.telephone);
           }
         }
        })
        .catch((e)=>{
-         console.log('SIP: ',e);
+         console.log(new Date(),'SIP: ',e);
        });
     }
     else if(item.type==='dialup')
     {
-      console.log('SIP: YTI');
+      console.log(new Date(),'SIP: YTI');
     }
   }
   dial(phone,message,uuid)
@@ -529,7 +529,7 @@ class VegaLinphone extends RHvoice
           {
             if(err.Error == 'Failed to connect pipe: Connection refused')
             {
-              console.error('SIP: Failed to connect pipe: Connection refused');
+              console.error(new Date(),'SIP: Failed to connect pipe: Connection refused');
               this.reload();
             }
           }

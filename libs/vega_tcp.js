@@ -66,7 +66,7 @@ class VegaTCP extends EventEmitter
   }
   _connected()
   {
-    console.log('Connected  tcp');
+    console.log(new Date(),'Connected  tcp');
   }
   _close(code)
   {
@@ -75,7 +75,7 @@ class VegaTCP extends EventEmitter
   }
   _connectTCP()
   {
-    console.log('Successful connection on tcp');
+    console.log(new Date(),'Successful connection on tcp');
     this._status = true;
     this._self.emit('run');
   }
@@ -94,7 +94,7 @@ class VegaTCP extends EventEmitter
     finally
     {
       this._self.emit('_data',mess);
-      console.log(mess);
+      console.log(new Date(),mess);
     }
   }
   _drain()
@@ -135,7 +135,7 @@ class VegaTCP extends EventEmitter
     // buffer.write(message, 6);
     // this._connect.write(buffer);
 
-    // console.log(message);
+    // console.log(new Date(),message);
     this._connect.write(message+"\n");
     //this._connect.end();
   }

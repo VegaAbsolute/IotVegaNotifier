@@ -54,7 +54,7 @@ class SMSCru extends EventEmitter
       var item = this._stack[i];
       if(!item.status)
       {
-        //  console.log('Можно было бы отправить');
+        //  console.log(new Date(),'Можно было бы отправить');
         item.status = true;
         let data = {
           login:this._login,
@@ -82,7 +82,7 @@ class SMSCru extends EventEmitter
                {
                  if(_self._stack[j].uuid === res.uuid)
                  {
-                   console.log('Success to send voice message '+_self._stack[j].telephone);
+                   console.log(new Date(),'Success to send voice message '+_self._stack[j].telephone);
                    _self._stack.splice(j,1);
                    _self.checkStackEmptiness();
                  }
@@ -106,7 +106,7 @@ class SMSCru extends EventEmitter
                      _self.pushVoiceMessage(tmp.message,tmp.telephone,tmp.firstTime);
                    }
                    _self.checkStackEmptiness();
-                   console.log('failed to send  voice message '+tmp.telephone);
+                   console.log(new Date(),'failed to send  voice message '+tmp.telephone);
                  }
                }
 
@@ -114,8 +114,8 @@ class SMSCru extends EventEmitter
          })
          .catch((e)=>{
           //  item.status = false;
-           console.log('failed to send  http message. Error 1');
-           console.log(e);
+           console.log(new Date(),'failed to send  http message. Error 1');
+           console.log(new Date(),e);
          });
        break;
       }

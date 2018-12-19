@@ -65,7 +65,7 @@ class VegaWS extends EventEmitter
     }
     catch (e)
     {
-      console.log(e);
+      console.log(new Date(),e);
     }
     finally
     {
@@ -74,19 +74,19 @@ class VegaWS extends EventEmitter
   }
   _error()
   {
-    console.log('WS error');
+    console.log(new Date(),'WS error');
     this._status = false;
     this._self.emit('no_connect');
   }
   _close(code)
   {
-    console.log('WS close');
+    console.log(new Date(),'WS close');
     this._status = false;
     this._self.emit('no_connect');
   }
   _open()
   {
-    console.log('Successful connection on WS');
+    console.log(new Date(),'Successful connection on WS');
     this._status = true;
     this._self.emit('run')
   }

@@ -350,7 +350,7 @@ class Config
       }
       catch (e)
       {
-        console.error(e);
+        console.error(new Date(),e);
         return false;
       }
     }
