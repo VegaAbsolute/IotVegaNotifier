@@ -210,7 +210,10 @@ class VegaLinphone extends RHvoice
       {
         if(_activeCall.type=='voicemessage')
         {
-          if(_activeCall.telephone==itemCall.telephone)
+          let isSipFormat = itemCall.telephone.indexOf('sip:')>-1;
+          let validTelephoneStandart = !isSipFormat&&_activeCall.telephone==itemCall.telephone;
+          let validTelephoneSip = isSipFormat&&itemCall.telephone.indexOf(_activeCall.telephone);
+          if(validTelephoneStandart||validTelephoneSip)
           {
             _activeCall.state = itemCall.state;
             let currentTime = new Date().getTime();
