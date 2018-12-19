@@ -7,5 +7,5 @@ RUN apt-get autoremove -y
 RUN npm install -g pm2
 RUN wget https://github.com/Olga-Yakovleva/RHVoice/archive/master.zip && unzip master.zip && cd RHVoice-master && scons && scons install && ldconfig
 USER vega
-RUN git clone -b beta git@github.com:VegaAbsolute/IotVegaNotifier.git && cd IotVegaNotifier
+RUN git clone -b beta https://github.com/VegaAbsolute/IotVegaNotifier.git
 CMD cd IotVegaNotifier && pm2 start npm -- start && pm2 monit
