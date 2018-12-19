@@ -22,9 +22,8 @@ let waitingReboot = false;
 //------------------------------------------------------------------------------
 function wasAlarm(time,channel)
 {
-  console.log('wasAlarm');
+  console.log(channel);
   if(!channel.enable_danger) return;
-  console.log('wasAlarm good');
   sendSMS(time,channel);
   sendVoiceMessage(time,channel);
 }
@@ -214,15 +213,12 @@ function rx(obj)
         {
           case 1:
           {
-            console.log('si11');
             if(validNumChannel)
             {
-              console.log('si11 validNumChannel');
               let channel = dev.get_channel(numChannel);
               let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel&&dataDevice.type_package==2)
               {
-                console.log('si11 value');
                 dev.lastDateSMS = currentDate;
                 wasAlarm(timeServerMs,channel);
               }
