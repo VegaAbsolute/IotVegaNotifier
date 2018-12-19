@@ -387,6 +387,28 @@ function rx(obj)
             }
             break;
           }
+          case 15:
+          {
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
+            {
+              let checkEvent = dataDevice.reason!=='00';
+              let t = parseFloat(dataDevice.temperature);
+              let t2 = parseFloat(dataDevice.temperature_2);
+              let t_max = channel.max_t;
+              let t_min = channel.min_t;
+              let checkTemperature = t<=t_min||t>=t_max;
+              let checkTemperature_2 = t2<=t_min||t2>=t_max;
+              if(checkEvent||checkTemperature||checkTemperature_2)
+              {
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,channel);
+              }
+            }
+            if(config.debugMOD) console.log('data from device TD11');
+            break;
+          }
           default:
           {
             if(config.debugMOD) console.log('data from device unknown');

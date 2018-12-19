@@ -2,7 +2,6 @@ class Parser
 {
   constructor(dt,data,port)
     {
-        //step 2
         this.type_package;
         this.comment;
         this.hex;
@@ -11,6 +10,7 @@ class Parser
         this.switch_device=[];
         this.time;
         this.temperature;
+        this.temperature_2;
         this.sensors=new Object();
         this.num_channel = 0;
         this.count =0;
@@ -448,6 +448,29 @@ class Parser
             return false;
         }
     }
+    _set_switch_state_td12(b)
+    {
+        try
+        {
+            var ss= parseInt(this.hex_array[b],16).toString(2).split('').reverse().splice(0,6);
+            var b1 = ss[0]!==undefined?ss[0].toString():'0';
+            var b2 = ss[1]!==undefined?ss[1].toString():'0';
+            var reason = b2+b1;
+            this.reason = reason;
+            //00 - по времени
+            //01 - по срабатыванию тампера
+            //10 - сработал датчик Холла двери
+            //11 - сработал датчик Холла отрыва
+            this.hall_1 = parseInt(ss[2])?true:false;
+            this.hall_2 = parseInt(ss[3])?true:false;
+            this.state_tamper = parseInt(ss[4])?true:false;
+            return true;
+        }
+        catch(err)
+        {
+            return false;
+        }
+    }
     _set_switch_device_smart()
     {
         try
@@ -662,87 +685,6 @@ class Parser
             return false;
         }
     }
-//    _set_switch_device_ug()
-//    {
-//        try
-//        {
-//            this.switch_device=parseInt(this.hex_array[2],16).toString(2).split('').reverse().splice(0,8);
-//            if(this.switch_device[0]==1)
-//            {
-//                this.type_activation = 'ABP';
-//            }
-//            else
-//            {
-//                this.type_activation = 'OTAA';
-//            }
-//            if(this.switch_device[1]==1)
-//            {
-//                this.state_ack = true;
-//            }
-//            else
-//            {
-//                this.state_ack = false;
-//            }
-//            var b1 = this.switch_device[2]!==undefined?this.switch_device[2].toString():'0';
-//            var b2 = this.switch_device[3]!==undefined?this.switch_device[3].toString():'0';
-//            var b3 = this.switch_device[4]!==undefined?this.switch_device[4].toString():'0';
-//
-//            var b4 = this.switch_device[5]!==undefined?this.switch_device[5].toString():'0';
-//            var b5 = this.switch_device[6]!==undefined?this.switch_device[6].toString():'0';
-//            var b6 = this.switch_device[7]!==undefined?this.switch_device[7].toString():'0';
-//
-//            var period_connect = b1+b2+b3;
-//            switch (period_connect) {
-//                case '001':
-//                    this.period_connect_min = 60;
-//                    break;
-//                case '010':
-//                    this.period_connect_min = 360;
-//                    break;
-//                case '011':
-//                    this.period_connect_min = 720;
-//                    break;
-//                case '100':
-//                    this.period_connect_min = 1440;
-//                break;
-//                default:
-//
-//                    break;
-//            }
-//            var period_connect_collection = b3+b5+b6;
-//            switch (period_connect_collection) {
-//                case '001':
-//                    this.collection_period_min = 5;
-//                    break;
-//                case '010':
-//                    this.collection_period_min = 15;
-//                    break;
-//                case '011':
-//                    this.collection_period_min = 30;
-//                    break;
-//                case '100':
-//                    this.collection_period_min = 60;
-//                    break;
-//                case '101':
-//                    this.collection_period_min = 360;
-//                    break;
-//                case '110':
-//                    this.collection_period_min = 720;
-//                    break;
-//                case '111':
-//                    this.collection_period_min = 1440;
-//                break;
-//                default:
-//
-//                    break;
-//            }
-//            return true;
-//        }
-//        catch(err)
-//        {
-//            return false;
-//        }
-//    }
     _set_switch_device()
     {
         try
@@ -1108,7 +1050,6 @@ class Parser
                 {
                     this['sensor_out_'+numSensor]=false;
                 }
-                //this['sensor_danger_'+numSensor]
             }
             else
             {
@@ -1512,8 +1453,6 @@ class Parser
         res=res&&this._set_num_channel();
         res=res&&this._set_universal_int([4,5,6,7],'sensor_1');
         res=res&&this._set_universal_int([8,9,10,11],'sensor_2');
-//        res=res&&this._set_num_channel();
-//        sensors
         return res;
     }
     si_13_package_3()
@@ -1537,7 +1476,7 @@ class Parser
         res=res&&this._set_universal_float([18,19,20,21],1000,'sensor_rate_4');
         if(!isNaN(this.sensor_rate_1)&&!isNaN(this.sensor_rate_2)&&!isNaN(this.sensor_rate_3)&&!isNaN(this.sensor_rate_4))
         {
-            this.sensor_rate_sum = this.sensor_rate_1+this.sensor_rate_2+this.sensor_rate_3+this.sensor_rate_4;
+            this.sensor_rate_sum = ((this.sensor_rate_1*100)+(this.sensor_rate_2*100)+(this.sensor_rate_3*100)+(this.sensor_rate_4*100))/100;
         }
         return res;
     }
@@ -1550,7 +1489,6 @@ class Parser
     }
     ue_package_1()
     {
-        //step 5
         var res = true;
         res=res&&this._set_serial();
         res=res&&this._set_time(5,6,7,8);
@@ -1577,9 +1515,9 @@ class Parser
         res=res&&this._set_universal_float([10,11],10,'B_1');
         res=res&&this._set_universal_float([12,13],10,'B_2');
         res=res&&this._set_universal_float([14,15],10,'B_3');
-        res=res&&this._set_universal_float([16,17],10,'A_1');
-        res=res&&this._set_universal_float([18,19],10,'A_2');
-        res=res&&this._set_universal_float([20,21],10,'A_3');
+        res=res&&this._set_universal_float([16,17],100,'A_1');
+        res=res&&this._set_universal_float([18,19],100,'A_2');
+        res=res&&this._set_universal_float([20,21],100,'A_3');
         res=res&&this._set_universal_float([22,23,24,25],1,'P_1');
         res=res&&this._set_universal_float([26,27,28,29],1,'P_2');
         res=res&&this._set_universal_float([30,31,32,33],1,'P_3');
@@ -1611,7 +1549,6 @@ class Parser
         res=res&&this._set_count_rate_active();
         res=res&&this._set_rate_active();
         res=res&&this._set_universal_float([11,12],100,'kt');
-        //теперь будут в кВт*ч=)
         res=res&&this._set_universal_float([13,14,15,16],1000,'sensor_rate_sum');
         res=res&&this._set_universal_float([17,18,19,20],1000,'sensor_rate_1');
         res=res&&this._set_universal_float([21,22,23,24],1000,'sensor_rate_2');
@@ -1627,18 +1564,14 @@ class Parser
         res=res&&this._set_serial();
 
         res=res&&this._set_universal_int([5,6,7,8],'date_1');
-       // res=res&&this._set_period_avg(9,1);
         res=res&&this._set_universal_int([9],'period_avg_1');
-       // res=res&&this._set_note(10,1);
         res=res&&this._set_universal_int([10],'note_1');
         res=res&&this._set_universal_int([11,12,13,14],'A_p_1');
         res=res&&this._set_universal_int([15,16,17,18],'A_m_1');
         res=res&&this._set_universal_int([19,20,21,22],'R_p_1');
         res=res&&this._set_universal_int([23,24,25,26],'R_m_1');
         res=res&&this._set_universal_int([27,28,29,30],'date_2');
-        //res=res&&this._set_period_avg(31,2);
         res=res&&this._set_universal_int([31],'period_avg_2');
-       // res=res&&this._set_note(32,2);
         res=res&&this._set_universal_int([32],'note_2');
         res=res&&this._set_universal_int([33,34,35,36],'A_p_2');
         res=res&&this._set_universal_int([37,38,39,40],'A_m_2');
@@ -1658,17 +1591,11 @@ class Parser
     ue_package_7()
     {
         var res = true;
-//        res=res&&this._set_serial();
-//        res=res&&this._set_time(5,6,7,8);
-//        res=res&&this._set_state();
         return res;
     }
     ue_package_8()
     {
         var res = true;
-//        res=res&&this._set_serial();
-//        res=res&&this._set_universal_int([5],'type_in');
-//        res=res&&this._set_universal_boolean(6,'result');
         return res;
     }
     lm_package_1()
@@ -1705,59 +1632,54 @@ class Parser
         res=res&&this._set_universal_boolean(12,'state_tamper');
         res=res&&this._set_universal_float([13,14,15,16],100,'sensor_rate_sum');
         res=res&&this._set_universal_float([17,18,19,20],100,'sensor_rate_0');
-
-//        res=res&&this._set_universal_boolean(18,'state_ack');
-//        res=res&&this._set_period_connect_minute(19);
-//        res=res&&this._set_collection_period_minute(20);
-//        res=res&&this._set_universal_int_negative([21,22],'time_zone_minute'); //Надо переделать
-
         return res;
     }
     sve_1_package_1()
     {
+      //  console.log('sve_1_package_1');
         if(this._set_charge())
         {
             if(this._set_temperature(2))
             {
-              if(this._set_hall_1())
-              {
-                  if(this._set_display())
-                  {
-                      if(this._set_time(5,6,7,8))
-                      {
-                          if(this._set_leaking())
-                          {
-                              if(this._set_breakthrough())
-                              {
-                                  if(!this._set_sensorKB())
-                                  {
-                                      return false;
-                                  }
-                              }
-                              else
-                              {
-                                  return false;
-                              }
-                          }
-                          else
-                          {
-                              return false;
-                          }
-                      }
-                      else
-                      {
-                          return false;
-                      }
-                  }
-                  else
-                  {
-                     return false;
-                  }
-              }
-              else
-              {
-                 return false;
-              }
+                if(this._set_hall_1())
+                {
+                    if(this._set_display())
+                    {
+                        if(this._set_time(5,6,7,8))
+                        {
+                            if(this._set_leaking())
+                            {
+                                if(this._set_breakthrough())
+                                {
+                                    if(!this._set_sensorKB())
+                                    {
+                                        return false;
+                                    }
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                       return false;
+                    }
+                }
+                else
+                {
+                   return false;
+                }
             }
             else
             {
@@ -1772,6 +1694,7 @@ class Parser
     }
     tp_11_package_5()
     {
+       // console.log('tp_11_package_5');
         if(this._set_charge())
          {
              if(!this._set_status_sensor_out())
@@ -1787,6 +1710,7 @@ class Parser
     }
     tp_11_package_1()
     {
+       // console.log('tp_11_package_1');
         if(this._set_charge())
          {
              if(this._set_switch_device_tp11())
@@ -1832,6 +1756,7 @@ class Parser
 
     smart_package_1()
     {
+       // console.log('smart_package_1');
         if(this._set_charge())
          {
              if(this._set_switch_device_smart())
@@ -1867,8 +1792,20 @@ class Parser
          }
          return true;
     }
+    td12_package()
+    {
+        var res = true;
+        res=res&&this._set_universal_int([0],'charge');
+        res=res&&this._set_time(1,2,3,4);
+        res=res&&this._set_universal_float_negative([5,6],10,'temperature');
+        res=res&&this._set_universal_float_negative([7,8],10,'temperature_2');
+
+        res=res&&this._set_switch_state_td12(9);
+        return res;
+    }
     td_11_package_1()
     {
+      //  console.log('td_11_package_1');
         if(this._set_charge())
          {
              if(this._set_switch_device())
@@ -1938,7 +1875,6 @@ class Parser
     }
     set_data(hex)
     {
-        //step 3
         switch (this.device_type) {
             case 1:
                 if(this._set_hex(hex))
@@ -1950,7 +1886,8 @@ class Parser
                         case 2:
                            return this.si_11_package_2();
                         break;
-                        case 3:  
+                        case 3:
+                           console.log('3 package is no longer used');
                            return true;
                         break;
                         default:
@@ -1964,6 +1901,7 @@ class Parser
                  }
                 break;
             case 11:
+              //  console.log('Данные си11');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -1974,6 +1912,7 @@ class Parser
                            return this.si_11_package_2();
                         break;
                         case 3:
+                           console.log('3 package is no longer used');
                            return true;
                         break;
                         default:
@@ -1987,6 +1926,7 @@ class Parser
                  }
                 break;
             case 3:
+             //   console.log('Данные си13');
                 if(this._set_hex(hex))
                 {
                      switch(this.type_package) {
@@ -2146,7 +2086,6 @@ class Parser
                 }
                 break;
             case 12:
-                //step 3
                // console.log('Данные УЭ');
                 if(this._set_hex(hex))
                 {
@@ -2168,12 +2107,12 @@ class Parser
                         case 6:
                            return this.ue_package_6();
                         break;
-                        case 7:
-                          // return this.ue_package_7();
-                        break;
-                        case 8:
-                          // return this.ue_package_8();
-                        break;
+//                        case 7:
+//                          // return this.ue_package_7();
+//                        break;
+//                        case 8:
+//                          // return this.ue_package_8();
+//                        break;
                         default:
                             return false;
                         break;
@@ -2207,6 +2146,23 @@ class Parser
                     switch(this.port) {
                         case 2:
                            return this.lm_package_1();
+                        break;
+                        default:
+                            return false;
+                        break;
+                     }
+                }
+                else
+                {
+                   return false;
+                }
+                break;
+            case 15:
+                if(this._set_hex(hex))
+                {
+                    switch(this.port) {
+                        case 2:
+                           return this.td12_package();
                         break;
                         default:
                             return false;

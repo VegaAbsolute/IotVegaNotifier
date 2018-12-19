@@ -95,7 +95,6 @@ class VegaLinphone extends RHvoice
           for (var i=0; i<items.length; i++)
           {
             let nameFile = items[i];
-            if(nameFile==_self._startupSound) continue;
             if(nameFile&&typeof nameFile == 'string')
             {
               let hash = nameFile.replace('.wav','');
@@ -210,7 +209,10 @@ class VegaLinphone extends RHvoice
       {
         if(_activeCall.type=='voicemessage')
         {
-          if(_activeCall.telephone==itemCall.telephone)
+          let isSipFormat = itemCall.telephone.indexOf('sip:')>-1;
+          let validTelephoneStandart = !isSipFormat&&_activeCall.telephone==itemCall.telephone;
+          let validTelephoneSip = isSipFormat&&itemCall.telephone.indexOf(_activeCall.telephone);
+          if(validTelephoneStandart||validTelephoneSip)
           {
             _activeCall.state = itemCall.state;
             let currentTime = new Date().getTime();
@@ -463,7 +465,7 @@ class VegaLinphone extends RHvoice
       .then((res)=>{
         if(res.status)
         {
-          this.play(`${this._directory}/${_self._startupSound}`);
+          this.play('""');
           if(_self._stack[res.uuid])
           {
            _self._stack.active = res.uuid;
