@@ -9,7 +9,6 @@ class VegaRHvoice extends EventEmitter
     super();
     this._voices = rhvoiceSettings.voices;
     this._process = rhvoiceSettings.process;
-    this._startupSound = rhvoiceSettings.startupSound;
     this.md5 = require('md5');
     this.wavList = {};
     this._directory = rhvoiceSettings.directory;

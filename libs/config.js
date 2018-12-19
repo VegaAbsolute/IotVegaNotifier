@@ -31,9 +31,8 @@ class Config
           preferred:'Anna',
           spare:'Alan'
         },
-        startupSound:'alert.wav',
         process:'RHVoice-test'
-      }   //voices, process, fileDirectory,startupSound
+      }   //voices, process, fileDirectory
     };
     this._smsc = {
       system:{},
@@ -116,10 +115,6 @@ class Config
     {
       this._sip.rhvoice.fileDirectory = val;
     }
-  }
-  set sip_startup_sound(val)
-  {
-    this._sip.rhvoice.startupSound = val;
   }
   set sip_voice_preferred(val)
   {
@@ -296,8 +291,7 @@ class Config
     return {
       voices:this._sip.rhvoice.voices.preferred+'+'+this._sip.rhvoice.voices.spare,
       process:this._sip.rhvoice.process,
-      directory:this._sip.rhvoice.fileDirectory,
-      startupSound:this._sip.rhvoice.startupSound
+      directory:this._sip.rhvoice.fileDirectory
     };
   }
   get sipCron()
