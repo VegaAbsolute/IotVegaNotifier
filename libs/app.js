@@ -406,7 +406,7 @@ function rx(obj)
                 wasAlarm(timeServerMs,channel);
               }
             }
-            if(config.debugMOD) console.log('data from device TD11');
+            if(config.debugMOD) console.log('data from device TL-11');
             break;
           }
           default:
