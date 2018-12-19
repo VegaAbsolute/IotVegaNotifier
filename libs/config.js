@@ -44,11 +44,6 @@ class Config
     this._devices = {
       betweenTimeSMS:30000
     };
-    this._baresip = {
-      system:{},
-      settings:{},
-      status:false
-    };
     this._debugMOD = {
       status:false,
       settings:{}
@@ -377,32 +372,6 @@ class Config
   set debug_phone(val)
   {
     this._debugMOD.settings.telephone = val;
-  }
-  get baresip()
-  {
-    return this._baresip.status;
-  }
-  get baresipIP()
-  {
-    return this._baresip.system.ip;
-  }
-  get baresipPort()
-  {
-    return this._baresip.system.port;
-  }
-  get baresipType()
-  {
-    return this._baresip.settings.type;
-  }
-  set baresip(val)
-  {
-    this._baresip.status = val;
-  }
-  baresip_address(ip,port,type)
-  {
-    this._baresip.system.ip = ip;
-    this._baresip.system.port = port;
-    this._baresip.settings.type = type;
   }
 
 }

@@ -230,7 +230,7 @@ class VegaLinphone extends RHvoice
                 _activeCall.countPlay++;
                 _activeCall.lastPlay = currentTime;
                 let dir = wav.directory;
-                if(dir!==undefined) this.play(dir,durationWav);
+                if(dir!==undefined) this.play(dir);
               }
               _activeCall.taking = true;
             }
