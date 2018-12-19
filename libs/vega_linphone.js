@@ -66,7 +66,7 @@ class VegaLinphone extends RHvoice
         {
           this.checkStack();
         }
-      },1000);
+      },2000);
     }
   }
   get employment()
