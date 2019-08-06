@@ -1,3 +1,4 @@
+let moment = require( 'moment' );
 class Config
 {
   constructor()
@@ -361,7 +362,7 @@ class Config
       }
       catch (e)
       {
-        console.error(e);
+        console.error(moment().format('LLL')+': ',e);
         return false;
       }
     }
