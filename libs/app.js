@@ -21,6 +21,24 @@ let waitingReboot = false;
 //------------------------------------------------------------------------------
 //Логика
 //------------------------------------------------------------------------------
+function checkValidRXType(type)
+{
+  try
+  {
+    let validType = typeof type === 'string';
+    if(!validType) return false;
+    let types = type.split('+');
+    if( types.indexOf( 'UNCONF_UP' ) > -1 || types.indexOf( 'CONF_UP' ) > -1 )
+    {
+      return true;
+    }
+    return false;
+  }
+  catch (e)
+  {
+    return false;
+  }
+}
 function wasAlarm(time,channel)
 {
   if(!channel.enable_danger) return;
@@ -36,11 +54,6 @@ function getValidTelephone(num)
     telephone = num.replace(/[^-0-9]/gim,'');
     let validTelephone = telephone&&telephone.length>0?true:false;
     if(!validTelephone) return false;
-    // if(telephone.length === 10)
-    // {
-    //   telephone = '7' + telephone;
-    // }
-    // else
     if(telephone.length === 11 && telephone[0] == 8)
     {
       telephone = telephone.replace(8,7);
@@ -187,7 +200,7 @@ function get_device_appdata_resp(obj)
 }
 function rx(obj)
 {
-  if(!(obj.type&&(obj.type.indexOf('UNCONF_UP')>-1||obj.type.indexOf('CONF_UP')>-1))) return;
+  if(!(obj.type&&checkValidRXType(obj.type))) return;
   try
   {
     //cmd      gatewayId   data       rssi
