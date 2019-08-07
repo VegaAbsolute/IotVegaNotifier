@@ -33,20 +33,20 @@ class Device
   {
     if( value === undefined )
     {
-      value = this.getDefaultVersion();
+      value = this.getFirstVersion();
     }
     value = parseInt(value);
     if( isNaN(value) ) value = 0;
     this._version=value;
   }
-  getDefaultVersion()
+  getFirstVersion()
   {
     for( let i = 0; i < devicesInfo.length; i++)
     {
       let devInfo = devicesInfo[i];
       if( this.type == devInfo.id )
       {
-        return devInfo.versions.default;
+        return devInfo.versions.first;
       }
     }
     return 0;
