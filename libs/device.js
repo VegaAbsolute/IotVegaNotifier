@@ -1,5 +1,5 @@
 const Channel = require('./channel.js');
-let devicesInfo = require('.vega_base_data.js').devicesInfo; 
+let devicesInfo = require('./vega_base_data.js').devicesInfo; 
 class Device
 {
   constructor()
