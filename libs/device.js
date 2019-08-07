@@ -24,6 +24,10 @@ class Device
   {
     return this._devEui!==undefined&&this._type!==undefined;
   }
+  get version()
+  {
+    return this._version;
+  }
   refresh(obj)
   {
     this._appEui = obj.appEui;
@@ -32,6 +36,7 @@ class Device
     this._type = obj.device_type;
     this._fcnt_down = obj.fcnt_down;
     this._fcnt_up = obj.fcnt_up;
+    this._version = obj._version;
     this._last_data_ts = obj.last_data_ts;
 
     for(let key in obj)
