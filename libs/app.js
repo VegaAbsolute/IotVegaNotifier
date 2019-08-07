@@ -332,6 +332,7 @@ function rx(obj)
           }
           case 7:
           {
+            console.log(dev.version);
             if(dataDevice.reason==1)
             {
                 dev.lastDateSMS = currentDate;
