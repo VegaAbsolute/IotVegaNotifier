@@ -225,6 +225,7 @@ function rx(obj)
       let validBetweenTime =  (dev.lastDateSMS===undefined||(currentDate-lastDateSMS)>config.devices_betweenTimeSMS);
       let validNumChannel = dataDevice.num_channel!==undefined;
       let numChannel = validNumChannel?parseInt(dataDevice.num_channel):1;
+      validNumChannel = validNumChannel&&!isNaN(numChannel);
       if(validBetweenTime)
       {
         switch (dev.type)
@@ -246,12 +247,33 @@ function rx(obj)
           }
           case 2:
           {
+            if(validNumChannel)
+            {
+              let channel = dev.get_channel(numChannel);
+              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              if(validChannel&&dataDevice.type_package==2)
+              {
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,channel);
+              }
+            }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI12');
             break;
           }
 
           case 3:
           {
+              if(validNumChannel)
+              {
+                num_channel = num_channel + 6;
+                let channel = dev.get_channel(numChannel);
+                let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+                if(validChannel&&dataDevice.type_package==2)
+                {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+                }
+              }
               if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI13');
               break;
           }
@@ -261,15 +283,32 @@ function rx(obj)
             let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
-              let checkEvent = dataDevice.reason!==0;
-              let t = parseInt(dataDevice.temperature);
-              let t_max = channel.max_t;
-              let t_min = channel.min_t;
-              let checkTemperature = t<=t_min||t>=t_max;
-              if(checkEvent||checkTemperature)
+              if ( dev.version === 1 )
               {
-                dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel);
+                let checkEvent = dataDevice.reason!==0;
+                let checkTemperature = dataDevice.limit_exceeded;
+                if ( checkEvent || checkTemperature )
+                {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+                }
+              }
+              else if ( dev.version === 0 )
+              {
+                let checkEvent = dataDevice.reason!==0;
+                let t = parseInt(dataDevice.temperature);
+                let t_max = channel.max_t;
+                let t_min = channel.min_t;
+                let checkTemperature = t<=t_min||t>=t_max;
+                if(checkEvent||checkTemperature)
+                {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+                }
+              }
+              else
+              {
+                if(config.debugMOD) console.log(moment().format('LLL')+': '+' An unknown version of the device device TD11');
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TD11');
@@ -281,40 +320,56 @@ function rx(obj)
             let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
-              let s = parseFloat(dataDevice.sensorTP);
-              let dangerEvent = dataDevice.sensor_danger_1||dataDevice.sensor_danger_2?true:false;
-              let validValue = s!==undefined&&typeof s === 'number';
-              let sensorEvent = false;
-              let min = parseFloat(channel.min_normal_v);
-              let max = parseFloat(channel.max_normal_v);
-              let min_v = parseFloat(channel.min_v);
-              let max_v = parseFloat(channel.max_v);
-              if(validValue&&!isNaN(min)&&!isNaN(max)&&!isNaN(min_v)&&!isNaN(max_v))
+              if ( dev.version === 1 )
               {
-                  if(s===0)
-                  {
-                      sensorEvent = true;
-                  }
-                  else if(s<=20&&s>=4)
-                  {
-                      let newvalue = min_v+(((max_v-min_v)*(s-4))/16);
-                      if(typeof newvalue === 'number')
-                      {
-                          if(newvalue<=min||newvalue>=max)
-                          {
-                              sensorEvent = true;
-                          }
-                      }
-                  }
-                  else
-                  {
-                     sensorEvent = true;
-                  }
-              }
-              if(sensorEvent||dangerEvent)
-              {
+                let danger = dataDevice.reason != 0 && dataDevice.reason !=5;
+                if ( danger )
+                {
                   dev.lastDateSMS = currentDate;
                   wasAlarm(timeServerMs,channel);
+                }
+              }
+              else if ( dev.version === 0 )
+              {
+                let s = parseFloat(dataDevice.sensorTP);
+                let dangerEvent = dataDevice.sensor_danger_1||dataDevice.sensor_danger_2?true:false;
+                let validValue = s!==undefined&&typeof s === 'number';
+                let sensorEvent = false;
+                let min = parseFloat(channel.min_normal_v);
+                let max = parseFloat(channel.max_normal_v);
+                let min_v = parseFloat(channel.min_v);
+                let max_v = parseFloat(channel.max_v);
+                if(validValue&&!isNaN(min)&&!isNaN(max)&&!isNaN(min_v)&&!isNaN(max_v))
+                {
+                    if(s===0)
+                    {
+                        sensorEvent = true;
+                    }
+                    else if(s<=20&&s>=4)
+                    {
+                        let newvalue = min_v+(((max_v-min_v)*(s-4))/16);
+                        if(typeof newvalue === 'number')
+                        {
+                            if(newvalue<=min||newvalue>=max)
+                            {
+                                sensorEvent = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                      sensorEvent = true;
+                    }
+                }
+                if(sensorEvent||dangerEvent)
+                {
+                    dev.lastDateSMS = currentDate;
+                    wasAlarm(timeServerMs,channel);
+                }
+              }
+              else
+              {
+                if(config.debugMOD) console.log(moment().format('LLL')+': '+' An unknown version of the device device TP11');
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TP11');
@@ -322,48 +377,82 @@ function rx(obj)
           }
           case 6:
           {
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MC');
-            if(dataDevice.reason==1)
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
             {
-                dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,dev.get_channel(1));
+              let danger = dataDevice.reason !== undefined && dataDevice.reason !== 0;
+              if ( danger )
+              {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+              }
             }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MC');
             break;
           }
           case 7:
           {
-            console.log(dev.version);
-            if(dataDevice.reason==1)
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
             {
-                dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,dev.get_channel(1));
+              let danger = dataDevice.reason !== undefined && dataDevice.reason !== 0;
+              if ( danger )
+              {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+              }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device AS');
             break;
           }
           case 8:
           {
-            if(dataDevice.reason==1)
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
             {
-                dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,dev.get_channel(1));
+              let danger = dataDevice.reason !== undefined && dataDevice.reason !== 0;
+              if ( danger )
+              {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+              }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MS');
             break;
           }
           case 9:
           {
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
+            {
+              let danger = dataDevice.state_display||dataDevice.leaking||dataDevice.breakthrough||dataDevice.hall_1;
+              if (danger)
+              {
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,channel);
+              }
+            }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device СВЭ-1');
             break;
           }
           case 10:
           {
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SS ');
-            if(dataDevice.reason==1)
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
             {
-                dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,dev.get_channel(1));
+              let danger = dataDevice.reason !== undefined && dataDevice.reason !== 0;
+              if ( danger )
+              {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,dev.get_channel(1));
+              }
             }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SS ');
             break;
           }
           case 11:
@@ -372,10 +461,10 @@ function rx(obj)
             {
               let channel = dev.get_channel(numChannel);
               let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
-              if(validChannel&&dataDevice.type_package==2)
+              if ( validChannel && dataDevice.type_package==2 )
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,dev.get_channel(numChannel));
+                wasAlarm(timeServerMs,channel);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI21');
@@ -383,28 +472,51 @@ function rx(obj)
           }
           case 12:
           {
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
+            {
+              let info = dataDevice.type_package==1;
+              let validEvent = dataDevice.event !== undefined;
+              let danger = info && validEvent && dataDevice.event != 1 && dataDevice.event != 19;
+              if ( danger )
+              {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+              }
+            }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device UE');
             break;
           }
           case 13:
           {
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device UG ');
-            let reason = dataDevice.reason!==undefined?parseInt(dataDevice.reason):NaN;
-            if(!isNaN(reason)&&reason>0)
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
             {
-                dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,dev.get_channel(1));
+              let danger = dataDevice.reason !== undefined && dataDevice.reason > 0;
+              if ( danger )
+              {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+              }
             }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device GM-2 ');
             break;
           }
           case 14:
           {
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device LM-1 ');
-            if(dataDevice.alarm)
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
             {
-                dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,dev.get_channel(1));
+              if(dataDevice.alarm)
+              {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+              }
             }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device LM-1 ');
             break;
           }
           case 15:
@@ -426,7 +538,95 @@ function rx(obj)
                 wasAlarm(timeServerMs,channel);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TD11');
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TD-11');
+            break;
+          }
+          case 17:
+          {
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
+            {
+              let danger = dataDevice.reason !== undefined && dataDevice.reason!=1;
+              if(danger)
+              {
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,channel);
+              }
+            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device GM-1 ');
+            break;
+          }
+          case 18:
+          {
+            if(validNumChannel)
+            {
+              let channel = dev.get_channel(num_channel);
+              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              if(validChannel)
+              {
+                if ( dataDevice.type_package==2 )
+                {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+                }
+              }
+            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI-22 ');
+            break;
+          }
+          case 20:
+          {
+            if(validNumChannel)
+            {
+              num_channel = num_channel + 10;
+              let channel = dev.get_channel(num_channel);
+              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              if(validChannel)
+              {
+                if ( dataDevice.type_package==5 )
+                {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+                }
+              }
+            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MBUS-1 ');
+            break;
+          }
+          case 21:
+          {
+            if(validNumChannel)
+            {
+              num_channel = num_channel + 10;
+              let channel = dev.get_channel(num_channel);
+              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              if(validChannel)
+              {
+                if ( dataDevice.type_package==5 )
+                {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel);
+                }
+              }
+            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MBUS-2 ');
+            break;
+          }
+          case 23:
+          {
+            let channel = dev.get_channel(1);
+            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
+            {
+              let danger = dataDevice.reason !== undefined && dataDevice.reason!=1;
+              if(danger)
+              {
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,channel);
+              }
+            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device HS ');
             break;
           }
           default:
