@@ -9,6 +9,11 @@ const Parser = require('./parser.js');
 const { exec } = require('child_process');
 const CronJob = require('cron').CronJob;
 let moment = require( 'moment' );
+
+const TeleBot = require('telebot');
+const bot = new TeleBot('929240850:AAGhpqgUgS3SefL-ooTPteq7iVZWjoXh4RY');
+console.log(bot);
+
 let devices = new Devices();
 let config = {};
 let statusAuth = false;
