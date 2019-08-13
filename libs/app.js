@@ -10,7 +10,7 @@ const { exec } = require('child_process');
 const CronJob = require('cron').CronJob;
 let moment = require( 'moment' );
 
-
+process.env.NTBA_FIX_319 = 1
 const TelegramBot = require('node-telegram-bot-api');
 const token = '929240850:AAGhpqgUgS3SefL-ooTPteq7iVZWjoXh4RY';
 const bot = new TelegramBot(token, {polling: true});
