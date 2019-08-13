@@ -10,9 +10,11 @@ const { exec } = require('child_process');
 const CronJob = require('cron').CronJob;
 let moment = require( 'moment' );
 
-const TeleBot = require('telebot');
-const bot = new TeleBot('929240850:AAGhpqgUgS3SefL-ooTPteq7iVZWjoXh4RY');
-console.log(bot);
+
+const TelegramBot = require('node-telegram-bot-api');
+const token = '929240850:AAGhpqgUgS3SefL-ooTPteq7iVZWjoXh4RY';
+const bot = new TelegramBot(token, {polling: true});
+bot.sendMessage('@alk120ger', '111');
 
 let devices = new Devices();
 let config = {};
