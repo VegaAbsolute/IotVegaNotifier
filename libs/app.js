@@ -14,7 +14,9 @@ let moment = require( 'moment' );
 const TelegramBot = require('node-telegram-bot-api');
 const token = '929240850:AAGhpqgUgS3SefL-ooTPteq7iVZWjoXh4RY';
 const bot = new TelegramBot(token, {polling: true});
-bot.sendMessage('@alk120ger', '111');
+bot.on('message', function(msg) {
+	console.log(msg);
+});
 
 let devices = new Devices();
 let config = {};
