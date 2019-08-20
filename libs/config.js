@@ -51,6 +51,19 @@ class Config
       settings:{},
       status:false
     };
+    this._telegram = {
+      status:false,
+      token:undefined,
+      chatId:undefined,
+      proxy:{
+        status:false,
+        host:undefined,
+        port:undefined,
+        login:undefined,
+        password:undefined,
+        type: 'socks5'
+      }
+    };
     this._debugMOD = {
       status:false,
       settings:{}
@@ -251,6 +264,38 @@ class Config
   {
     this._smpp.info.sm_default_msg_id = val;
   }
+  set telegram_enabled(val)
+  {
+    this._telegram.status = val;
+  }
+  set telegram_bot_token(val)
+  {
+    this._telegram.token = val;
+  }
+  set telegram_administartor_chat_id(val)
+  {
+    this._telegram.chatId = val;
+  }
+  set telegram_proxy_socks5_host(val)
+  {
+    this._telegram.proxy.host = val;
+  }
+  set telegram_proxy_socks5_enabled(val)
+  {
+    this._telegram.proxy.status = val;
+  }
+  set telegram_proxy_socks5_port(val)
+  {
+    this._telegram.proxy.port = val;
+  }
+  set telegram_proxy_socks5_name(val)
+  {
+    this._telegram.proxy.login = val;
+  }
+  set telegram_proxy_socks5_password(val)
+  {
+    this._telegram.proxy.password = val;
+  }
   //getters-------------------------
   get ws()
   {
@@ -347,6 +392,22 @@ class Config
   get auto_update()
   {
     return this._system.settings.auto_update;
+  }
+  get telegram()
+  {
+    return this._telegram.status;
+  }
+  get telegram_bot_token()
+  {
+    return this._telegram.token;
+  }
+  get telegram_admin_chatId()
+  {
+    return this._telegram.chatId;
+  }
+  get telegram_proxy()
+  {
+    return this._telegram.proxy;
   }
   //methods
   setFromConfig(config)

@@ -1,5 +1,6 @@
 
 const VegaSMPP = require('./vega_smpp.js');
+const VegaTelegram = require('./vega_telegram.js');
 const SMSCru = require('./vega_smsc.js');
 const VegaLinphone = require('./vega_linphone.js');
 const Devices = require('./devices.js');
@@ -9,15 +10,6 @@ const Parser = require('./parser.js');
 const { exec } = require('child_process');
 const CronJob = require('cron').CronJob;
 let moment = require( 'moment' );
-
-process.env.NTBA_FIX_319 = 1
-const TelegramBot = require('node-telegram-bot-api');
-const token = '929240850:AAGhpqgUgS3SefL-ooTPteq7iVZWjoXh4RY';
-const bot = new TelegramBot(token, {polling: true});
-bot.on('message', function(msg) {
-	console.log(msg);
-});
-
 let devices = new Devices();
 let config = {};
 let statusAuth = false;
@@ -25,6 +17,7 @@ let premission = {};
 let smpp = {};
 let smsc = {};
 let linphone = {};
+let telegram = {};
 let ws = {};
 let waitingReboot = false;
 //------------------------------------------------------------------------------
@@ -58,6 +51,7 @@ function wasAlarm(time,channel)
   sendSMS(time,channel);
   sendVoiceMessage(time,channel);
   sendConsoleMessage(time,channel);
+  sendTelegram(time,channel);
 }
 function getValidTelephone(num)
 {
@@ -72,6 +66,22 @@ function getValidTelephone(num)
     {
       telephone = telephone.replace(8,7);
     }
+    return telephone;
+  }
+  catch (e)
+  {
+    return false;
+  }
+}
+function getValidChat(val)
+{
+  try
+  {
+    let valid = val&&val.length>0?true:false;
+    if(!valid) return false;
+    chat = val.replace(/[^-0-9]/gim,'');
+    let validChat = chat&&chat.length>0?true:false;
+    if(!validChat) return false;
     return telephone;
   }
   catch (e)
@@ -173,6 +183,47 @@ function sendSMS(time,channel)
       if(config.debugMOD&&config.telephoneAdministrator)
       {
         smpp.pushSMS(messageSMS_admin,config.telephoneAdministrator,new Date().getTime());
+      }
+    }
+  }
+}
+function sendTelegram(time,channel)
+{
+  if(telegram.active)
+  {
+    let chats = [];
+    if(channel.telegram_chats)
+    {
+      chats = channel.telegram_chats.split(',');
+    }
+    let mytelegram = channel.telegram;
+    mytelegram = true
+    let nameObject = channel.name_level_1;
+    let room = channel.level_2;
+    let name = channel.name;
+    let messageSMS = channel.message_sms;
+    let messageSMS_admin = 'undefined';
+    if(!messageSMS)
+    {
+       messageSMS = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
+    }
+    messageSMS_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
+    if(mytelegram)
+    {
+      if(chats.length>0)
+      {
+        for (let i = 0 ; i < chats.length; i++)
+        {
+          let chat = getValidChat(chats[i]);
+          if(chat!==false)
+          {
+            telegram.pushMessage(messageSMS,chat,new Date().getTime());
+          }
+        }
+      }
+      if(config.debugMOD&&config.telegram_admin_chatId)
+      {
+        telegram.pushMessage(messageSMS_admin,config.telegram_admin_chatId,new Date().getTime());
       }
     }
   }
@@ -669,7 +720,7 @@ function free()
 }
 function emergencyExit()
 {
-  if(smpp.employment||smsc.employment||linphone.employment)
+  if(smpp.employment||smsc.employment||linphone.employment||telegram.employment)
   {
     return;
   }
@@ -725,9 +776,11 @@ function run(conf)
       smpp = new VegaSMPP(config.address_smpp,config.system_smpp,config.smpp_info,config.smpp,config.debugMOD);
       smsc = new SMSCru(config.smsc_auth,config.smsc,config.smsc_settings,config.debugMOD);
       linphone = new VegaLinphone(config.sipHost,config.sipLogin,config.sipPassword,config.sipOtherSettings,config.sipCron,config.sipRHvoice,config.sip,config.debugMOD);
+      telegram = new VegaTelegram(config.telegram_bot_token,config.telegram,config.telegram_proxy,config.debugMOD);
       smpp.on('free',free);
       smsc.on('free',free);
       linphone.on('free',free);
+      telegram.on('free',free);
     }
     catch (e)
     {
