@@ -73,6 +73,9 @@ class VegaTelegram extends EventEmitter
   {
     console.log(moment().format('LLL')+': '+'[Telegram] Error '+err.code);
     this._status = false;  
+    this.stopPolling().then(()=>{
+      console.log(moment().format('LLL')+': '+'[Telegram] Unavailable telegram');
+    });
   }
   checkStackEmptiness()
   {
