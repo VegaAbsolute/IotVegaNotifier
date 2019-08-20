@@ -114,7 +114,7 @@ class VegaWS extends EventEmitter
   }
   _open ()
   {
-    console.log( moment().format('LLL') + ': [WS] ', 'Successful connection on WS' );
+    console.log( moment().format('LLL') + ': [WS]', 'Successful connection on WS' );
     this._status = true;
     this._self.emit( 'run' );
   }
