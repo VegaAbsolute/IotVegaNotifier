@@ -40,34 +40,30 @@ class VegaTelegram extends EventEmitter
   }
   validProxy()
   {
-    return this._proxy.host && this._proxy.port;
+    return this._proxy.host && this._proxy.port && this._proxy.status === true;
   }
   reload()
   {
-    let polling = {polling:false};
-    if( this._proxy.status === true )
+    let polling = {polling:true};
+    if ( this.validProxy() )
     {
-        polling.polling = true;
-        if ( this.validProxy() )
+        let host = this._proxy.host;
+        let port = this._proxy.port;
+        let username = this._proxy.login;
+        let password = this._proxy.password;
+        polling.request = {
+        agentClass: Agent,
+        agentOptions: {
+                socksHost: host,
+                socksPort: port
+            }
+        }
+        if( username && password ) 
         {
-            let host = this._proxy.host;
-            let port = this._proxy.port;
-            let username = this._proxy.login;
-            let password = this._proxy.password;
-            polling.request = {
-            agentClass: Agent,
-            agentOptions: {
-                    socksHost: host,
-                    socksPort: port
-                }
-            }
-            if( username && password ) 
-            {
-                polling.request.agentOptions.socksUsername = username;
-                polling.request.agentOptions.socksPassword = password;
-            }
-        } 
-    }
+            polling.request.agentOptions.socksUsername = username;
+            polling.request.agentOptions.socksPassword = password;
+        }
+    } 
     this._connect = new TelegramBot(this._token, polling);
     this._connect._status = true;
     this._connect.on('polling_error',this._error);
