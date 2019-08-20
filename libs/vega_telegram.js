@@ -140,7 +140,7 @@ class VegaTelegram extends EventEmitter
                 })
                 .catch((e)=>{
                     console.log(moment().format('LLL')+': '+'[Telegram] Failed to send  http message. Error 1');
-                    console.log(moment().format('LLL')+': ',e);
+                    console.log(moment().format('LLL')+': [Telegram]',e);
                 });
                 break;
             }
