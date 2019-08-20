@@ -72,7 +72,7 @@ class VegaTelegram extends EventEmitter
   _error(err)
   {
     console.log(moment().format('LLL')+': '+'[Telegram] Error '+err.code);
-    this._connect._status = false;  
+    console.log(this);
   }
   checkStackEmptiness()
   {
