@@ -18,11 +18,15 @@ class VegaTelegram extends EventEmitter
       this._token = token;
       this._proxy = proxy;
       this._connect = {
-          _status:false
+          _status:false,
+          _timeLastUpdate:new Date().getTime()
       };
       this.reload();
       setInterval(()=>{
-        if(!this._connect._status)
+        let currentTime = new Date().getTime();
+        let firstTime = this._connect._timeLastUpdate;
+        let timePassed = firstTime?(currentTime-firstTime):0;
+        if(!this._connect._status&&timePassed>30000)
         {
           this.reload();
         }
@@ -71,6 +75,7 @@ class VegaTelegram extends EventEmitter
     } 
     this._connect = new TelegramBot(this._token, polling);
     this._connect._status = true;
+    this._connect._timeLastUpdate = new Date().getTime();
     this._connect.on('polling_error',this._error);
     this._connect._self = this;
   }
@@ -78,6 +83,7 @@ class VegaTelegram extends EventEmitter
   {
     console.log(moment().format('LLL')+': '+'[Telegram] Error '+err.code);
     this._status = false;  
+    this._timeLastUpdate = new Date().getTime();
     this.stopPolling().then(()=>{
       console.log(moment().format('LLL')+': '+'[Telegram] Unavailable telegram');
     });
