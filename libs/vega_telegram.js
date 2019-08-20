@@ -81,7 +81,7 @@ class VegaTelegram extends EventEmitter
   }
   _error(err)
   {
-    console.log(moment().format('LLL')+': '+'[Telegram] Error '+err.code);
+    console.log(moment().format('LLL')+': '+'[Telegram] Error '+err.code+' . '+err.message);
     this._status = false;  
     this._timeLastUpdate = new Date().getTime();
     this.stopPolling().then(()=>{
@@ -119,7 +119,7 @@ class VegaTelegram extends EventEmitter
                         {
                             if(_self._stack[j].uuid === res.uuid)
                             {
-                                console.log(moment().format('LLL')+': '+'[Telegram] Success to send voice message '+_self._stack[j].chatId+'( '+res.chat.username+' )');
+                                console.log(moment().format('LLL')+': '+'[Telegram] Success to send message '+_self._stack[j].chatId+'( '+res.chat.username+' )');
                                 _self._stack.splice(j,1);
                                 _self.checkStackEmptiness();
                             }
@@ -142,14 +142,14 @@ class VegaTelegram extends EventEmitter
                                 {
                                     _self.pushMessage(tmp.message,tmp.chatId,tmp.firstTime);
                                 }
-                                console.log(moment().format('LLL')+': '+'[Telegram] Failed to send  voice message '+tmp.chatId+'. Error '+ res.err);
+                                console.log(moment().format('LLL')+': '+'[Telegram] Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message);
                                 _self.checkStackEmptiness();
                             }
                         }
                     }
                 })
                 .catch((e)=>{
-                    console.log(moment().format('LLL')+': '+'[Telegram] Failed to send  http message. Error 1');
+                    console.log(moment().format('LLL')+': '+'[Telegram] Failed to send message. Error 1');
                     console.log(moment().format('LLL')+': [Telegram]',e);
                 });
                 break;
@@ -168,7 +168,9 @@ class VegaTelegram extends EventEmitter
             resolve({status:true,uuid:uuid,username:res.chat.username});
         })
         .catch((err)=>{
-            resolve({status:false,uuid:uuid,err:err.code});
+            _self._connect._status = false;
+            _self._connect._timeLastUpdate = new Date().getTime();
+            resolve({status:false,uuid:uuid,err:err});
         });
       }
       catch (e)
