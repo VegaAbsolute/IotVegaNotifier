@@ -68,7 +68,7 @@ class VegaTelegram extends EventEmitter
             }
         } 
     }
-    this._connect = new TelegramBot(token, polling);
+    this._connect = new TelegramBot(this._token, polling);
     this._connect._status = true;
     this._connect.on('polling_error',this._error);
     this._connect._self = this;
