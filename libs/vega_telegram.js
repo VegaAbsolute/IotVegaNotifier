@@ -21,7 +21,12 @@ class VegaTelegram extends EventEmitter
           _status:false
       };
       this.reload();
-            
+      setInterval(()=>{
+        if(!this._connect._status)
+        {
+          this.reload();
+        }
+      },30000);      
       setInterval(()=>{
         if(this.employment)
         {
