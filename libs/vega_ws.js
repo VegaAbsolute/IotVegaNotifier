@@ -1,4 +1,4 @@
-//vega_ws.ini version 1.0.2
+//vega_ws.ini version 1.0.3
 const DELAY_MESSAGE = 10000;
 const DELAY_RECONNECT = 5000;
 const MAX_DELAY_PING = 120000;
@@ -77,7 +77,7 @@ class VegaWS extends EventEmitter
     }
     catch (e)
     {
-      console.log( moment().format('LLL'), e );
+      console.log( moment().format('LLL')+': [WS]', e );
     }
   }
   _message ( message )
@@ -93,7 +93,7 @@ class VegaWS extends EventEmitter
     }
     catch ( e )
     {
-      console.log( moment().format('LLL') + ': ', e );
+      console.log( moment().format('LLL') + ': [WS]', e );
     }
     finally
     {
@@ -102,19 +102,19 @@ class VegaWS extends EventEmitter
   }
   _error ()
   {
-    console.log( moment().format('LLL') + ': ', 'WS error');
+    console.log( moment().format('LLL') + ': [WS]', 'WS error');
     this._status = false;
     this._self.emit( 'no_connect' );
   }
   _close ( code )
   {
-    console.log( moment().format('LLL') + ': ', 'WS close' );
+    console.log( moment().format('LLL') + ': [WS]', 'WS close' );
     this._status = false;
     this._self.emit( 'no_connect' );
   }
   _open ()
   {
-    console.log( moment().format('LLL') + ': ', 'Successful connection on WS' );
+    console.log( moment().format('LLL') + ': [WS] ', 'Successful connection on WS' );
     this._status = true;
     this._self.emit( 'run' );
   }
@@ -129,14 +129,14 @@ class VegaWS extends EventEmitter
     this._connect.send( JSON.stringify( obj ), function( e ) {
       if ( e )
       {
-        console.log( moment().format('LLL'), e );
+        console.log( moment().format('LLL')+': [WS] ', e );
         try
         {
           connect._status = false;
         }
         catch (e)
         {
-          console.log( moment().format('LLL'), e );
+          console.log( moment().format('LLL')+': [WS] ', e );
         }
       }
     });
