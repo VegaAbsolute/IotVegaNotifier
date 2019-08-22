@@ -1,3 +1,6 @@
+//parser.js version 1.0.1
+//Идентичен классу data_lora из vega_lib.js iotvega pulse
+//за исключением того что функция isObject в данном классе метод
 class Parser
 {
     constructor(dt,data,port,version)
@@ -106,6 +109,10 @@ class Parser
         this.num_package;
         this.port = port;
         this.validParse=this.set_data(data);
+    }
+    isObject(obj)
+    {
+        return typeof obj === 'object' && obj !== null;
     }
     _set_last_time()
     {
@@ -1179,7 +1186,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -1223,7 +1230,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -1267,7 +1274,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
@@ -1315,7 +1322,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_divider = typeof divider === 'number';
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_divider&&valid_param)
@@ -1364,7 +1371,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_divider = typeof divider === 'number';
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_divider&&valid_param)
@@ -1409,7 +1416,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_divider = typeof divider === 'number';
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_divider&&valid_param)
@@ -1454,7 +1461,7 @@ class Parser
     {
         try
         {
-            var valid_arr = isObject(arr_b) && arr_b.length;
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
             var valid_param = typeof param === 'string';
             if (valid_arr&&valid_param)
             {
