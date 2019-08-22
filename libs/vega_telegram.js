@@ -156,7 +156,7 @@ class VegaTelegram extends EventEmitter
             }
         }
     }
-  }
+  } 
   sendMessage(data,uuid)
   {
     let _self = this;
