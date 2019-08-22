@@ -163,7 +163,7 @@ class VegaTelegram extends EventEmitter
     return new Promise((resolve, reject)=>{
       try
       {
-        _self._connect.sendMessage(data.chatId, data.message)
+        _self._connect.sendMessage(data.chatId, data.mes)
         .then((res)=>{
             resolve({status:true,uuid:uuid,username:res.chat.username});
         })
