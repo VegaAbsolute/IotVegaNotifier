@@ -86,10 +86,11 @@ class VegaTelegram extends EventEmitter
       if( this._connect._status === true )
       {
         this._connect.getMe()
-        .then((info)=>{console.log(info)})
+        .then((info)=>{
+          console.log(moment().format('LLL')+': '+'[Telegram] Successfully started telegram bot management '+ info.username);
+        })
         .catch(this._error);
       }
-      console.log(this._status);
     },400);
   }
   _getChatID(msg)
