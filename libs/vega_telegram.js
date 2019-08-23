@@ -5,6 +5,7 @@ const EventEmitter = require('events');
 const TelegramBot = require('node-telegram-bot-api');
 const Agent = require('socks5-https-client/lib/Agent');
 let moment = require( 'moment' );
+let linkBot = undefined;
 class VegaTelegram extends EventEmitter
 {
   constructor(token,status,proxy,debugMOD)
@@ -53,6 +54,7 @@ class VegaTelegram extends EventEmitter
   }
   reload()
   {
+    linkBot = undefined;
     let polling = {polling:true};
     if ( this.validProxy() )
     {
@@ -79,12 +81,15 @@ class VegaTelegram extends EventEmitter
     this._connect.on('polling_error',this._error);
     this._connect.onText(/\/chatid/,this._getChatID);
     this._connect._self = this;
+    linkBot = this._connect;
   }
   _getChatID(msg)
   {
     var chatId = msg.chat.id;
-    console.log(this);
-    //this._connect.sendMessage(chatId, "ChatID: "+chatId.toString());
+    if( linkBot !== undefined && typeof linkBot === 'object' && linkBot._status === true )
+    {
+      linkBot.sendMessage(chatId, "ChatID: "+chatId.toString());
+    }
     console.log(moment().format('LLL')+': '+'[Telegram] ChatID: '+ chatId.toString());
   }
   _error(err)
