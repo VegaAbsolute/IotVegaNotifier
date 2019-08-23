@@ -41,16 +41,11 @@ function checkValidRXType(type)
     return false;
   }
 }
-function sendConsoleMessage(time,channel)
-{
-  console.log(time,'Danger',channel);
-}
 function wasAlarm(time,channel)
 {
   if(!channel.enable_danger) return;
   sendSMS(time,channel);
   sendVoiceMessage(time,channel);
-  sendConsoleMessage(time,channel);
   sendTelegram(time,channel);
 }
 function getValidTelephone(num)
