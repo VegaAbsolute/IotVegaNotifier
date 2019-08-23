@@ -82,6 +82,7 @@ class VegaTelegram extends EventEmitter
     this._connect.onText(/\/chatid/,this._getChatID);
     this._connect._self = this;
     linkBot = this._connect;
+    setTimeout(()=>{console.log(this._status);},400);
   }
   _getChatID(msg)
   {
