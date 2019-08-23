@@ -83,7 +83,8 @@ class VegaTelegram extends EventEmitter
   _getChatID(msg)
   {
     var chatId = msg.chat.id;
-    this._connect.sendMessage(chatId, "ChatID: "+chatId.toString());
+    console.log(this);
+    //this._connect.sendMessage(chatId, "ChatID: "+chatId.toString());
     console.log(moment().format('LLL')+': '+'[Telegram] ChatID: '+ chatId.toString());
   }
   _error(err)
