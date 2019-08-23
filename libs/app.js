@@ -184,16 +184,13 @@ function sendSMS(time,channel)
 }
 function sendTelegram(time,channel)
 {
-  console.log('send telegram ', time);
   if(telegram.active)
   {
-    console.log('active');
     let chats = [];
     if(channel.telegram_chats)
     {
       chats = channel.telegram_chats.split(',');
     }
-    console.log('chats',chats);
     let mytelegram = channel.telegram;
     let nameObject = channel.name_level_1;
     let room = channel.level_2;
@@ -205,20 +202,15 @@ function sendTelegram(time,channel)
       message = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
     }
     message_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
-    console.log('message',message);
-    console.log('mytelegram',mytelegram);
     if(mytelegram)
     {
       if(chats.length>0)
       {
-        console.log('-------');
         for (let i = 0 ; i < chats.length; i++)
         {
           let chat = getValidChat(chats[i]);
-          console.log(chat);
           if(chat!==false)
           {
-            console.log(message,chat,new Date().getTime());
             telegram.pushMessage(message,chat,new Date().getTime());
           }
         }
