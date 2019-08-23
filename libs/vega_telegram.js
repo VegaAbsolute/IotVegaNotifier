@@ -77,7 +77,23 @@ class VegaTelegram extends EventEmitter
     this._connect._status = true;
     this._connect._timeLastUpdate = new Date().getTime();
     this._connect.on('polling_error',this._error);
+    this._connect.onText(/\/chatid/,this._getChatID);
+    bot.onText(/\/id/, (msg) => {
+      // 'msg' is the received Message from Telegram
+    
+      var chatId = msg.chat.id;
+      var resp = 'test'; // the captured "whatever"
+    
+      // send back the matched "whatever" to the chat
+      bot.sendMessage(chatId, resp);
+    });
     this._connect._self = this;
+  }
+  _getChatID(msg)
+  {
+    var chatId = msg.chat.id;
+    this.sendMessage(chatId, "ChatID: "+chatId.toString());
+    console.log(moment().format('LLL')+': '+'[Telegram] ChatID: '+ chatId.toString());
   }
   _error(err)
   {
