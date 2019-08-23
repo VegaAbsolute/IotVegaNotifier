@@ -192,17 +192,16 @@ function sendTelegram(time,channel)
       chats = channel.telegram_chats.split(',');
     }
     let mytelegram = channel.telegram;
-    mytelegram = true
     let nameObject = channel.name_level_1;
     let room = channel.level_2;
     let name = channel.name;
-    let messageSMS = channel.message_sms;
-    let messageSMS_admin = 'undefined';
-    if(!messageSMS)
+    let message = channel.message_messenger;
+    let message_admin = 'undefined';
+    if(!message)
     {
-       messageSMS = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
+      message = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
     }
-    messageSMS_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
+    message_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
     if(mytelegram)
     {
       if(chats.length>0)
@@ -212,13 +211,13 @@ function sendTelegram(time,channel)
           let chat = getValidChat(chats[i]);
           if(chat!==false)
           {
-            telegram.pushMessage(messageSMS,chat,new Date().getTime());
+            telegram.pushMessage(message,chat,new Date().getTime());
           }
         }
       }
       if(config.debugMOD&&config.telegram_admin_chatId)
       {
-        telegram.pushMessage(messageSMS_admin,config.telegram_admin_chatId,new Date().getTime());
+        telegram.pushMessage(message_admin,config.telegram_admin_chatId,new Date().getTime());
       }
     }
   }
