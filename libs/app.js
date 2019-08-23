@@ -706,6 +706,13 @@ function rx(obj)
     return;
   }
 }
+function telegramStarted()
+{
+  if(config.telegram_admin_chatId)
+  {
+    telegram.pushMessage('Successfully started IotVega Notifier',config.telegram_admin_chatId,new Date().getTime());
+  }
+}
 function free()
 {
   if(waitingReboot)
@@ -776,6 +783,7 @@ function run(conf)
       smsc.on('free',free);
       linphone.on('free',free);
       telegram.on('free',free);
+      telegram.on('telegramStarted',telegramStarted);
     }
     catch (e)
     {

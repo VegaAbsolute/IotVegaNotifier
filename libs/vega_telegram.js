@@ -90,6 +90,7 @@ class VegaTelegram extends EventEmitter
           console.log(moment().format('LLL')+': '+'[Telegram] Successfully started telegram bot management '+ info.username);
         })
         .catch(this._error);
+        this.emit('telegramStarted');
       }
     },400);
   }
