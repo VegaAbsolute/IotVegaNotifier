@@ -8,6 +8,14 @@ class Config
       login:'root',
       password:'123'
     };
+    this._smtp = {
+      status:false,
+      host:'smpt.example.com',
+      port:465,
+      secure:true,
+      user:'',
+      password:''
+    };
     this._smpp = {
       address:{},
       system:{},
@@ -70,6 +78,30 @@ class Config
     };
   }
   //setters-------------------------
+  set smtp_enabled(val)
+  {
+    this._smtp.status = val;
+  }
+  set smtp_host(val)
+  {
+    this._smtp.host = val;
+  }
+  set smtp_port(val)
+  {
+    this._smtp.port = val;
+  }
+  set smtp_secure(val)
+  {
+    this._smtp.secure = val;
+  }
+  set smtp_user(val)
+  {
+    this._smtp.user = val;
+  }
+  set smtp_password(val)
+  {
+    this._smtp.password = val;
+  }
   set ws_user(val)
   {
     this._ws.login = val;
@@ -297,6 +329,30 @@ class Config
     this._telegram.proxy.password = val;
   }
   //getters-------------------------
+  get smtp()
+  {
+    return this._smtp.status;
+  }
+  get smpp_host()
+  {
+    return this._smtp.host;
+  }
+  get smpp_port()
+  {
+    return this._smtp.port;
+  }
+  get smpp_secure()
+  {
+    return this._smtp.secure;
+  }
+  get smpp_user()
+  {
+    return this._smtp.user;
+  }
+  get smpp_password()
+  {
+    return this._smtp.password;
+  }
   get ws()
   {
     return this._ws.url;
