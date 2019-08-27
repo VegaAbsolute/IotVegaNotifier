@@ -166,7 +166,13 @@ class VegaSMTP extends EventEmitter
     return new Promise((resolve, reject)=>{
       try
       {
-        _self._connect.sendMessage(data.email, data.mes)
+        _self._connect.sendMail({
+            from: '"IotVegaNatifier" <'+this.user+'>', 
+            to: data.email, 
+            subject: 'IotVegaNatifier danger', // Subject line
+            text: data.mes,
+            //html: ''
+        })
         .then((res)=>{
             resolve({status:true,uuid:uuid});
         })
