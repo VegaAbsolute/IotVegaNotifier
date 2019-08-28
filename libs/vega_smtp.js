@@ -166,7 +166,7 @@ class VegaSMTP extends EventEmitter
     let _self = this;
     return new Promise((resolve, reject)=>{
         console.log({
-            from: '"IotVegaNatifier" <'+this.user+'>', 
+            from: '"IotVegaNatifier" <'+_self._user+'>', 
             to: data.email, 
             subject: 'IotVegaNatifier danger', // Subject line
             text: data.mes,
@@ -175,7 +175,7 @@ class VegaSMTP extends EventEmitter
       try
       {
         _self._connect.sendMail({
-            from: '"IotVegaNatifier" <'+this.user+'>', 
+            from: '"IotVegaNatifier" <'+_self._user+'>', 
             to: data.email, 
             subject: 'IotVegaNatifier danger', // Subject line
             text: data.mes,
