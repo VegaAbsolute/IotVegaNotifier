@@ -64,15 +64,6 @@ class VegaSMTP extends EventEmitter
             pass: pass
         }
     });
-    console.log({
-        host: host,
-        port: port,
-        secure: secure,
-        auth: {
-            user: user,
-            pass: pass
-        }
-    });
     this._connect._self = this;
     setTimeout(()=>{
         let self = this;
@@ -165,13 +156,6 @@ class VegaSMTP extends EventEmitter
   {
     let _self = this;
     return new Promise((resolve, reject)=>{
-        console.log({
-            from: '"IotVegaNatifier" <'+_self._user+'>', 
-            to: data.email, 
-            subject: 'IotVegaNatifier danger', // Subject line
-            text: data.mes,
-            //html: ''
-        });
       try
       {
         _self._connect.sendMail({
