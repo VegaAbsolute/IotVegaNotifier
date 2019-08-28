@@ -64,8 +64,6 @@ class VegaSMTP extends EventEmitter
             pass: pass
         }
     });
-    this._connect._status = true;
-    this._connect._timeLastUpdate = new Date().getTime();
     this._connect._self = this;
     setTimeout(()=>{
       if( this._connect._status === true )
@@ -88,7 +86,7 @@ class VegaSMTP extends EventEmitter
   }
   _error(err)
   {
-    console.log(moment().format('LLL')+': '+'[SMTP] Error '+err.code+' . '+err.response);
+    console.log(moment().format('LLL')+': '+'[SMTP] Error ',err);
     this._status = false;  
     this._timeLastUpdate = new Date().getTime();
   }
