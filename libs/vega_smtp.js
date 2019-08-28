@@ -64,6 +64,15 @@ class VegaSMTP extends EventEmitter
             pass: pass
         }
     });
+    console.log({
+        host: host,
+        port: port,
+        secure: secure,
+        auth: {
+            user: user,
+            pass: pass
+        }
+    });
     this._connect._self = this;
     setTimeout(()=>{
         let self = this;
