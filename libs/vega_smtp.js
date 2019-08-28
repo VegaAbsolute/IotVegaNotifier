@@ -66,8 +66,6 @@ class VegaSMTP extends EventEmitter
     });
     this._connect._self = this;
     setTimeout(()=>{
-      if( this._connect._status === true )
-      {
         let self = this;
         this._connect.verify((err)=>{
             if (err) 
@@ -81,7 +79,6 @@ class VegaSMTP extends EventEmitter
                 console.log(moment().format('LLL')+': '+'[SMTP] Successfully started SMTP');
             }
         });
-      }
     },100);
   }
   _error(err)
