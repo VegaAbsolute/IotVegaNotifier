@@ -70,20 +70,21 @@ class VegaSMTP extends EventEmitter
     setTimeout(()=>{
       if( this._connect._status === true )
       {
-        this._connect.verify(this._verify);
+        let self = this;
+        this._connect.verify((err)=>{
+            if (err) 
+            {
+                self._error(err);
+            }
+            else
+            {
+                self._connect._status = true;
+                self._connect._timeLastUpdate = new Date().getTime();
+                console.log(moment().format('LLL')+': '+'[SMTP] Successfully started SMTP');
+            }
+        });
       }
     },100);
-  }
-  _verify(err,succ)
-  {
-    if (err) 
-    {
-      this._error(err);
-    } 
-    else 
-    {
-        console.log(moment().format('LLL')+': '+'[SMTP] Successfully started SMTP');
-    }
   }
   _error(err)
   {
