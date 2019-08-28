@@ -70,7 +70,9 @@ class VegaSMTP extends EventEmitter
         this._connect.verify((err)=>{
             if (err) 
             {
-                self._error(err);
+                console.log(moment().format('LLL')+': '+'[SMTP] Error ',err);
+                this._connect._status = false;  
+                this._connect._timeLastUpdate = new Date().getTime();
             }
             else
             {
@@ -80,12 +82,6 @@ class VegaSMTP extends EventEmitter
             }
         });
     },100);
-  }
-  _error(err)
-  {
-    console.log(moment().format('LLL')+': '+'[SMTP] Error ',err);
-    this._status = false;  
-    this._timeLastUpdate = new Date().getTime();
   }
   checkStackEmptiness()
   {
@@ -141,7 +137,7 @@ class VegaSMTP extends EventEmitter
                                 {
                                     _self.pushMessage(tmp.message,tmp.email,tmp.firstTime);
                                 }
-                                console.log(moment().format('LLL')+': '+'[SMTP] Failed to send message '+tmp.email+'. Error '+ res.err.code+'. '+res.err.response);
+                                console.log(moment().format('LLL')+': '+'[SMTP] Failed to send message '+tmp.email, res.err);
                                 _self.checkStackEmptiness();
                             }
                         }
