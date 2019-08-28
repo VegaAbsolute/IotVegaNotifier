@@ -333,23 +333,23 @@ class Config
   {
     return this._smtp.status;
   }
-  get smpp_host()
+  get smtp_host()
   {
     return this._smtp.host;
   }
-  get smpp_port()
+  get smtp_port()
   {
     return this._smtp.port;
   }
-  get smpp_secure()
+  get smtp_secure()
   {
     return this._smtp.secure;
   }
-  get smpp_user()
+  get smtp_user()
   {
     return this._smtp.user;
   }
-  get smpp_password()
+  get smtp_password()
   {
     return this._smtp.password;
   }
