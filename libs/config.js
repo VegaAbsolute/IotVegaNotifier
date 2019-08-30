@@ -33,16 +33,7 @@ class Config
       address: {}, //host
       cron: {
         command:'*/1 * * * *'
-      },      //command
-      rhvoice: {
-        fileDirectory:'tmp',
-        voices:{
-          preferred:'Anna',
-          spare:'Alan'
-        },
-        startupSound:'alert.wav',
-        process:'RHVoice-test'
-      }   //voices, process, fileDirectory,startupSound
+      }
     };
     this._smsc = {
       system:{},
@@ -53,11 +44,6 @@ class Config
     };
     this._devices = {
       betweenTimeSMS:30000
-    };
-    this._baresip = {
-      system:{},
-      settings:{},
-      status:false
     };
     this._telegram = {
       status:false,
@@ -133,51 +119,6 @@ class Config
   set smsc_sender(val)
   {
     this._smsc.settings.sender = val;
-  }
-  set sip_enabled(val)
-  {
-    this._sip.status = val;
-  }
-  set sip_host(val)
-  {
-    this._sip.address.host = val;
-  }
-  set sip_user(val)
-  {
-    this._sip.system.login = val;
-  }
-  set sip_password(val)
-  {
-    this._sip.system.password = val;
-  }
-  set sip_cron(val)
-  {
-    this._sip.cron = {
-      command:val
-    };
-  }
-  set sip_directory(val)
-  {
-    if(val!==undefined)
-    {
-      this._sip.rhvoice.fileDirectory = val;
-    }
-  }
-  set sip_startup_sound(val)
-  {
-    this._sip.rhvoice.startupSound = val;
-  }
-  set sip_voice_preferred(val)
-  {
-    this._sip.rhvoice.voices.preferred = val;
-  }
-  set sip_voice_spare(val)
-  {
-    this._sip.rhvoice.voices.spare = val;
-  }
-  set sip_rhvoice(val)
-  {
-    this._sip.rhvoice.process = val;
   }
   set other_auto_update(val)
   {
@@ -377,31 +318,7 @@ class Config
   {
     return this._smsc.system;
   }
-  get sipHost()
-  {
-    return this._sip.address.host;
-  }
-  get sipLogin()
-  {
-    return this._sip.system.login;
-  }
-  get sipPassword()
-  {
-    return this._sip.system.password;
-  }
-  get sipOtherSettings()
-  {
-    return this._sip.system.other;
-  }
-  get sipRHvoice()
-  {
-    return {
-      voices:this._sip.rhvoice.voices.preferred+'+'+this._sip.rhvoice.voices.spare,
-      process:this._sip.rhvoice.process,
-      directory:this._sip.rhvoice.fileDirectory,
-      startupSound:this._sip.rhvoice.startupSound
-    };
-  }
+  
   get sipCron()
   {
     if(typeof this._sip.cron === 'object')
@@ -489,45 +406,5 @@ class Config
   {
     return true;
   }
-  //rudiments
-  set devices_between_time(val)
-  {
-    this._devices.betweenTimeSMS = val;
-  }
-  set debug_enabled(val)
-  {
-    this._debugMOD.status = val;
-  }
-  set debug_phone(val)
-  {
-    this._debugMOD.settings.telephone = val;
-  }
-  get baresip()
-  {
-    return this._baresip.status;
-  }
-  get baresipIP()
-  {
-    return this._baresip.system.ip;
-  }
-  get baresipPort()
-  {
-    return this._baresip.system.port;
-  }
-  get baresipType()
-  {
-    return this._baresip.settings.type;
-  }
-  set baresip(val)
-  {
-    this._baresip.status = val;
-  }
-  baresip_address(ip,port,type)
-  {
-    this._baresip.system.ip = ip;
-    this._baresip.system.port = port;
-    this._baresip.settings.type = type;
-  }
-
 }
 module.exports = Config;
