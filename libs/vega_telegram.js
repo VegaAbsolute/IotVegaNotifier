@@ -143,7 +143,7 @@ class VegaTelegram extends EventEmitter
                         {
                             if(_self._stack[j].uuid === res.uuid)
                             {
-                                console.log(moment().format('LLL')+': '+'[Telegram] Success to send message '+_self._stack[j].chatId+'( '+res.username+' )');
+                                resolve({status:true,uuid:uuid,username:res.chat.username!==undefined?res.chat.username:res.chat.title});
                                 _self._stack.splice(j,1);
                                 _self.checkStackEmptiness();
                             }
