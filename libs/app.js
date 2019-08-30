@@ -328,7 +328,7 @@ function rx(obj)
             if(validNumChannel)
             {
               let channel = dev.get_channel(numChannel);
-              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
@@ -343,7 +343,7 @@ function rx(obj)
             if(validNumChannel)
             {
               let channel = dev.get_channel(numChannel);
-              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
@@ -360,7 +360,7 @@ function rx(obj)
               {
                 num_channel = num_channel + 6;
                 let channel = dev.get_channel(numChannel);
-                let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+                let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
                 if(validChannel&&dataDevice.type_package==2)
                 {
                   dev.lastDateSMS = currentDate;
@@ -373,7 +373,7 @@ function rx(obj)
           case 4:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               if ( dev.version === 1 )
@@ -410,7 +410,7 @@ function rx(obj)
           case 5:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               if ( dev.version === 1 )
@@ -471,7 +471,7 @@ function rx(obj)
           case 6:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason !== 0;
@@ -487,7 +487,7 @@ function rx(obj)
           case 7:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason !== 0;
@@ -503,7 +503,7 @@ function rx(obj)
           case 8:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason !== 0;
@@ -519,7 +519,7 @@ function rx(obj)
           case 9:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               let danger = dataDevice.state_display||dataDevice.leaking||dataDevice.breakthrough||dataDevice.hall_1;
@@ -535,7 +535,7 @@ function rx(obj)
           case 10:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason !== 0;
@@ -553,7 +553,7 @@ function rx(obj)
             if(validNumChannel)
             {
               let channel = dev.get_channel(numChannel);
-              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
               if ( validChannel && dataDevice.type_package==2 )
               {
                 dev.lastDateSMS = currentDate;
@@ -566,7 +566,7 @@ function rx(obj)
           case 12:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               let info = dataDevice.type_package==1;
@@ -584,7 +584,7 @@ function rx(obj)
           case 13:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason > 0;
@@ -600,7 +600,7 @@ function rx(obj)
           case 14:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               if(dataDevice.alarm)
@@ -615,7 +615,7 @@ function rx(obj)
           case 15:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               let checkEvent = dataDevice.reason!=='00';
@@ -637,7 +637,7 @@ function rx(obj)
           case 17:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason!=1;
@@ -655,7 +655,7 @@ function rx(obj)
             if(validNumChannel)
             {
               let channel = dev.get_channel(num_channel);
-              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel)
               {
                 if ( dataDevice.type_package==2 )
@@ -674,7 +674,7 @@ function rx(obj)
             {
               num_channel = num_channel + 10;
               let channel = dev.get_channel(num_channel);
-              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel)
               {
                 if ( dataDevice.type_package==5 )
@@ -693,7 +693,7 @@ function rx(obj)
             {
               num_channel = num_channel + 10;
               let channel = dev.get_channel(num_channel);
-              let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel)
               {
                 if ( dataDevice.type_package==5 )
@@ -709,7 +709,7 @@ function rx(obj)
           case 23:
           {
             let channel = dev.get_channel(1);
-            let validChannel = channel!==undefined&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason!=1;
