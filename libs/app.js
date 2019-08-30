@@ -3,7 +3,6 @@ const VegaSMPP = require('./vega_smpp.js');
 const VegaTelegram = require('./vega_telegram.js');
 const VegaSMTP = require('./vega_smtp.js');
 const SMSCru = require('./vega_smsc.js');
-const VegaLinphone = require('./vega_linphone.js');
 const Devices = require('./devices.js');
 const VegaWS = require('./vega_ws.js');
 const Config = require('./config.js');
@@ -17,7 +16,6 @@ let statusAuth = false;
 let premission = {};
 let smpp = {};
 let smsc = {};
-let linphone = {};
 let telegram = {};
 let smtp = {};
 let ws = {};
@@ -139,24 +137,6 @@ function sendVoiceMessage(time,channel)
       if(config.debugMOD&&config.telephoneAdministrator)
       {
         smsc.pushVoiceMessage(voiceMessage_admin,config.telephoneAdministrator,new Date().getTime());
-      }
-    }
-    if(linphone.active)
-    {
-      if(telephones.length>0)
-      {
-        for (let i = 0 ; i < telephones.length; i++)
-        {
-          let telephone = getValidTelephone(telephones[i]);
-          if(telephone!==false)
-          {
-            linphone.pushVoiceMessage(voiceMessage,telephone,new Date().getTime());
-          }
-        }
-      }
-      if(config.debugMOD&&config.telephoneAdministrator)
-      {
-        linphone.pushVoiceMessage(voiceMessage_admin,config.telephoneAdministrator,new Date().getTime());
       }
     }
   }
@@ -780,7 +760,7 @@ function free()
 }
 function emergencyExit()
 {
-  if(smpp.employment||smsc.employment||linphone.employment||telegram.employment||smtp.employment)
+  if(smpp.employment||smsc.employment||telegram.employment||smtp.employment)
   {
     return;
   }
@@ -835,12 +815,10 @@ function run(conf)
       initWS();
       smpp = new VegaSMPP(config.address_smpp,config.system_smpp,config.smpp_info,config.smpp,config.debugMOD);
       smsc = new SMSCru(config.smsc_auth,config.smsc,config.smsc_settings,config.debugMOD);
-      linphone = new VegaLinphone(config.sipHost,config.sipLogin,config.sipPassword,config.sipOtherSettings,config.sipCron,config.sipRHvoice,config.sip,config.debugMOD);
       telegram = new VegaTelegram(config.telegram_bot_token,config.telegram,config.telegram_proxy,config.debugMOD);
       smtp = new VegaSMTP(config.smtp,config.smtp_host,config.smtp_port,config.smtp_secure,config.smtp_user,config.smtp_password,config.debugMOD);
       smpp.on('free',free);
       smsc.on('free',free);
-      linphone.on('free',free);
       telegram.on('free',free);
       smtp.on('free',free);
       telegram.on('telegramStarted',telegramStarted);
