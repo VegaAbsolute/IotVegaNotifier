@@ -1,50 +1,16 @@
-# IotVegaNotifier
+[![IotVega](http://iotvega.com/images/logo.png)](http://iotvega.com)
+# IotVegaNotifierLite
 Application to notify IotVegaServer users about an alarm event.
 ## Quick start
-1. Install the docker.io
-
-- `sudo apt-get install docker.io`
-
-- `sudo usermod -aG docker YourUser`
-
-- `newgrp docker`
-
-2. Run Docker IotVegaNotifier `docker run -it -d -p 5060:5060 --restart=always --name iotveganotifier vegaabsolute/iotveganotifier`
-
-3. Configure IotVegaNotifier
-
-- Open the console `docker exec -it iotveganotifier bash`
-
-- Go to the folder with the application `cd IotVegaNotifier`
-
-- Open the application configuration file for editing. `nano config.ini`
-
-- Restart the application  IotVegaNotifier `pm2 restart 0`
-
-To exit the console, press CTRL+D
-
-## Self-build docker
-
-1. Install the docker.io
-
-- `sudo apt-get install docker.io`
-
-- `sudo usermod -aG docker YourUser`
-
-- `newgrp docker`
-
-2. Make git clone IotVegaNotifier application `git clone https://github.com/VegaAbsolute/IotVegaNotifier.git`
-3. Go to the folder with the application `cd IotVegaNotifier`
-4. Build `docker build -t ivn .`
-5. Run Docker IotVegaNotifier `docker run -it -d -p 5060:5060 --restart=always --name iotveganotifier ivn:latest`
-6. Configure IotVegaNotifier
-
-- Open the console `docker exec -it iotveganotifier bash`
-
-- Go to the folder with the application `cd IotVegaNotifier`
-
-- Open the application configuration file for editing. `nano config.ini`
-
-- Restart the application  IotVegaNotifier `pm2 restart 0`
-
+#### Preparation
+- Install node.js, [download](https://nodejs.org/en/download/)
+- Install the Nodejs Application Task Manager PM2 `npm install pm2 -g`
+- Install git (examle for ubuntu `apt-get install git`)
+#### Installing and running the application
+- Make a clone of the repository IotVegaNotifier `git clone https://github.com/VegaAbsolute/IotVegaNotifier.git -b lite`
+- Go to the Applications folder IotVegaNotifier `cd IotVegaNotifier`
+- Running the application `pm2 start npm -- start`
+- Configure IotVegaNotifier. Edit the config.ini file.
+- Restart the application so that the settings are applied `pm2 restart 0`
+> To view the program work use the command `pm2 monit`
 To exit the console, press CTRL+D
