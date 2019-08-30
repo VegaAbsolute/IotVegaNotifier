@@ -189,7 +189,7 @@ class VegaTelegram extends EventEmitter
       {
         _self._connect.sendMessage(data.chatId, data.mes)
         .then((res)=>{
-            resolve({status:true,uuid:uuid,username:res.chat.username});
+            resolve({status:true,uuid:uuid,username:res.chat.username!==undefined?res.chat.username:res.chat.title});
         })
         .catch((err)=>{
             _self._connect._status = false;
