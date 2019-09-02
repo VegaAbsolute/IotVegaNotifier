@@ -358,7 +358,7 @@ function rx(obj)
           {
               if(validNumChannel)
               {
-                num_channel = num_channel + 6;
+                numChannel = numChannel + 6;
                 let channel = dev.get_channel(numChannel);
                 let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
                 if(validChannel&&dataDevice.type_package==2)
@@ -654,7 +654,7 @@ function rx(obj)
           {
             if(validNumChannel)
             {
-              let channel = dev.get_channel(num_channel);
+              let channel = dev.get_channel(numChannel);
               let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel)
               {
@@ -672,8 +672,8 @@ function rx(obj)
           {
             if(validNumChannel)
             {
-              num_channel = num_channel + 10;
-              let channel = dev.get_channel(num_channel);
+              numChannel = numChannel + 10;
+              let channel = dev.get_channel(numChannel);
               let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel)
               {
@@ -691,8 +691,8 @@ function rx(obj)
           {
             if(validNumChannel)
             {
-              num_channel = num_channel + 10;
-              let channel = dev.get_channel(num_channel);
+              numChannel = numChannel + 10;
+              let channel = dev.get_channel(numChannel);
               let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel)
               {
