@@ -159,9 +159,9 @@ class VegaSMTP extends EventEmitter
       try
       {
         _self._connect.sendMail({
-            from: '"IotVegaNatifier" <'+_self._user+'>', 
+            from: '"IotVegaNotifier" <'+_self._user+'>', 
             to: data.email, 
-            subject: 'IotVegaNatifier danger', // Subject line
+            subject: 'IotVegaNotifier danger', // Subject line
             text: data.mes,
             //html: ''
         })
