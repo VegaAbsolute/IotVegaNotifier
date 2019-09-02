@@ -143,7 +143,7 @@ class VegaTelegram extends EventEmitter
                         {
                             if(_self._stack[j].uuid === res.uuid)
                             {
-                                resolve({status:true,uuid:uuid,username:res.chat.username!==undefined?res.chat.username:res.chat.title});
+                                console.log(moment().format('LLL')+': '+'[Telegram] Success to send message '+_self._stack[j].chatId+'( '+res.username+' )');
                                 _self._stack.splice(j,1);
                                 _self.checkStackEmptiness();
                             }
@@ -189,7 +189,7 @@ class VegaTelegram extends EventEmitter
       {
         _self._connect.sendMessage(data.chatId, data.mes)
         .then((res)=>{
-            resolve({status:true,uuid:uuid,username:res.chat.username});
+          resolve({status:true,uuid:uuid,username:res.chat.username!==undefined?res.chat.username:res.chat.title});
         })
         .catch((err)=>{
             _self._connect._status = false;
