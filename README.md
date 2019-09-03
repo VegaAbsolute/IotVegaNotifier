@@ -3,7 +3,12 @@
 Application to notify IotVegaServer users about an alarm event.
 ## Quick start
 #### Preparation
-- Install node.js, [download](https://nodejs.org/en/download/)
+- Install node.js 
+[download](https://nodejs.org/en/download/)
+or
+`apt-get install nodejs` - Example for linux ubuntu
+- Install npm
+`apt-get install npm` - Example for linux ubuntu
 - Install the Nodejs Application Task Manager PM2 `npm install pm2 -g`
 - Install git (examle for ubuntu `apt-get install git`)
 #### Installing and running the application
