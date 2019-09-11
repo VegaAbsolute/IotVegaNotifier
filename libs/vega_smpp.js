@@ -172,7 +172,7 @@ class VegaSMPP extends EventEmitter
       else
       {
         _self._status = false;
-        console.log(moment().format('LLL')+': '+'Not successful connection on SMPP');
+        console.log('Not successful connection on SMPP, status ='+pdu.command_status);
       }
     });
     this._self.checkStackSMS();
