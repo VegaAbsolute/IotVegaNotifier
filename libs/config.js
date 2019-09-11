@@ -1,3 +1,4 @@
+let moment = require( 'moment' );
 class Config
 {
   constructor()
@@ -6,6 +7,14 @@ class Config
       url:'ws://0.0.0.0:8002',
       login:'root',
       password:'123'
+    };
+    this._smtp = {
+      status:false,
+      host:'smpt.example.com',
+      port:465,
+      secure:true,
+      user:'',
+      password:''
     };
     this._smpp = {
       address:{},
@@ -50,12 +59,49 @@ class Config
       settings:{},
       status:false
     };
+    this._telegram = {
+      status:false,
+      token:undefined,
+      chatId:undefined,
+      proxy:{
+        status:false,
+        host:undefined,
+        port:undefined,
+        login:undefined,
+        password:undefined,
+        type: 'socks5'
+      }
+    };
     this._debugMOD = {
       status:false,
       settings:{}
     };
   }
   //setters-------------------------
+  set smtp_enabled(val)
+  {
+    this._smtp.status = val;
+  }
+  set smtp_host(val)
+  {
+    this._smtp.host = val;
+  }
+  set smtp_port(val)
+  {
+    this._smtp.port = val;
+  }
+  set smtp_secure(val)
+  {
+    this._smtp.secure = val;
+  }
+  set smtp_user(val)
+  {
+    this._smtp.user = val;
+  }
+  set smtp_password(val)
+  {
+    this._smtp.password = val;
+  }
   set ws_user(val)
   {
     this._ws.login = val;
@@ -250,7 +296,63 @@ class Config
   {
     this._smpp.info.sm_default_msg_id = val;
   }
+  set telegram_enabled(val)
+  {
+    this._telegram.status = val;
+  }
+  set telegram_bot_token(val)
+  {
+    this._telegram.token = val;
+  }
+  set telegram_administartor_chat_id(val)
+  {
+    this._telegram.chatId = val;
+  }
+  set telegram_proxy_socks5_host(val)
+  {
+    this._telegram.proxy.host = val;
+  }
+  set telegram_proxy_socks5_enabled(val)
+  {
+    this._telegram.proxy.status = val;
+  }
+  set telegram_proxy_socks5_port(val)
+  {
+    this._telegram.proxy.port = val;
+  }
+  set telegram_proxy_socks5_name(val)
+  {
+    this._telegram.proxy.login = val;
+  }
+  set telegram_proxy_socks5_password(val)
+  {
+    this._telegram.proxy.password = val;
+  }
   //getters-------------------------
+  get smtp()
+  {
+    return this._smtp.status;
+  }
+  get smtp_host()
+  {
+    return this._smtp.host;
+  }
+  get smtp_port()
+  {
+    return this._smtp.port;
+  }
+  get smtp_secure()
+  {
+    return this._smtp.secure;
+  }
+  get smtp_user()
+  {
+    return this._smtp.user;
+  }
+  get smtp_password()
+  {
+    return this._smtp.password;
+  }
   get ws()
   {
     return this._ws.url;
@@ -347,6 +449,22 @@ class Config
   {
     return this._system.settings.auto_update;
   }
+  get telegram()
+  {
+    return this._telegram.status;
+  }
+  get telegram_bot_token()
+  {
+    return this._telegram.token;
+  }
+  get telegram_admin_chatId()
+  {
+    return this._telegram.chatId;
+  }
+  get telegram_proxy()
+  {
+    return this._telegram.proxy;
+  }
   //methods
   setFromConfig(config)
   {
@@ -361,7 +479,7 @@ class Config
       }
       catch (e)
       {
-        console.error(e);
+        console.error(moment().format('LLL')+': ',e);
         return false;
       }
     }

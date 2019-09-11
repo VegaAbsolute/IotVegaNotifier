@@ -2,12 +2,13 @@ const app = require('./libs/app.js');
 const Config = require('./libs/config.js');
 const fs = require('fs');
 const ini = require('ini');
+let moment = require( 'moment' );
 let config = new Config();
 let myConfig = {};
 let path = './config.ini';
 if(!fs.existsSync(path))
 {
-  console.error('Error accessing config.ini file');
+  console.error( moment().format('LLL') + ':'+' Error accessing config.ini file');
   process.exit(0);
 }
 else
@@ -18,7 +19,7 @@ else
   }
   catch (e)
   {
-    console.error('Config.ini file is not in the correct format, check that the data is correctly populated',e);
+    console.error(moment().format('LLL') + ':'+' Config.ini file is not in the correct format, check that the data is correctly populated',e);
     process.exit(0);
   }
   finally
@@ -26,7 +27,7 @@ else
     let resultSetSettings = config.setFromConfig(myConfig);
     if(!resultSetSettings)
     {
-      console.error('Some config.ini parameters were not correctly populated!');
+      console.error(moment().format('LLL') + ':'+' Some config.ini parameters were not correctly populated!');
       process.exit(0);
     }
     else

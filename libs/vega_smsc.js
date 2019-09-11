@@ -3,6 +3,7 @@ var request = require('request');
 var http = require('http');
 const uuidv4 = require('uuid/v4');
 const EventEmitter = require('events');
+let moment = require( 'moment' );
 class SMSCru extends EventEmitter
 {
   constructor(system,status,settings,debugMOD)
@@ -82,7 +83,7 @@ class SMSCru extends EventEmitter
                {
                  if(_self._stack[j].uuid === res.uuid)
                  {
-                   console.log('Success to send voice message '+_self._stack[j].telephone);
+                   console.log(moment().format('LLL')+': '+'Success to send voice message '+_self._stack[j].telephone);
                    _self._stack.splice(j,1);
                    _self.checkStackEmptiness();
                  }
@@ -106,7 +107,7 @@ class SMSCru extends EventEmitter
                      _self.pushVoiceMessage(tmp.message,tmp.telephone,tmp.firstTime);
                    }
                    _self.checkStackEmptiness();
-                   console.log('failed to send  voice message '+tmp.telephone);
+                   console.log(moment().format('LLL')+': '+'failed to send  voice message '+tmp.telephone);
                  }
                }
 
@@ -114,8 +115,8 @@ class SMSCru extends EventEmitter
          })
          .catch((e)=>{
           //  item.status = false;
-           console.log('failed to send  http message. Error 1');
-           console.log(e);
+           console.log(moment().format('LLL')+': '+'failed to send  http message. Error 1');
+           console.log(moment().format('LLL')+': ',e);
          });
        break;
       }
@@ -131,7 +132,7 @@ class SMSCru extends EventEmitter
             'http://smsc.ru/sys/send.php',
              {form:data},
              function (error, response, body) {
-               console.dir(body);
+               console.dir(moment().format('LLL')+': ',body);
                 if (!error && response.statusCode == 200)
                 {
                     resolve({status:true,uuid:uuid});

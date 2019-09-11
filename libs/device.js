@@ -1,4 +1,5 @@
 const Channel = require('./channel.js');
+let devicesInfo = require('./vega_base_data.js').devicesInfo; 
 class Device
 {
   constructor()
@@ -24,6 +25,32 @@ class Device
   {
     return this._devEui!==undefined&&this._type!==undefined;
   }
+  get version()
+  {
+    return this._version;
+  }
+  set version ( value )
+  {
+    if( value === undefined )
+    {
+      value = this.getFirstVersion();
+    }
+    value = parseInt(value);
+    if( isNaN(value) ) value = 0;
+    this._version=value;
+  }
+  getFirstVersion()
+  {
+    for( let i = 0; i < devicesInfo.length; i++)
+    {
+      let devInfo = devicesInfo[i];
+      if( this.type == devInfo.id )
+      {
+        return devInfo.versions.first;
+      }
+    }
+    return 0;
+  }
   refresh(obj)
   {
     this._appEui = obj.appEui;
@@ -33,7 +60,7 @@ class Device
     this._fcnt_down = obj.fcnt_down;
     this._fcnt_up = obj.fcnt_up;
     this._last_data_ts = obj.last_data_ts;
-
+    this.version = obj.version;
     for(let key in obj)
     {
       if(key.indexOf('other_info')>-1)
