@@ -2651,7 +2651,7 @@ class Parser
                             break;
                          }
                     }
-                    else if ( this.version == 1 )
+                    else if ( this.version >= 1 )
                     {
                         switch(this.type_package) {
                             case 1: 
