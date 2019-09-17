@@ -409,7 +409,7 @@ function rx(obj)
               else if ( dev.version === 0 )
               {
                 let checkEvent = dataDevice.reason!==0;
-                let t = parseInt(dataDevice.temperature);
+                let t = parseFloat(dataDevice.temperature);
                 let t_max = channel.max_t;
                 let t_min = channel.min_t;
                 let checkTemperature = t<=t_min||t>=t_max;
