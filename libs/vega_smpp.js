@@ -1,4 +1,4 @@
-//vega_smpp.js version 1.0.0
+//vega_smpp.js version 1.0.2
 const SMPP = require('smpp');
 const uuidv4 = require('uuid/v4');
 const EventEmitter = require('events');
@@ -102,7 +102,7 @@ class VegaSMPP extends EventEmitter
              {
                if(_self._stack[j].uuid === res.uuid)
                {
-                 console.log(moment().format('LLL')+': '+'Success to send sms message '+_self._stack[j].telephone);
+                 console.log(moment().format('LLL')+':  [SMPP]'+'Success to send sms message '+_self._stack[j].telephone);
                  _self._stack.splice(j,1);
                  _self.checkStackEmptiness();
                }
@@ -125,7 +125,7 @@ class VegaSMPP extends EventEmitter
                    _self.pushSMS(tmp.message,tmp.telephone,tmp.firstTime);
                  }
                  _self.checkStackEmptiness();
-                 console.log(moment().format('LLL')+': '+'failed to send  sms message '+tmp.telephone);
+                 console.log(moment().format('LLL')+':  [SMPP]'+'failed to send  sms message '+tmp.telephone);
                }
              }
 
@@ -133,8 +133,8 @@ class VegaSMPP extends EventEmitter
          })
          .catch((e)=>{
            item.status = false;
-           console.log(moment().format('LLL')+': '+'failed to send  sms message. Error 1');
-           console.log(moment().format('LLL')+': ',e);
+           console.log(moment().format('LLL')+':  [SMPP]'+'failed to send  sms message. Error 1');
+           console.log(moment().format('LLL')+':  [SMPP]',e);
          });
          break;
         }
@@ -163,17 +163,17 @@ class VegaSMPP extends EventEmitter
       if (pdu.command_status == 0)
       {
           _self._status = true;
-          console.log(moment().format('LLL')+': '+'Successful connection on SMPP ');
+          console.log(moment().format('LLL')+':  [SMPP]'+'Successful connection on SMPP ');
       }
       else if(pdu.command_status == 5) {
         _self._status = false;
         _self.unbind();
-        console.log(moment().format('LLL')+': '+'Not successful connection on SMPP, status = 5');
+        console.log(moment().format('LLL')+':  [SMPP]'+'Not successful connection on SMPP, status = 5');
       }
       else
       {
         _self._status = false;
-        console.log('Not successful connection on SMPP, status ='+pdu.command_status);
+        console.log(moment().format('LLL')+':  [SMPP]'+'Not successful connection on SMPP, status ='+pdu.command_status);
       }
     });
     this._self.checkStackSMS();
@@ -191,25 +191,25 @@ class VegaSMPP extends EventEmitter
         {
           text = pdu.short_message.message;
         }
-        console.log(moment().format('LLL')+': '+'SMS ' + fromNumber + ' -> ' + toNumber + ': ' + text);
+        console.log(moment().format('LLL')+':  [SMPP]'+'SMS ' + fromNumber + ' -> ' + toNumber + ': ' + text);
         // Reply to SMSC that we received and processed the SMS
         this.deliver_sm_resp({ sequence_number: pdu.sequence_number });
       }
       catch(err)
       {
-        console.log(moment().format('LLL')+': '+'Error event pdu deliver_sm, ',err);
-        console.dir(moment().format('LLL')+': '+'pdu',pdu);
+        console.log(moment().format('LLL')+':  [SMPP]'+'Error event pdu deliver_sm, ',err);
+        console.dir(moment().format('LLL')+':  [SMPP]'+'pdu',pdu);
       }
     }
   }
   _close()
   {
-    console.log(moment().format('LLL')+': '+'smpp disconnected');
+    console.log(moment().format('LLL')+':  [SMPP]'+'smpp disconnected');
     this._status = false;
   }
   _error(error)
   {
-    console.log(moment().format('LLL')+': '+'smpp error', error);
+    console.log(moment().format('LLL')+':  [SMPP]'+'smpp error', error);
     this._status = false;
   }
   lookupPDUStatusKey(status)
@@ -251,7 +251,7 @@ class VegaSMPP extends EventEmitter
             }
             else
             {
-              console.log(moment().format('LLL')+': '+pdu.command_status);
+              console.log(moment().format('LLL')+':  [SMPP]'+pdu.command_status);
               resolve({status:false,uuid:uuid});
             }
         });
