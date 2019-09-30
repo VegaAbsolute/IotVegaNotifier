@@ -43,9 +43,10 @@ function checkValidRXType(type)
     return false;
   }
 }
-function wasAlarm(time,channel)
+function wasAlarm(time,channel,fcnt,devEui)
 {
   if(!channel.enable_danger) return;
+  if(config.debugMOD) console.log(moment().format('LLL')+': '+' Detected alarm DevEui',devEui,'  fcnt:',fcnt);
   sendSMS(time,channel);
   sendVoiceMessage(time,channel);
   sendTelegram(time,channel);
@@ -352,7 +353,7 @@ function rx(obj)
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel);
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI11');
@@ -367,7 +368,7 @@ function rx(obj)
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel);
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI12');
@@ -384,7 +385,7 @@ function rx(obj)
                 if(validChannel&&dataDevice.type_package==2)
                 {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
                 }
               }
               if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI13');
@@ -403,7 +404,7 @@ function rx(obj)
                 if ( checkEvent || checkTemperature )
                 {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
                 }
               }
               else if ( dev.version === 0 )
@@ -416,7 +417,7 @@ function rx(obj)
                 if(checkEvent||checkTemperature)
                 {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
                 }
               }
               else
@@ -439,7 +440,7 @@ function rx(obj)
                 if ( danger )
                 {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
                 }
               }
               else if ( dev.version === 0 )
@@ -477,7 +478,7 @@ function rx(obj)
                 if(sensorEvent||dangerEvent)
                 {
                     dev.lastDateSMS = currentDate;
-                    wasAlarm(timeServerMs,channel);
+                    wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
                 }
               }
               else
@@ -498,7 +499,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MC');
@@ -514,7 +515,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device AS');
@@ -530,7 +531,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MS');
@@ -546,7 +547,7 @@ function rx(obj)
               if (danger)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel);
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device СВЭ-1');
@@ -577,7 +578,7 @@ function rx(obj)
               if ( validChannel && dataDevice.type_package==2 )
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel);
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI21');
@@ -595,7 +596,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device UE');
@@ -611,7 +612,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device GM-2 ');
@@ -626,7 +627,7 @@ function rx(obj)
               if(dataDevice.alarm)
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device LM-1 ');
@@ -648,7 +649,7 @@ function rx(obj)
               if(checkEvent||checkTemperature||checkTemperature_2)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel);
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TD-11');
@@ -664,7 +665,7 @@ function rx(obj)
               if(danger)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel);
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device GM-1 ');
@@ -681,7 +682,7 @@ function rx(obj)
                 if ( dataDevice.type_package==2 )
                 {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
                 }
               }
             }
@@ -700,7 +701,7 @@ function rx(obj)
                 if ( dataDevice.type_package==5 )
                 {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
                 }
               }
             }
@@ -719,7 +720,7 @@ function rx(obj)
                 if ( dataDevice.type_package==5 )
                 {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
                 }
               }
             }
@@ -736,7 +737,7 @@ function rx(obj)
               if(danger)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel);
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device HS ');
