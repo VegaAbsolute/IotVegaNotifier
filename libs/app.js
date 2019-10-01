@@ -346,6 +346,7 @@ function rx(obj)
         {
           case 1:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI11');
             if(validNumChannel)
             {
               let channel = dev.get_channel(numChannel);
@@ -356,11 +357,11 @@ function rx(obj)
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI11');
             break;
           }
           case 2:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI12');
             if(validNumChannel)
             {
               let channel = dev.get_channel(numChannel);
@@ -371,31 +372,32 @@ function rx(obj)
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI12');
             break;
           }
 
           case 3:
           {
-              if(validNumChannel)
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI13');
+            if(validNumChannel)
+            {
+              numChannel = numChannel + 6;
+              let channel = dev.get_channel(numChannel);
+              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
+              if(validChannel&&dataDevice.type_package==2)
               {
-                numChannel = numChannel + 6;
-                let channel = dev.get_channel(numChannel);
-                let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-                if(validChannel&&dataDevice.type_package==2)
-                {
-                  dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
-                }
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
-              if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI13');
-              break;
+            }
+            break;
           }
           case 4:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TD11');
+            if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel = dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if( validChannel && port === 2 )
+            if( validChannel )
             {
               if ( dev.version === 1 )
               {
@@ -425,14 +427,15 @@ function rx(obj)
                 if(config.debugMOD) console.log(moment().format('LLL')+': '+' An unknown version of the device device TD11');
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TD11');
             break;
           }
           case 5:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TP11');
+            if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            if(validChannel && dataDevice.type_package == 1)
             {
               if ( dev.version === 1 )
               {
@@ -486,14 +489,15 @@ function rx(obj)
                 if(config.debugMOD) console.log(moment().format('LLL')+': '+' An unknown version of the device device TP11');
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TP11');
             break;
           }
           case 6:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MC');
+            if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            if(validChannel )
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason !== 0;
               if ( danger )
@@ -502,11 +506,12 @@ function rx(obj)
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MC');
             break;
           }
           case 7:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device AS');
+            if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
@@ -518,11 +523,12 @@ function rx(obj)
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device AS');
             break;
           }
           case 8:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MS');
+            if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
@@ -534,11 +540,12 @@ function rx(obj)
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MS');
             break;
           }
           case 9:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device СВЭ-1');
+            if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
@@ -550,11 +557,12 @@ function rx(obj)
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device СВЭ-1');
             break;
           }
           case 10:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SS ');
+            if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
@@ -566,11 +574,11 @@ function rx(obj)
                   wasAlarm(timeServerMs,dev.get_channel(1));
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SS ');
             break;
           }
           case 11:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI21');
             if(validNumChannel)
             {
               let channel = dev.get_channel(numChannel);
@@ -581,11 +589,11 @@ function rx(obj)
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI21');
             break;
           }
           case 12:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device UE');
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
@@ -599,11 +607,12 @@ function rx(obj)
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device UE');
             break;
           }
           case 13:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device GM-2 ');
+            if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
@@ -615,13 +624,14 @@ function rx(obj)
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device GM-2 ');
             break;
           }
           case 14:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device LM-1 ');
+            if( port !== 2 ) return;
             let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
+            let validChannel = dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
             {
               if(dataDevice.alarm)
@@ -630,11 +640,12 @@ function rx(obj)
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device LM-1 ');
             break;
           }
           case 15:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TD-11');
+            if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
@@ -652,11 +663,12 @@ function rx(obj)
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TD-11');
             break;
           }
           case 17:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device GM-1 ');
+            if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
@@ -668,11 +680,11 @@ function rx(obj)
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device GM-1 ');
             break;
           }
           case 18:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI-22 ');
             if(validNumChannel)
             {
               let channel = dev.get_channel(numChannel);
@@ -686,11 +698,11 @@ function rx(obj)
                 }
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI-22 ');
             break;
           }
           case 20:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MBUS-1 ');
             if(validNumChannel)
             {
               numChannel = numChannel + 10;
@@ -705,11 +717,11 @@ function rx(obj)
                 }
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MBUS-1 ');
             break;
           }
           case 21:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MBUS-2 ');
             if(validNumChannel)
             {
               numChannel = numChannel + 10;
@@ -724,11 +736,12 @@ function rx(obj)
                 }
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MBUS-2 ');
             break;
           }
           case 23:
           {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device HS ');
+            if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
@@ -740,7 +753,6 @@ function rx(obj)
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
               }
             }
-            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device HS ');
             break;
           }
           default:
