@@ -394,8 +394,8 @@ function rx(obj)
           case 4:
           {
             let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            let validChannel = dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if( validChannel && port === 2 )
             {
               if ( dev.version === 1 )
               {
