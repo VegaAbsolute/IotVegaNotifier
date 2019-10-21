@@ -2,10 +2,12 @@ const app = require('./libs/app.js');
 const Config = require('./libs/config.js');
 const fs = require('fs');
 const ini = require('ini');
+const pjson = require('./package.json');
 let moment = require( 'moment' );
 let config = new Config();
 let myConfig = {};
 let path = './config.ini';
+console.log('IoTVega Notifier v', pjson.version, ' launched!')
 if(!fs.existsSync(path))
 {
   console.error( moment().format('LLL') + ':'+' Error accessing config.ini file');
