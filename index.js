@@ -7,7 +7,7 @@ let moment = require( 'moment' );
 let config = new Config();
 let myConfig = {};
 let path = './config.ini';
-console.log('IoTVega Notifier Lite v', pjson.version, ' launched!')
+console.log('IoTVega Notifier Lite v'+pjson.version, ' launched!')
 if(!fs.existsSync(path))
 {
   console.error( moment().format('LLL') + ':'+' Error accessing config.ini file');
