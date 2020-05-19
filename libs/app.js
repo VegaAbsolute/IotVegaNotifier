@@ -925,7 +925,7 @@ function updating()
     else
     {
       exec(npm+' install', (err, stdout, stderr) => {
-        if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:';
+        if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:');
         if(config.debugMOD) console.log('--- ',stdout);
         if(config.debugMOD) console.log('--- ',err);
         if(config.debugMOD) console.log('--- ',stderr);
