@@ -934,20 +934,20 @@ function updating()
         if(config.debugMOD)  console.log(moment().format('LLL')+': '+data);
       });
       spawn_update.on('close',(code)=>{
-        if(config.debugMOD)  console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall success',code);
+        if(code == 0)
+        {
+          console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall success');
+          waitingReboot = true;
+          emergencyExit();
+        }
+        else
+        {
+          if(config.debugMOD)  console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall close, code',code);
+        }
       });
       spawn_update.on('error',(err)=>{
-        if(config.debugMOD)  console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall error',err);
+        console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall error',err);
       });
-      // exec('npm install', (err, stdout, stderr) => {
-      //   if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:',stdout,err,stderr);
-      //   if(config.debugMOD) console.log('--- ',stdout);
-      //   if(config.debugMOD) console.log('--- ',err);
-      //   if(config.debugMOD) console.log('--- ',stderr);
-      //   waitingReboot = true;
-      //   emergencyExit();
-      // });
-      
     }
   });
 }
