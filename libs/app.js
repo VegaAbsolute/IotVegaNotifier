@@ -10,6 +10,7 @@ const Config = require('./config.js');
 const Parser = require('./parser.js');
 const { exec } = require('child_process');
 const CronJob = require('cron').CronJob;
+const Which = require('which');
 const CRON_TIME = '*/1 * * * *';
 let moment = require( 'moment' );
 let devices = new Devices();
@@ -919,14 +920,31 @@ function updating()
     else
     {
       if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is updated, reinstall',stdout);
-      exec('npm install', (err, stdout, stderr) => {
-        if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:',stdout,err,stderr);
-        if(config.debugMOD) console.log('--- ',stdout);
-        if(config.debugMOD) console.log('--- ',err);
-        if(config.debugMOD) console.log('--- ',stderr);
-        waitingReboot = true;
-        emergencyExit();
+      Which('npm', function(error, path){ 
+          if(config.debugMOD) console.log(moment().format('LLL')+': '+'[SYSTEM ERROR]',error);
+          process = exec.spawn(path, 'install').then((res)=>{
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall success:',res);
+          })
+          .catch((err)=>{
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall error:',err);
+          });
       });
+      // exec('npm install', (err, stdout, stderr) => {
+      //   if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:',stdout,err,stderr);
+      //   if(config.debugMOD) console.log('--- ',stdout);
+      //   if(config.debugMOD) console.log('--- ',err);
+      //   if(config.debugMOD) console.log('--- ',stderr);
+      //   waitingReboot = true;
+      //   emergencyExit();
+      // });
+      // exec('npm install', (err, stdout, stderr) => {
+      //   if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:',stdout,err,stderr);
+      //   if(config.debugMOD) console.log('--- ',stdout);
+      //   if(config.debugMOD) console.log('--- ',err);
+      //   if(config.debugMOD) console.log('--- ',stderr);
+      //   waitingReboot = true;
+      //   emergencyExit();
+      // });
       
     }
   });
