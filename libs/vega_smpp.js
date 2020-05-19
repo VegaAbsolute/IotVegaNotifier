@@ -1,4 +1,4 @@
-//vega_smpp.js version 1.0.2
+//vega_smpp.js version 1.1.5
 const SMPP = require('smpp');
 const uuidv4 = require('uuid/v4');
 const EventEmitter = require('events');
@@ -121,6 +121,7 @@ class VegaSMPP extends EventEmitter
                  let currentTime = new Date().getTime();
                  let timePassed = firstTime?(currentTime-firstTime):0;
                  let lifeTime = timePassed<86400000;
+                 if(lifeTime)
                  {
                    _self.pushSMS(tmp.message,tmp.telephone,tmp.firstTime);
                  }

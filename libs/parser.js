@@ -1,4 +1,5 @@
-//parser.js version 1.0.2
+//parser.js version 1.1.5
+//Соответствует pulse v 1.1.10
 //Идентичен классу data_lora из vega_lib.js iotvega pulse
 //за исключением того что функция isObject в данном классе метод
 class Parser
@@ -42,7 +43,11 @@ class Parser
         
         this.in_move;
         this.angle;
+        this.led_duty;
         this.damp;
+        this.lux;
+        this.dB;
+        this.CO2;
         this.coord_status;
         this.lat;
         this.lng;
@@ -100,7 +105,114 @@ class Parser
         this.state_2;
         //Состояние реле ограничения нагрузки
         this.state_3;
-        
+
+
+        this.note_1;
+        this.note_2;
+        this.network_address;
+        this.time_zone;
+        this.period_reconnection_h;
+        this.flag_event;
+        this.flag_helf_hour;
+        this.flag_ack;
+        this.limit_power;
+        this.accumulation_period_info;
+        this.accumulation_period_day_info;
+        this.accumulation_period_month_info;
+        this.accumulation_period_readings;
+        this.accumulation_period_day_readings;
+        this.accumulation_period_month_readings;
+        this.accumulation_period_instant;
+        this.accumulation_period_day_instant;
+        this.accumulation_period_month_instant;
+        this.tariff_schedule_season_number;
+        this.tariff_schedule_code;
+        for(var i = 1; i<=15; i++)
+        {
+            this[`tariff_schedule_minute_end_${i}_zone`] = undefined;
+            this[`tariff_schedule_hour_end_${i}_zone`] = undefined;
+            this[`tariff_schedule_number_${i}_zone`] = undefined;
+        }
+        this.version_soft_device;
+        this.code_error_1;
+        this.code_error_2;
+        this.code_error_3;
+        this.code_error_4;
+        this.code_error_5;
+        this.diagnostic_codes;
+        this.location_description;
+        this.version_module_electronic;
+        this.version_parameterization;
+        this.flag_translation_time;
+        this.flag_relay;
+        this.state_relay;
+        this.info_radiomodule;
+        this.nomenal_voltage;
+        this.nomenal_current;
+        this.code_model;
+        this.maximal_current;
+        this.limit_active_power;
+        this.time_minute_averages_power;
+        this.mode_measuring_power;
+        this.time_minute_delay_automatic_switching_relay;
+
+        this.selected_d_archive;
+        this.selected_m_archive;
+        this.selected_y_archive;
+        this.cumulative_energy_summary;
+        this.cumulative_energy_rate_1;
+        this.cumulative_energy_rate_2;
+        this.cumulative_energy_rate_3;
+        this.cumulative_energy_rate_4;
+
+
+        this.count_automatic_switching_relay;
+        for(var i = 1; i<=31; i++)
+        {
+            this[`code_page_indication_${i}`] = undefined;
+            this[`time_seconds_show_page_indication_${i}`] = undefined;
+        }
+        this.voltage_A;
+        this.voltage_B;
+        this.voltage_C;
+        this.electric_current_A;
+        this.electric_current_B;
+        this.electric_current_C;
+        this.power_factor_A;
+        this.power_factor_B;
+        this.power_factor_C;
+        this.power_factor_summary;
+        this.frequency_network;
+        this.status_state;
+        for(var i = 1; i<=31; i++)
+        {
+            this[`special_day_d_${i}`] = undefined;
+            this[`special_day_m_${i}`] = undefined;
+            this[`special_day_t_${i}`] = undefined;
+        }
+        this.selected_d_archive;
+        this.selected_date;
+        for(var i = 2; i<=48; i++)
+        {
+            this[`date_${i}`] = undefined;
+        }
+        this.half_hour_slices_active_power = [];
+        this.temp;
+        this.journal = [];
+        this.number_phase;
+        this.active_power_A;
+        this.active_power_B;
+        this.active_power_C;
+        this.active_power_summary;
+        this.reactive_power_A;
+        this.reactive_power_B;
+        this.reactive_power_C;
+        this.reactive_power_summary;
+        this.total_power_A;
+        this.total_power_B;
+        this.total_power_C;
+        this.total_power_summary;
+
         this.address;
         this.cmd_code;
         this.state_energy;
@@ -114,6 +226,7 @@ class Parser
     {
         return typeof obj === 'object' && obj !== null;
     }
+    
     _set_last_time()
     {
         try
@@ -270,14 +383,15 @@ class Parser
             return false;
         }
     }
-    _set_sensors()
+    _set_sensors(begin_byte)
     {
         try
         {
-            this.sensors.sensor_1=parseInt(this.hex_array[11]+this.hex_array[10]+this.hex_array[9]+this.hex_array[8],16);
-            this.sensors.sensor_2=parseInt(this.hex_array[15]+this.hex_array[14]+this.hex_array[13]+this.hex_array[12],16);
-            this.sensors.sensor_3=parseInt(this.hex_array[19]+this.hex_array[18]+this.hex_array[17]+this.hex_array[16],16);
-            this.sensors.sensor_4=parseInt(this.hex_array[23]+this.hex_array[22]+this.hex_array[21]+this.hex_array[20],16);
+            if ( begin_byte == undefined ) begin_byte = 8;
+            this.sensors.sensor_1=parseInt(this.hex_array[begin_byte+3]+this.hex_array[begin_byte+2]+this.hex_array[begin_byte+1]+this.hex_array[begin_byte],16);
+            this.sensors.sensor_2=parseInt(this.hex_array[begin_byte+7]+this.hex_array[begin_byte+6]+this.hex_array[begin_byte+5]+this.hex_array[begin_byte+4],16);
+            this.sensors.sensor_3=parseInt(this.hex_array[begin_byte+11]+this.hex_array[begin_byte+10]+this.hex_array[begin_byte+9]+this.hex_array[begin_byte+8],16);
+            this.sensors.sensor_4=parseInt(this.hex_array[begin_byte+15]+this.hex_array[begin_byte+4]+this.hex_array[begin_byte+13]+this.hex_array[begin_byte+12],16);
             return true;
         }
         catch(err)
@@ -402,11 +516,18 @@ class Parser
             return false;
         }
     }
-    _set_state()
+    _set_state(bytes)
     {
         try
         {
-            var state = this.hex_array[31].toString()+this.hex_array[30].toString()+this.hex_array[29].toString()+this.hex_array[28].toString();
+            if( !this.isObject(bytes)||bytes.length < 4 ) bytes = [28,29,30,31];
+            bytes.reverse();
+            var state = '';
+            for(var i = 0; i<bytes.length; i++)
+            {
+                state+=this.hex_array[bytes[i]];
+            }
+            //var state = this.hex_array[31].toString()+this.hex_array[30].toString()+this.hex_array[29].toString()+this.hex_array[28].toString();
             this.state = state;
             var state_int= parseInt(state,16);
             var state_binary = state_int.toString(2).split('' ).reverse();
@@ -490,6 +611,29 @@ class Parser
             return true;
         }
         catch(e)
+        {
+            return false;
+        }
+    }
+    _set_switch_state_tl11(b)
+    {
+        try
+        {
+            var ss= parseInt(this.hex_array[b],16).toString(2).split('' ).reverse().splice(0,6);
+            var b1 = ss[0]!==undefined?ss[0].toString():'0';
+            var b2 = ss[1]!==undefined?ss[1].toString():'0';
+            var reason = b2+b1;
+            this.reason = reason;
+            //00 - по времени
+            //01 - по срабатыванию тампера
+            //10 - сработал датчик Холла двери
+            //11 - сработал датчик Холла отрыва
+           // this.hall_1 = parseInt(ss[2])?true:false;
+           // this.hall_2 = parseInt(ss[3])?true:false;
+            this.state_tamper = parseInt(ss[2])?true:false;
+            return true;
+        }
+        catch(err)
         {
             return false;
         }
@@ -859,11 +1003,15 @@ class Parser
             return false;
         }
     }
-    _set_serial()
+    _set_serial(b1,b2,b3,b4)
     {
         try
         {
-            this.serial = this.hex_array[4].toString()+this.hex_array[3].toString()+this.hex_array[2].toString()+this.hex_array[1].toString();
+            if( b1 === undefined ) b1 = 1;
+            if( b2 === undefined ) b2 = 2;
+            if( b3 === undefined ) b3 = 3;
+            if( b4 === undefined ) b4 = 4;
+            this.serial = this.hex_array[b4].toString()+this.hex_array[b3].toString()+this.hex_array[b2].toString()+this.hex_array[b1].toString();
             return true;
         }
         catch(err)
@@ -884,11 +1032,15 @@ class Parser
             return false;
         }
     }
-    _set_release_date()
+    _set_release_date(b1,b2,b3,b4)
     {
         try
         {
-            var time = this.hex_array[16].toString()+this.hex_array[15].toString()+this.hex_array[14].toString()+this.hex_array[13].toString();
+            if( b1 === undefined ) b1 = 13;
+            if( b2 === undefined ) b2 = 14;
+            if( b3 === undefined ) b3 = 15;
+            if( b4 === undefined ) b4 = 16;
+            var time = this.hex_array[b4].toString()+this.hex_array[b3].toString()+this.hex_array[b2].toString()+this.hex_array[b1].toString();
             this.release_date = parseInt(time,16);
             return true;
         }
@@ -909,6 +1061,24 @@ class Parser
             return false;
         }
     } 
+    _set_universal_string_ASCII(beginByte, endByte, param)
+    {
+        try
+        {
+            var data_h = [];
+            for(var i = beginByte; i<=endByte;i++)
+            {
+                data_h.push(String.fromCharCode('0x'+this.hex_array[i]));
+            }
+            data_h = data_h.join('');
+            this[param] = data_h;
+            return true;
+        }
+        catch(e)
+        {
+            return false;
+        }
+    }
     _set_data_b(before)
     {
         try
@@ -1048,11 +1218,12 @@ class Parser
             return false;
         }
     }
-    _set_rate_active()
+    _set_rate_active(b)
     {
         try
         {
-            this.rate_active = parseInt(this.hex_array[10],16);
+            if(!b) b = 10;
+            this.rate_active = parseInt(this.hex_array[b],16);
             return true;
         }
         catch(err)
@@ -1181,6 +1352,133 @@ class Parser
         {
             return false;
         }
+    }
+    _get_number_phaseV2(b1,val)
+    {
+        var result = {
+            status_parse:false
+        };
+        try
+        {
+            if(val === undefined) result.hex = this.hex_array[b1];
+            else result.hex = val.toString();
+            result.binary = parseInt(result.hex,16).toString(2).split('' ).reverse();
+            while ( result.binary.length < 8 ) result.binary.push('0');
+            result.A = result.binary[0] == 1?true:false;
+            result.B = result.binary[1] == 1?true:false;
+            result.C = result.binary[2] == 1?true:false;
+            var validABC = typeof result.A === 'boolean' && typeof result.B === 'boolean' && typeof result.C === 'boolean';
+            if( validABC ) result.status_parse = true;
+        }
+        catch(err)
+        {
+            result.status_parse = false;
+        }
+        finally
+        {
+            return result;
+        }
+    }
+    _get_number_phase(b1,val)
+    {
+        var result = {
+            status_parse:false
+        };
+        try
+        {
+            if(val === undefined) result.hex = this.hex_array[b1];
+            else result.hex = val.toString();
+            result.binary = parseInt(result.hex,16).toString(2).split('' ).reverse();
+            while ( result.binary.length < 8 ) result.binary.push('0');
+            result.A = result.binary[0] == 1?true:false;
+            result.B = result.binary[1] == 1?true:false;
+            result.C = result.binary[2] == 1?true:false;
+            var code_phase_binary = result.binary[5] + result.binary[4];
+            var code_phase = parseInt(code_phase_binary,2);
+            if( code_phase == 1 ) result.code_phase_max_deviation = 'A';
+            if( code_phase == 2 ) result.code_phase_max_deviation = 'B';
+            if( code_phase == 3 ) result.code_phase_max_deviation = 'C';
+            result.end_event_power_lost  = result.binary[6] == 1?true:false;
+            result.end_event_exec_cmd_settings = result.binary[7] == 1?true:false;
+            var validABC = typeof result.A === 'boolean' && typeof result.B === 'boolean' && typeof result.C === 'boolean';
+            var validCodePhase = result.code_phase_max_deviation !== undefined;
+            var validEndEvent = typeof result.end_event_power_lost === 'boolean' && typeof result.end_event_exec_cmd_settings === 'boolean';
+            if( validABC && validCodePhase && validEndEvent ) result.status_parse = true;
+        }
+        catch(err)
+        {
+            result.status_parse = false;
+        }
+        finally
+        {
+            return result;
+        }
+    }
+    _get_byte_state(b1)
+    {
+        var result = {
+            status_parse:false
+        };
+        try
+        {
+            result.hex = b1;
+            result.binary = parseInt(this.hex_array[b1],16).toString(2).split('' ).reverse();
+            var code_reason_binary = result.binary[0]+result.binary[1]+result.binary[2]+result.binary[3]+result.binary[4]+result.binary[5]+result.binary[6];
+            result.code_reason = parseInt(code_reason_binary,2);
+            result.relay_state  = result.binary[7] == 1?true:false;
+            var validCodeReason= result.code_reason !== undefined && !isNaN(result.code_reason);
+            var validRelayState = typeof result.relay_state === 'boolean';
+            if( validCodeReason && validRelayState ) result.status_parse = true;
+        }
+        catch(err)
+        {
+            result.status_parse = false;
+        }
+        finally
+        {
+            return result;
+        }
+    }
+    _get_universal_float_negative_noFF(arr_b,divider)
+    {
+        this.temp = undefined;
+        this._set_universal_float_negative_noFF(arr_b,divider,'temp');
+        var res = this.temp;
+        this.temp = undefined;
+        return res;
+    }
+    _get_universal_float_noFF(arr_b,divider)
+    {
+        this.temp = undefined;
+        this._set_universal_float_noFF(arr_b,divider,'temp');
+        var res = this.temp;
+        this.temp = undefined;
+        return res;
+    }
+    _get_universal_int_noFF(arr_b)
+    {
+        this.temp = undefined;
+        this._set_universal_int_noFF(arr_b,'temp');
+        var res = this.temp;
+        this.temp = undefined;
+        return res;
+    }
+    _get_universal_hex_noFF(arr_b)
+    {
+        this.temp = undefined;
+        this._set_universal_hex(arr_b,'temp');
+        var res = this.temp;
+        this.temp = undefined;
+        return res;
+    }
+    _get_universal_int_negative_noFF(arr_b)
+    {
+        this.temp = undefined;
+        this._set_universal_int_negative_noFF(arr_b,'temp');
+        var res = this.temp;
+        this.temp = undefined;
+        return res;
+        
     }
     _set_universal_int_noFF(arr_b,param)
     {
@@ -1318,6 +1616,54 @@ class Parser
             return false;
         }
     }
+    _set_universal_int_negative_noFF(arr_b,param)
+    {
+        try
+        {
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_param = typeof param === 'string';
+            if (valid_arr&&valid_param)
+            {
+                var countMAX = 0;
+                arr_b.reverse();
+                var result='';
+                for(var i = 0; i<arr_b.length;i++)
+                {
+                    if (this.hex_array[arr_b[i]]=='ff' ) countMAX++;
+                    result+=this.hex_array[arr_b[i]]===undefined?'00':this.hex_array[arr_b[i]].toString();
+                }
+                var result_int = parseInt(result,16);
+                if (!isNaN(result_int))
+                {
+                    var maxVal = Math.pow(2, result.length / 2 * 8);
+                    if (result_int > maxVal / 2 - 1) {
+                        result_int = result_int - maxVal;
+                    }
+                    if (countMAX!==arr_b.length)
+                    {
+                        this[param] = result_int;
+                    }
+                    else
+                    {
+                        this[param] = undefined;
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch(e)
+        {
+            return false;
+        }
+    }
     _set_universal_float_negative(arr_b,divider,param)
     {
         try
@@ -1412,6 +1758,55 @@ class Parser
             return false;
         }
     }
+    _set_universal_float_negative_noFF(arr_b,divider,param)
+    {
+        try
+        {
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_divider = typeof divider === 'number';
+            var valid_param = typeof param === 'string';
+            if (valid_arr&&valid_divider&&valid_param)
+            {
+                var countMAX = 0;
+                arr_b.reverse();
+                var result='';
+                for(var i = 0; i<arr_b.length;i++)
+                {
+                    if (this.hex_array[arr_b[i]]=='ff' ) countMAX++;
+                    result+=this.hex_array[arr_b[i]]===undefined?'00':this.hex_array[arr_b[i]].toString();
+                }
+                var result_int = parseInt(result,16);
+                if (!isNaN(result_int))
+                {
+                    var maxVal = Math.pow(2, result.length / 2 * 8);
+                    if (result_int > maxVal / 2 - 1) {
+                        result_int = result_int - maxVal;
+                    }
+                    if (countMAX!==arr_b.length)
+                    {
+                        this[param] = result_int/divider;
+                    }
+                    else
+                    {
+                        this[param] = undefined;
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch(e)
+        {
+            return false;
+        }
+    }
     _set_universal_float_noFF(arr_b,divider,param)
     {
         try
@@ -1446,6 +1841,58 @@ class Parser
                 {
                     return false;
                 }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch(e)
+        {
+            return false;
+        }
+    }
+    _set_version(arr_b,param)
+    {
+        var valid_arr = this.isObject(arr_b) && arr_b.length;
+        try
+        {
+            if(valid_arr)
+            {
+                var validB1 = this.hex_array[arr_b[1]]!==undefined;
+                var validB0 = this.hex_array[arr_b[0]]!==undefined;
+                if(validB1&&validB0)
+                {
+                    this[param] = parseInt(this.hex_array[arr_b[1]])+'.'+parseInt(this.hex_array[arr_b[0]]);
+                    return true;
+                }
+                return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch(e)
+        {
+            return false;
+        }
+    }
+    _set_version_soft_device(arr_b)
+    {
+        var valid_arr = this.isObject(arr_b) && arr_b.length;
+        try
+        {
+            if(valid_arr)
+            {
+                var validB1 = this.hex_array[arr_b[1]]!==undefined;
+                var validB0 = this.hex_array[arr_b[0]]!==undefined;
+                if(validB1&&validB0)
+                {
+                    this.version_soft_device = parseInt(this.hex_array[arr_b[1]])+'.'+parseInt(this.hex_array[arr_b[0]]);
+                    return true;
+                }
+                return false;
             }
             else
             {
@@ -1493,7 +1940,32 @@ class Parser
             return false;
         }
     }
-    
+    _set_universal_hex2(arr_b,param)
+    {
+        try
+        {
+            var valid_arr = this.isObject(arr_b) && arr_b.length;
+            var valid_param = typeof param === 'string';
+            if (valid_arr&&valid_param)
+            {
+                var result='';
+                for(var i = 0; i<arr_b.length;i++)
+                {
+                    result+=this.hex_array[arr_b[i]]===undefined?'00':this.hex_array[arr_b[i]].toString();
+                }
+                this[param] = result;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch(e)
+        {
+            return false;
+        }
+    }
     
     _set_universal_boolean(b1,param)
     {
@@ -1625,6 +2097,55 @@ class Parser
          }
          return true;
     }
+
+
+    si_21_or_22_package_1_rev2()
+    {
+        var res = true;
+        res = res && this._set_universal_int( [1],'charge' );
+        res = res && this._set_switch_device();
+        res = res && this._set_time(3,4,5,6);
+        res = res && this._set_universal_float_negative( [7,8],10,'temperature' );
+        res = res && this._set_sensors(9);
+        return res;
+    }
+    si_21_or_22_package_2_rev2()
+    {
+        var res = true;
+        res = res && this._set_universal_int( [1],'charge' );
+        res = res && this._set_switch_device();
+        res = res && this._set_num_channel();
+        res = res && this._set_time(4,5,6,7);
+        res = res && this._set_sensors();
+        return res;
+    }
+    si_21_or_22_package_85_rev2()
+    {
+        var res = true;
+        if ( this.result === undefined ) this.result = {};
+        this.result.count_reboot_power = this._get_universal_int_noFF([0]);
+        this.result.count_reboot_soft = this._get_universal_int_noFF([1]);
+        this.result.count_reboot = this._get_universal_int_noFF([2]);
+        this.result.charge = this._get_universal_int_noFF([3]);
+        this.result.count_reboot = this._get_universal_hex_noFF([4]);
+        return res;
+    }
+    si_21_or_22_package_195_rev2()
+    {
+        var res = true;
+        res = res && this._set_universal_int( [1],'reason' );
+        res = res && this._set_universal_string_ASCII(2,3,'info_radiomodule');
+        res = res && this._set_universal_string_ASCII(4,5,'model');
+        res = res && this._set_universal_int( [9,8,7,6],'release_date' );
+        res = res && this._set_version( [10,11],'version_module_electronic' );
+        res = res && this._set_version( [12,13],'version_soft_device' );
+        res = res && this._set_version( [14,15],'version_parameterization' );
+        res = res && this._set_universal_int( [16],'charge' );
+        res = res && this._set_universal_int( [20,19,18,17],'count_package' );
+        return res;
+    }
+
+
     si_22_package_1()
     {
         var res = true;
@@ -1786,6 +2307,1102 @@ class Parser
         this.address = this.data_b[0];
         return res;
     }
+    package_correction_time()
+    {
+        var res = true;
+        res = res && this._set_time(1,2,3,4);
+        return res;
+    }
+    package_settings()
+    {
+        var res = true;
+        return res;
+    }
+    spbzip_package_1()
+    {
+        var res = true;
+        res = res && this._set_serial();
+        res = res && this._set_time(5,6,7,8);
+        res = res && this._set_model();
+        res = res && this._set_count_phase(10);
+        res = res && this._set_count_rate();
+        // res = res && this._set_relay_state();
+        res = res && this._set_release_date();
+        res = res && this._set_version_soft();
+        // res = res && this._set_kt();
+        res = res && this._set_universal_float_noFF( [21,22,23,24],1000,'sensor_rate_sum' );
+        res = res && this._set_temperature(25);
+        res = res && this._set_state([26,27,28,29]);
+        res = res && this._set_universal_int( [30,31],'event' );
+        res = res && this._set_universal_hex2( [32,33],'UUID' );
+        return res;
+    }
+    spbzip_package_2()
+    {
+        var res = true;
+        res = res && this._set_serial();
+        res = res && this._set_time(5,6,7,8);
+        res = res && this._set_universal_float_noFF( [9,10],100,'voltage_A' );
+        res = res && this._set_universal_float_noFF( [11,12],100,'voltage_B' );
+        res = res && this._set_universal_float_noFF( [13,14],100,'voltage_C' );
+        res = res && this._set_universal_float_noFF( [15,16,17,18],1000,'electric_current_A' );
+        res = res && this._set_universal_float_noFF( [19,20,21,22],1000,'electric_current_B' );
+        res = res && this._set_universal_float_noFF( [23,24,25,26],1000,'electric_current_C' );
+        res = res && this._set_universal_float_noFF( [27,28],1000,'power_factor_A' );
+        res = res && this._set_universal_float_noFF( [29,30],1000,'power_factor_B' );
+        res = res && this._set_universal_float_noFF( [31,32],1000,'power_factor_C' );
+        res = res && this._set_universal_float_noFF( [33,34],1000,'power_factor_summary' );
+        res = res && this._set_universal_float_noFF( [35,36],100,'frequency_network' );
+        res = res && this._set_universal_int_noFF( [37,38,39,40],'total_power_summary' );
+        res = res && this._set_universal_hex2( [41,42],'UUID' );
+        return res;
+    }
+    spbzip_package_3()
+    {
+        var res = true;
+        res = res && this._set_size_package_in();
+        res = res && this._set_size_package_out();
+        res = res && this._set_num_out();
+        res = res && this._set_count_package();
+        res = res && this._set_data_b(6);
+        return res;
+    }
+    spbzip_package_4()
+    {
+        var res = true;
+        res = res && this._set_serial();
+        res = res && this._set_time(5,6,7,8);
+        // res = res && this._set_count_rate_active();
+        res = res && this._set_rate_active(9);
+        // res = res && this._set_universal_float( [11,12],100,'kt' );
+        res = res && this._set_universal_float_noFF( [10,11,12,13],1000,'sensor_rate_sum' );
+        res = res && this._set_universal_float_noFF( [14,15,16,17],1000,'sensor_rate_1' );
+        res = res && this._set_universal_float_noFF( [18,19,20,21],1000,'sensor_rate_2' );
+        res = res && this._set_universal_float_noFF( [22,23,24,25],1000,'sensor_rate_3' );
+        res = res && this._set_universal_float_noFF( [26,27,28,29],1000,'sensor_rate_4' );
+        res = res && this._set_universal_hex2( [30,31],'UUID' );
+        return res;
+    }
+    spbzip_package_5()
+    {
+        var res = true;
+        res = res && this._set_serial();
+        res = res && this._set_universal_int( [5,6,7,8],'date_1' );
+        res = res && this._set_universal_int( [9],'note_1' );
+        res = res && this._set_universal_int_noFF( [10,11,12,13],'A_p_1' );
+        res = res && this._set_universal_int( [14,15,16,17],'date_2' );
+        res = res && this._set_universal_int( [18],'note_2' );
+        res = res && this._set_universal_int_noFF( [19,20,21,22],'A_p_2' );
+        res = res && this._set_universal_hex2( [23,24],'UUID' );
+        return res;
+    }
+    spbzip_package_6()
+    {
+        var res = true;
+        res = res && this._set_serial();
+        res = res && this._set_universal_int_noFF( [5],'result' );
+        res = res && this._set_universal_hex2( [6,7],'UUID' );
+        return res;
+    }
+    spbzip_package_7()
+    {
+        var res = true;
+        res = res && this._set_universal_int_noFF( [1,2,3,4],'network_address' );
+        res = res && this._set_universal_int_negative( [5,6],'time_zone' );
+        res = res && this._set_universal_int_noFF( [7],'period_reconnection_h' );
+        res = res && this._set_universal_int_noFF( [8],'flag_event' );
+        res = res && this._set_universal_int_noFF( [9],'flag_helf_hour' );
+        res = res && this._set_universal_int_noFF( [10],'flag_ack' );
+        res = res && this._set_universal_float_noFF( [11,12,13,14],10,'limit_power' );
+        // res = res && this._set_universal_int_noFF( [15,16,17,18],'limit_energy' );
+
+        res = res && this._set_universal_int_noFF( [19],'accumulation_period_info' );
+        res = res && this._set_universal_int_noFF( [20],'accumulation_period_day_info' );
+        res = res && this._set_universal_int_noFF( [21],'accumulation_period_month_info' );
+
+        res = res && this._set_universal_int_noFF( [22],'accumulation_period_readings' );
+        res = res && this._set_universal_int_noFF( [23],'accumulation_period_day_readings' );
+        res = res && this._set_universal_int_noFF( [24],'accumulation_period_month_readings' );
+
+        res = res && this._set_universal_int_noFF( [25],'accumulation_period_instant' );
+        res = res && this._set_universal_int_noFF( [26],'accumulation_period_day_instant' );
+        res = res && this._set_universal_int_noFF( [27],'accumulation_period_month_instant' );
+
+        res = res && this._set_universal_hex2( [28,29],'UUID' );
+
+        return res;
+    }
+    spbzip_package_8()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int_noFF( [1],'tariff_schedule_season_number' );
+        res = res && this._set_universal_int_noFF( [2],'tariff_schedule_code' );
+
+        res = res && this._set_universal_int_noFF( [3],'tariff_schedule_minute_end_1_zone' );
+        res = res && this._set_universal_int_noFF( [4],'tariff_schedule_hour_end_1_zone' );
+        res = res && this._set_universal_int_noFF( [5],'tariff_schedule_number_1_zone' );
+
+        res = res && this._set_universal_int_noFF( [6],'tariff_schedule_minute_end_2_zone' );
+        res = res && this._set_universal_int_noFF( [7],'tariff_schedule_hour_end_2_zone' );
+        res = res && this._set_universal_int_noFF( [8],'tariff_schedule_number_2_zone' );
+
+        res = res && this._set_universal_int_noFF( [9],'tariff_schedule_minute_end_3_zone' );
+        res = res && this._set_universal_int_noFF( [10],'tariff_schedule_hour_end_3_zone' );
+        res = res && this._set_universal_int_noFF( [11],'tariff_schedule_number_3_zone' );
+
+        res = res && this._set_universal_int_noFF( [12],'tariff_schedule_minute_end_4_zone' );
+        res = res && this._set_universal_int_noFF( [13],'tariff_schedule_hour_end_4_zone' );
+        res = res && this._set_universal_int_noFF( [14],'tariff_schedule_number_4_zone' );
+
+        res = res && this._set_universal_int_noFF( [15],'tariff_schedule_minute_end_5_zone' );
+        res = res && this._set_universal_int_noFF( [16],'tariff_schedule_hour_end_5_zone' );
+        res = res && this._set_universal_int_noFF( [17],'tariff_schedule_number_5_zone' );
+
+        res = res && this._set_universal_int_noFF( [18],'tariff_schedule_minute_end_6_zone' );
+        res = res && this._set_universal_int_noFF( [19],'tariff_schedule_hour_end_6_zone' );
+        res = res && this._set_universal_int_noFF( [20],'tariff_schedule_number_6_zone' );
+
+        res = res && this._set_universal_int_noFF( [21],'tariff_schedule_minute_end_7_zone' );
+        res = res && this._set_universal_int_noFF( [22],'tariff_schedule_hour_end_7_zone' );
+        res = res && this._set_universal_int_noFF( [23],'tariff_schedule_number_7_zone' );
+
+        res = res && this._set_universal_int_noFF( [24],'tariff_schedule_minute_end_8_zone' );
+        res = res && this._set_universal_int_noFF( [25],'tariff_schedule_hour_end_8_zone' );
+        res = res && this._set_universal_int_noFF( [26],'tariff_schedule_number_8_zone' );
+
+        res = res && this._set_universal_int_noFF( [27],'tariff_schedule_minute_end_9_zone' );
+        res = res && this._set_universal_int_noFF( [28],'tariff_schedule_hour_end_9_zone' );
+        res = res && this._set_universal_int_noFF( [29],'tariff_schedule_number_9_zone' );
+
+        res = res && this._set_universal_int_noFF( [30],'tariff_schedule_minute_end_10_zone' );
+        res = res && this._set_universal_int_noFF( [31],'tariff_schedule_hour_end_10_zone' );
+        res = res && this._set_universal_int_noFF( [32],'tariff_schedule_number_10_zone' );
+
+        res = res && this._set_universal_int_noFF( [33],'tariff_schedule_minute_end_11_zone' );
+        res = res && this._set_universal_int_noFF( [34],'tariff_schedule_hour_end_11_zone' );
+        res = res && this._set_universal_int_noFF( [35],'tariff_schedule_number_11_zone' );
+
+        res = res && this._set_universal_int_noFF( [36],'tariff_schedule_minute_end_12_zone' );
+        res = res && this._set_universal_int_noFF( [37],'tariff_schedule_hour_end_12_zone' );
+        res = res && this._set_universal_int_noFF( [38],'tariff_schedule_number_12_zone' );
+
+        res = res && this._set_universal_int_noFF( [39],'tariff_schedule_minute_end_13_zone' );
+        res = res && this._set_universal_int_noFF( [40],'tariff_schedule_hour_end_13_zone' );
+        res = res && this._set_universal_int_noFF( [41],'tariff_schedule_number_13_zone' );
+
+        res = res && this._set_universal_int_noFF( [42],'tariff_schedule_minute_end_14_zone' );
+        res = res && this._set_universal_int_noFF( [43],'tariff_schedule_hour_end_14_zone' );
+        res = res && this._set_universal_int_noFF( [44],'tariff_schedule_number_14_zone' );
+
+        res = res && this._set_universal_int_noFF( [45],'tariff_schedule_minute_end_15_zone' );
+        res = res && this._set_universal_int_noFF( [46],'tariff_schedule_hour_end_15_zone' );
+        res = res && this._set_universal_int_noFF( [47],'tariff_schedule_number_15_zone' );
+
+        res = res && this._set_universal_hex2( [48,49],'UUID' );
+
+        return res;
+    }
+    spbzip_package_9()
+    {
+        var res = true;
+
+        res = res && this._set_time(1,2,3,4);
+        res = res && this._set_version_soft_device( [5,6] );
+        res = res && this._set_release_date(7,8,9,10);
+        // res = res && this._set_serial(11,12,13,14);
+        res = res && this._set_universal_int_noFF( [11,12,13,14],'serial' );
+        res = res && this._set_universal_int_noFF( [15,16,17,18],'network_address' );
+        res = res && this._set_universal_string_ASCII(19,34,'location_description');
+        res = res && this._set_universal_int_noFF( [35],'version_module_electronic' );
+        res = res && this._set_universal_hex2( [36],'version_parameterization' );
+        res = res && this._set_universal_hex2( [37,38,39],'info_radiomodule' );
+        res = res && this._set_universal_float_noFF( [40,41],100,'nomenal_voltage' );
+        res = res && this._set_universal_int_noFF( [42],'nomenal_current' );
+        res = res && this._set_universal_int_noFF( [43],'maximal_current' );
+        res = res && this._set_universal_int_noFF( [44],'code_model' );
+
+        // res = res && this._set_universal_int_noFF( [7,8],'code_error_1' );
+        // res = res && this._set_universal_int_noFF( [9,10],'code_error_2' );
+        // res = res && this._set_universal_int_noFF( [11,12],'code_error_3' );
+        // res = res && this._set_universal_hex( [13,14,15,16],'diagnostic_codes' );
+        // res = res && this._set_universal_hex( [20,19,18,17],'serial' );
+        // res = res && this._set_universal_int_noFF( [21,22,23,24],'network_address' );
+        // res = res && this._set_universal_string_ASCII(25,40,'location_description');
+        // res = res && this._set_universal_int_noFF( [41],'version_module_electronic' );
+        // res = res && this._set_universal_int_noFF( [42],'version_parameterization' );
+        // // res = res && this._set_status_electronic_meter( [43,44] );
+        // res = res && this._set_universal_int_noFF( [45],'flag_relay' );
+        // res = res && this._set_universal_int_noFF( [46],'flag_state_relay' );
+        // res = res && this._set_universal_int_noFF( [47],'flag_translation_time' );
+
+        res = res && this._set_universal_hex2( [45,46],'UUID' );
+
+        return res;
+    }
+    spbzip_package_10()
+    {
+        var res = true;
+
+        res = res && this._set_time(1,2,3,4);
+        res = res && this._set_universal_hex2( [5,6],'code_error_1' );
+        res = res && this._set_universal_hex2( [7,8],'code_error_2' );
+        res = res && this._set_universal_hex2( [9,10],'code_error_3' );
+        res = res && this._set_universal_hex2( [11,12],'code_error_4' );
+        res = res && this._set_universal_hex2( [13,14],'code_error_5' );
+        res = res && this._set_universal_hex2( [15,16,17,18],'diagnostic_codes' );
+        res = res && this._set_universal_hex2( [19,20],'status_state' );
+        res = res && this._set_universal_int_noFF( [21],'flag_relay' );
+        res = res && this._set_universal_int_noFF( [22],'flag_state_relay' );
+        res = res && this._set_universal_int_noFF( [23],'flag_translation_time' );
+
+        res = res && this._set_universal_hex2( [24,25],'UUID' );
+
+        return res;
+    }
+    spbzip_package_11()
+    {
+        var res = true;
+
+        res = res && this._set_time(1,2,3,4);
+        res = res && this._set_universal_float_noFF( [5,6,7,8],10,'limit_active_power' );
+        res = res && this._set_universal_int_noFF( [9],'time_minute_averages_power' );
+        res = res && this._set_universal_hex2( [10],'mode_measuring_power' );
+
+        res = res && this._set_universal_hex2( [11,12],'UUID' );
+        return res;
+    }
+    spbzip_package_12()
+    {
+        var res = true;
+
+        res = res && this._set_time(1,2,3,4);
+        res = res && this._set_universal_float_noFF( [5,6,7,8],10,'limit_active_power' );
+        res = res && this._set_universal_int_noFF( [9],'time_minute_averages_power' );
+        res = res && this._set_universal_hex2( [10],'mode_measuring_power' );
+
+        res = res && this._set_universal_int_noFF( [11],'time_minute_delay_automatic_switching_relay' );
+        res = res && this._set_universal_int_noFF( [12],'count_automatic_switching_relay' );
+
+        res = res && this._set_universal_hex2( [13,14],'UUID' );
+
+        return res;
+    }
+    spbzip_package_13()
+    {
+        var res = true;
+
+        res = res && this._set_time(1,2,3,4);
+
+        res = res && this._set_universal_int_noFF( [5],'code_page_indication_1' );
+        res = res && this._set_universal_int_noFF( [6],'time_seconds_show_page_indication_1' );
+        res = res && this._set_universal_int_noFF( [7],'code_page_indication_2' );
+        res = res && this._set_universal_int_noFF( [8],'time_seconds_show_page_indication_2' );
+        res = res && this._set_universal_int_noFF( [9],'code_page_indication_3' );
+        res = res && this._set_universal_int_noFF( [10],'time_seconds_show_page_indication_3' );
+        res = res && this._set_universal_int_noFF( [11],'code_page_indication_4' );
+        res = res && this._set_universal_int_noFF( [12],'time_seconds_show_page_indication_4' );
+        res = res && this._set_universal_int_noFF( [13],'code_page_indication_5' );
+        res = res && this._set_universal_int_noFF( [14],'time_seconds_show_page_indication_5' );
+        res = res && this._set_universal_int_noFF( [15],'code_page_indication_6' );
+        res = res && this._set_universal_int_noFF( [16],'time_seconds_show_page_indication_6' );
+        res = res && this._set_universal_int_noFF( [17],'code_page_indication_7' );
+        res = res && this._set_universal_int_noFF( [18],'time_seconds_show_page_indication_7' );
+        res = res && this._set_universal_int_noFF( [19],'code_page_indication_8' );
+        res = res && this._set_universal_int_noFF( [20],'time_seconds_show_page_indication_8' );
+        res = res && this._set_universal_int_noFF( [21],'code_page_indication_9' );
+        res = res && this._set_universal_int_noFF( [22],'time_seconds_show_page_indication_9' );
+        res = res && this._set_universal_int_noFF( [23],'code_page_indication_10' );
+        res = res && this._set_universal_int_noFF( [24],'time_seconds_show_page_indication_10' );
+        res = res && this._set_universal_int_noFF( [25],'code_page_indication_11' );
+        res = res && this._set_universal_int_noFF( [26],'time_seconds_show_page_indication_11' );
+        res = res && this._set_universal_int_noFF( [27],'code_page_indication_12' );
+        res = res && this._set_universal_int_noFF( [28],'time_seconds_show_page_indication_12' );
+        res = res && this._set_universal_int_noFF( [29],'code_page_indication_13' );
+        res = res && this._set_universal_int_noFF( [30],'time_seconds_show_page_indication_13' );
+        res = res && this._set_universal_int_noFF( [31],'code_page_indication_14' );
+        res = res && this._set_universal_int_noFF( [32],'time_seconds_show_page_indication_14' );
+        res = res && this._set_universal_int_noFF( [33],'code_page_indication_15' );
+        res = res && this._set_universal_int_noFF( [34],'time_seconds_show_page_indication_15' );
+
+        res = res && this._set_universal_hex2( [35,36],'UUID' );
+
+        return res;
+    }
+    
+    spbzip_package_14()
+    {
+        var res = true;
+
+        res = res && this._set_time(1,2,3,4);
+
+        res = res && this._set_universal_int_noFF( [5],'code_page_indication_16' );
+        res = res && this._set_universal_int_noFF( [6],'time_seconds_show_page_indication_16' );
+        res = res && this._set_universal_int_noFF( [7],'code_page_indication_17' );
+        res = res && this._set_universal_int_noFF( [8],'time_seconds_show_page_indication_17' );
+        res = res && this._set_universal_int_noFF( [9],'code_page_indication_18' );
+        res = res && this._set_universal_int_noFF( [10],'time_seconds_show_page_indication_18' );
+        res = res && this._set_universal_int_noFF( [11],'code_page_indication_19' );
+        res = res && this._set_universal_int_noFF( [12],'time_seconds_show_page_indication_19' );
+        res = res && this._set_universal_int_noFF( [13],'code_page_indication_20' );
+        res = res && this._set_universal_int_noFF( [14],'time_seconds_show_page_indication_20' );
+        res = res && this._set_universal_int_noFF( [15],'code_page_indication_21' );
+        res = res && this._set_universal_int_noFF( [16],'time_seconds_show_page_indication_21' );
+        res = res && this._set_universal_int_noFF( [17],'code_page_indication_22' );
+        res = res && this._set_universal_int_noFF( [18],'time_seconds_show_page_indication_22' );
+        res = res && this._set_universal_int_noFF( [19],'code_page_indication_23' );
+        res = res && this._set_universal_int_noFF( [20],'time_seconds_show_page_indication_23' );
+        res = res && this._set_universal_int_noFF( [21],'code_page_indication_24' );
+        res = res && this._set_universal_int_noFF( [22],'time_seconds_show_page_indication_24' );
+        res = res && this._set_universal_int_noFF( [23],'code_page_indication_25' );
+        res = res && this._set_universal_int_noFF( [24],'time_seconds_show_page_indication_25' );
+        res = res && this._set_universal_int_noFF( [25],'code_page_indication_26' );
+        res = res && this._set_universal_int_noFF( [26],'time_seconds_show_page_indication_26' );
+        res = res && this._set_universal_int_noFF( [27],'code_page_indication_27' );
+        res = res && this._set_universal_int_noFF( [28],'time_seconds_show_page_indication_27' );
+        res = res && this._set_universal_int_noFF( [29],'code_page_indication_28' );
+        res = res && this._set_universal_int_noFF( [30],'time_seconds_show_page_indication_28' );
+        res = res && this._set_universal_int_noFF( [31],'code_page_indication_29' );
+        res = res && this._set_universal_int_noFF( [32],'time_seconds_show_page_indication_29' );
+        res = res && this._set_universal_int_noFF( [33],'code_page_indication_30' );
+        res = res && this._set_universal_int_noFF( [34],'time_seconds_show_page_indication_30' );
+        res = res && this._set_universal_int_noFF( [35],'code_page_indication_31' );
+        res = res && this._set_universal_int_noFF( [36],'time_seconds_show_page_indication_31' );
+
+        res = res && this._set_universal_hex2( [37,38],'UUID' );
+
+        return res;
+    }
+
+    spbzip_package_15()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int( [1],'special_day_d_1' );
+        res = res && this._set_universal_int( [2],'special_day_m_1' );
+        res = res && this._set_universal_int( [3],'special_day_t_1' );
+        res = res && this._set_universal_int( [4],'special_day_d_2' );
+        res = res && this._set_universal_int( [5],'special_day_m_2' );
+        res = res && this._set_universal_int( [6],'special_day_t_2' );
+        res = res && this._set_universal_int( [7],'special_day_d_3' );
+        res = res && this._set_universal_int( [8],'special_day_m_3' );
+        res = res && this._set_universal_int( [9],'special_day_t_3' );
+        res = res && this._set_universal_int( [10],'special_day_d_4' );
+        res = res && this._set_universal_int( [11],'special_day_m_4' );
+        res = res && this._set_universal_int( [12],'special_day_t_4' );
+        res = res && this._set_universal_int( [13],'special_day_d_5' );
+        res = res && this._set_universal_int( [14],'special_day_m_5' );
+        res = res && this._set_universal_int( [15],'special_day_t_5' );
+        res = res && this._set_universal_int( [16],'special_day_d_6' );
+        res = res && this._set_universal_int( [17],'special_day_m_6' );
+        res = res && this._set_universal_int( [18],'special_day_t_6' );
+        res = res && this._set_universal_int( [19],'special_day_d_7' );
+        res = res && this._set_universal_int( [20],'special_day_m_7' );
+        res = res && this._set_universal_int( [21],'special_day_t_7' );
+        res = res && this._set_universal_int( [22],'special_day_d_8' );
+        res = res && this._set_universal_int( [23],'special_day_m_8' );
+        res = res && this._set_universal_int( [24],'special_day_t_8' );
+        res = res && this._set_universal_int( [25],'special_day_d_9' );
+        res = res && this._set_universal_int( [26],'special_day_m_9' );
+        res = res && this._set_universal_int( [27],'special_day_t_9' );
+        res = res && this._set_universal_int( [28],'special_day_d_10' );
+        res = res && this._set_universal_int( [29],'special_day_m_10' );
+        res = res && this._set_universal_int( [30],'special_day_t_10' );
+        res = res && this._set_universal_int( [31],'special_day_d_11' );
+        res = res && this._set_universal_int( [32],'special_day_m_11' );
+        res = res && this._set_universal_int( [33],'special_day_t_11' );
+        res = res && this._set_universal_int( [34],'special_day_d_12' );
+        res = res && this._set_universal_int( [35],'special_day_m_12' );
+        res = res && this._set_universal_int( [36],'special_day_t_12' );
+        res = res && this._set_universal_int( [37],'special_day_d_13' );
+        res = res && this._set_universal_int( [38],'special_day_m_13' );
+        res = res && this._set_universal_int( [39],'special_day_t_13' );
+        res = res && this._set_universal_int( [40],'special_day_d_14' );
+        res = res && this._set_universal_int( [41],'special_day_m_14' );
+        res = res && this._set_universal_int( [42],'special_day_t_14' );
+        res = res && this._set_universal_int( [43],'special_day_d_15' );
+        res = res && this._set_universal_int( [44],'special_day_m_15' );
+        res = res && this._set_universal_int( [45],'special_day_t_15' );
+        res = res && this._set_universal_int( [46],'special_day_d_16' );
+        res = res && this._set_universal_int( [47],'special_day_m_16' );
+        res = res && this._set_universal_int( [48],'special_day_t_16' );
+
+        res = res && this._set_universal_hex2( [49,50],'UUID' );
+
+        return res;
+    }
+
+    spbzip_package_16()
+    {
+        var res = true;
+        res = res && this._set_time(1,2,3,4);
+        res = res && this._set_universal_int_noFF( [5],'selected_m_archive' );
+        res = res && this._set_universal_int_noFF( [6],'selected_y_archive' );
+        res = res && this._set_universal_int_noFF( [7,8,9,10],'cumulative_energy_summary' );
+        res = res && this._set_universal_int_noFF( [11,12,13,14],'cumulative_energy_rate_1' );
+        res = res && this._set_universal_int_noFF( [15,16,17,18],'cumulative_energy_rate_2' );
+        res = res && this._set_universal_int_noFF( [19,20,21,22],'cumulative_energy_rate_3' );
+        res = res && this._set_universal_int_noFF( [23,25,25,26],'cumulative_energy_rate_4' );
+        
+        res = res && this._set_universal_hex2( [27,28],'UUID' );
+
+        return res;
+    }
+
+    spbzip_package_17()
+    {
+        var res = true;
+        res = res && this._set_time(1,2,3,4);
+        res = res && this._set_universal_int_noFF( [5],'selected_d_archive' );
+        res = res && this._set_universal_int_noFF( [6],'selected_m_archive' );
+        res = res && this._set_universal_int_noFF( [7],'selected_y_archive' );
+        res = res && this._set_universal_int_noFF( [8,9,10,11],'cumulative_energy_summary' );
+        res = res && this._set_universal_int_noFF( [12,13,14,15],'cumulative_energy_rate_1' );
+        res = res && this._set_universal_int_noFF( [16,17,18,19],'cumulative_energy_rate_2' );
+        res = res && this._set_universal_int_noFF( [20,21,22,23],'cumulative_energy_rate_3' );
+        res = res && this._set_universal_int_noFF( [24,25,26,27],'cumulative_energy_rate_4' );
+
+        res = res && this._set_universal_hex2( [28,29],'UUID' );
+
+        return res;
+    }
+
+    spbzip_package_18()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        res = res && this._set_universal_int_noFF( [2,3,4,5],'selected_date' );
+        if(this.num_package && this.selected_date)
+        {
+            if( typeof this.half_hour_slices_active_power !== 'object' ) this.half_hour_slices_active_power = [];
+            if(this.num_package == 1)
+            {
+                this.half_hour_slices_active_power.push({
+                    date_begin: moment.unix(this.selected_date).utc().hour(0).minute(0).unix(),
+                    status: this._get_universal_int_noFF([6]),
+                    active_power: this._get_universal_int_noFF([7,8])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(0).minute(30).unix(),
+                    status: this._get_universal_int_noFF([9]),
+                    active_power: this._get_universal_int_noFF([10,11])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(1).minute(0).unix(),
+                    status: this._get_universal_int_noFF([12]),
+                    active_power: this._get_universal_int_noFF([13,14])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(1).minute(30).unix(),
+                    status: this._get_universal_int_noFF([15]),
+                    active_power: this._get_universal_int_noFF([16,17])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(2).minute(0).unix(),
+                    status: this._get_universal_int_noFF([18]),
+                    active_power: this._get_universal_int_noFF([19,20])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(2).minute(30).unix(),
+                    status: this._get_universal_int_noFF([21]),
+                    active_power: this._get_universal_int_noFF([22,23])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(3).minute(0).unix(),
+                    status: this._get_universal_int_noFF([24]),
+                    active_power: this._get_universal_int_noFF([25,26])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(3).minute(30).unix(),
+                    status: this._get_universal_int_noFF([27]),
+                    active_power: this._get_universal_int_noFF([28,29])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(4).minute(0).unix(),
+                    status: this._get_universal_int_noFF([30]),
+                    active_power: this._get_universal_int_noFF([31,32])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(4).minute(30).unix(),
+                    status: this._get_universal_int_noFF([33]),
+                    active_power: this._get_universal_int_noFF([34,35])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(5).minute(0).unix(),
+                    status: this._get_universal_int_noFF([36]),
+                    active_power: this._get_universal_int_noFF([37,38])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(5).minute(30).unix(),
+                    status: this._get_universal_int_noFF([39]),
+                    active_power: this._get_universal_int_noFF([40,41])
+                });
+                res = res && this._set_universal_hex2( [42,43],'UUID' );
+            }
+            else if(this.num_package == 2)
+            {
+                this.half_hour_slices_active_power.push({
+                    date_begin: moment.unix(this.selected_date).utc().hour(6).minute(0).unix(),
+                    status: this._get_universal_int_noFF([6]),
+                    active_power: this._get_universal_int_noFF([7,8])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(6).minute(30).unix(),
+                    status: this._get_universal_int_noFF([9]),
+                    active_power: this._get_universal_int_noFF([10,11])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(7).minute(0).unix(),
+                    status: this._get_universal_int_noFF([12]),
+                    active_power: this._get_universal_int_noFF([13,14])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(7).minute(30).unix(),
+                    status: this._get_universal_int_noFF([15]),
+                    active_power: this._get_universal_int_noFF([16,17])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(8).minute(0).unix(),
+                    status: this._get_universal_int_noFF([18]),
+                    active_power: this._get_universal_int_noFF([19,20])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(8).minute(30).unix(),
+                    status: this._get_universal_int_noFF([21]),
+                    active_power: this._get_universal_int_noFF([22,23])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(9).minute(0).unix(),
+                    status: this._get_universal_int_noFF([24]),
+                    active_power: this._get_universal_int_noFF([25,26])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(9).minute(30).unix(),
+                    status: this._get_universal_int_noFF([27]),
+                    active_power: this._get_universal_int_noFF([28,29])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(10).minute(0).unix(),
+                    status: this._get_universal_int_noFF([30]),
+                    active_power: this._get_universal_int_noFF([31,32])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(10).minute(30).unix(),
+                    status: this._get_universal_int_noFF([33]),
+                    active_power: this._get_universal_int_noFF([34,35])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(11).minute(0).unix(),
+                    status: this._get_universal_int_noFF([36]),
+                    active_power: this._get_universal_int_noFF([37,38])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(11).minute(30).unix(),
+                    status: this._get_universal_int_noFF([39]),
+                    active_power: this._get_universal_int_noFF([40,41])
+                });
+                res = res && this._set_universal_hex2( [42,43],'UUID' );
+            }
+            else if(this.num_package == 3)
+            {
+                this.half_hour_slices_active_power.push({
+                    date_begin: moment.unix(this.selected_date).utc().hour(12).minute(0).unix(),
+                    status: this._get_universal_int_noFF([6]),
+                    active_power: this._get_universal_int_noFF([7,8])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(12).minute(30).unix(),
+                    status: this._get_universal_int_noFF([9]),
+                    active_power: this._get_universal_int_noFF([10,11])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(13).minute(0).unix(),
+                    status: this._get_universal_int_noFF([12]),
+                    active_power: this._get_universal_int_noFF([13,14])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(13).minute(30).unix(),
+                    status: this._get_universal_int_noFF([15]),
+                    active_power: this._get_universal_int_noFF([16,17])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(14).minute(0).unix(),
+                    status: this._get_universal_int_noFF([18]),
+                    active_power: this._get_universal_int_noFF([19,20])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(14).minute(30).unix(),
+                    status: this._get_universal_int_noFF([21]),
+                    active_power: this._get_universal_int_noFF([22,23])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(15).minute(0).unix(),
+                    status: this._get_universal_int_noFF([24]),
+                    active_power: this._get_universal_int_noFF([25,26])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(15).minute(30).unix(),
+                    status: this._get_universal_int_noFF([27]),
+                    active_power: this._get_universal_int_noFF([28,29])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(16).minute(0).unix(),
+                    status: this._get_universal_int_noFF([30]),
+                    active_power: this._get_universal_int_noFF([31,32])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(16).minute(30).unix(),
+                    status: this._get_universal_int_noFF([33]),
+                    active_power: this._get_universal_int_noFF([34,35])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(17).minute(0).unix(),
+                    status: this._get_universal_int_noFF([36]),
+                    active_power: this._get_universal_int_noFF([37,38])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(17).minute(30).unix(),
+                    status: this._get_universal_int_noFF([39]),
+                    active_power: this._get_universal_int_noFF([40,41])
+                });
+                res = res && this._set_universal_hex2( [42,43],'UUID' );
+            }
+            else if(this.num_package == 4)
+            {
+                this.half_hour_slices_active_power.push({
+                    date_begin: moment.unix(this.selected_date).utc().hour(18).minute(0).unix(),
+                    status: this._get_universal_int_noFF([6]),
+                    active_power: this._get_universal_int_noFF([7,8])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(18).minute(30).unix(),
+                    status: this._get_universal_int_noFF([9]),
+                    active_power: this._get_universal_int_noFF([10,11])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(19).minute(0).unix(),
+                    status: this._get_universal_int_noFF([12]),
+                    active_power: this._get_universal_int_noFF([13,14])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(19).minute(30).unix(),
+                    status: this._get_universal_int_noFF([15]),
+                    active_power: this._get_universal_int_noFF([16,17])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(20).minute(0).unix(),
+                    status: this._get_universal_int_noFF([18]),
+                    active_power: this._get_universal_int_noFF([19,20])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(20).minute(30).unix(),
+                    status: this._get_universal_int_noFF([21]),
+                    active_power: this._get_universal_int_noFF([22,23])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(21).minute(0).unix(),
+                    status: this._get_universal_int_noFF([24]),
+                    active_power: this._get_universal_int_noFF([25,26])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(21).minute(30).unix(),
+                    status: this._get_universal_int_noFF([27]),
+                    active_power: this._get_universal_int_noFF([28,29])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(22).minute(0).unix(),
+                    status: this._get_universal_int_noFF([30]),
+                    active_power: this._get_universal_int_noFF([31,32])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(22).minute(30).unix(),
+                    status: this._get_universal_int_noFF([33]),
+                    active_power: this._get_universal_int_noFF([34,35])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(23).minute(0).unix(),
+                    status: this._get_universal_int_noFF([36]),
+                    active_power: this._get_universal_int_noFF([37,38])
+                });
+                this.half_hour_slices_active_power.push({
+                    date_begin:moment.unix(this.selected_date).utc().hour(23).minute(30).unix(),
+                    status: this._get_universal_int_noFF([39]),
+                    active_power: this._get_universal_int_noFF([40,41])
+                });
+                res = res && this._set_universal_hex2( [42,43],'UUID' );
+            }
+        }
+
+        return res;
+    }
+
+    spbzip_package_19()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 4; i++)
+        {
+            this.journal.push({
+                date_begin: this._get_universal_int_noFF([currentByte,currentByte+1,currentByte+2,currentByte+3]),
+                date_end: this._get_universal_int_noFF([currentByte+4,currentByte+5,currentByte+6,currentByte+7]),
+                code: this._get_universal_hex_noFF([currentByte+8]),
+                service_info: this._get_universal_hex_noFF([currentByte+9])
+            });
+            currentByte = currentByte+10;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+        return res;
+    }
+
+    spbzip_package_20()
+    {
+        var res = true;
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 3; i++)
+        {
+            this.journal.push({
+                date_begin: this._get_universal_int_noFF([currentByte,currentByte+1,currentByte+2,currentByte+3]),
+                date_end: this._get_universal_int_noFF([currentByte+4,currentByte+5,currentByte+6,currentByte+7]),
+                service_info: this._get_universal_hex_noFF([currentByte+8]),
+                max_value:this._get_universal_float_noFF([currentByte+9,currentByte+10],100),
+                max_deviation:this._get_universal_float_negative_noFF([currentByte+11,currentByte+12],100)
+            });
+            currentByte = currentByte+13;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+        return res;
+    }
+
+    spbzip_package_21()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 3; i++)
+        {
+            this.journal.push({
+                service_info: this._get_universal_hex_noFF([currentByte]),
+                date_begin: this._get_universal_int_noFF([currentByte+1,currentByte+2,currentByte+3,currentByte+4]),
+                date_end: this._get_universal_int_noFF([currentByte+5,currentByte+6,currentByte+7,currentByte+8]),
+                number_phase_deviation:this._get_number_phase(currentByte+9),
+                max_value:this._get_universal_float_noFF([currentByte+10,currentByte+11],100),
+                max_deviation:this._get_universal_float_negative_noFF([currentByte+12,currentByte+13],100)
+            });
+            var lastItemJournal = this.journal[this.journal.length-1];
+            if( lastItemJournal.date_begin === undefined ) lastItemJournal.number_phase_deviation.status_parse = false;
+            currentByte = currentByte+14;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+        return res;
+    }
+
+    spbzip_package_22()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 3; i++)
+        {
+            this.journal.push({
+                service_info: this._get_universal_hex_noFF([currentByte]),
+                date_begin: this._get_universal_int_noFF([currentByte+1,currentByte+2,currentByte+3,currentByte+4]),
+                date_end: this._get_universal_int_noFF([currentByte+5,currentByte+6,currentByte+7,currentByte+8]),
+                number_phase_deviation:this._get_number_phase(currentByte+9),
+                max_value:this._get_universal_float_noFF([currentByte+10,currentByte+11],100),
+                max_deviation:this._get_universal_float_negative_noFF([currentByte+12,currentByte+13],100)
+            });
+            var lastItemJournal = this.journal[this.journal.length-1];
+            if( lastItemJournal.date_begin === undefined ) lastItemJournal.number_phase_deviation.status_parse = false;
+            currentByte = currentByte+14;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+        return res;
+    }
+
+    spbzip_package_23()
+    {
+        var res = true;
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 3; i++)
+        {
+            this.journal.push({
+                service_info: this._get_universal_hex_noFF([currentByte]),
+                date_begin: this._get_universal_int_noFF([currentByte+1,currentByte+2,currentByte+3,currentByte+4]),
+                date_end: this._get_universal_int_noFF([currentByte+5,currentByte+6,currentByte+7,currentByte+8]),
+                number_phase_deviation:this._get_number_phase(currentByte+9),
+                max_value:this._get_universal_float_noFF([currentByte+10,currentByte+11],100),
+                max_deviation:this._get_universal_float_negative_noFF([currentByte+12,currentByte+13],100)
+            });
+            var lastItemJournal = this.journal[this.journal.length-1];
+            if( lastItemJournal.date_begin === undefined ) lastItemJournal.number_phase_deviation.status_parse = false;
+            currentByte = currentByte+14;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+        return res;
+    }
+
+    spbzip_package_24()
+    {
+        var res = true;
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 8; i++)
+        {
+            this.journal.push({
+                date_begin: this._get_universal_int_noFF([currentByte,currentByte+1,currentByte+2,currentByte+3]),
+                byte_state: this._get_byte_state(currentByte+4)
+            });
+            currentByte = currentByte+5;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+
+        return res;
+    }
+
+    spbzip_package_25()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 8; i++)
+        {
+            this.journal.push({
+                date: this._get_universal_int_noFF([currentByte,currentByte+1,currentByte+2,currentByte+3])
+            });
+            currentByte = currentByte+4;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+
+        return res;
+    }
+
+    spbzip_package_26()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 4; i++)
+        {
+            this.journal.push({
+                date_begin: this._get_universal_int_noFF([currentByte,currentByte+1,currentByte+2,currentByte+3]),
+                date_end: this._get_universal_int_noFF([currentByte+4,currentByte+5,currentByte+6,currentByte+7]),
+                code: this._get_universal_hex_noFF([currentByte+8])
+            });
+            currentByte = currentByte+9;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+
+        return res;
+    }
+
+    spbzip_package_27()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 4; i++)
+        {
+            this.journal.push({
+                date: this._get_universal_int_noFF([currentByte,currentByte+1,currentByte+2,currentByte+3]),
+                code: this._get_universal_hex_noFF([currentByte+4]),
+                value: this._get_universal_int_negative_noFF([currentByte+5])
+            });
+            currentByte = currentByte+6;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+
+        return res;
+    }
+
+    spbzip_package_28()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 8; i++)
+        {
+            this.journal.push({
+                date: this._get_universal_int_noFF([currentByte,currentByte+1,currentByte+2,currentByte+3]),
+                code: this._get_universal_hex_noFF([currentByte+4])
+            });
+            currentByte = currentByte+5;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+
+        return res;
+    }
+
+    spbzip_package_29()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 4; i++)
+        {
+            this.journal.push({
+                date: this._get_universal_int_noFF([currentByte,currentByte+1,currentByte+2,currentByte+3]),
+                code: this._get_universal_hex_noFF([currentByte+4]),
+                cmd: this._get_universal_hex_noFF([currentByte+5])
+            });
+            currentByte = currentByte+6;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+
+        return res;
+    }
+
+    spbzip_package_30()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 4; i++)
+        {
+            this.journal.push({
+                service_info: this._get_universal_hex_noFF([currentByte]),
+                date_begin: this._get_universal_int_noFF([currentByte+1,currentByte+2,currentByte+3,currentByte+4]),
+                date_end: this._get_universal_int_noFF([currentByte+5,currentByte+6,currentByte+7,currentByte+8]),
+                service_info_2: this._get_universal_hex_noFF([currentByte+9])
+            });
+            currentByte = currentByte+10;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+
+        return res;
+    }
+    
+    spbzip_package_31()
+    {
+        var res = true;
+        res = res && this._set_universal_int_noFF( [1],'num_package' );
+
+        if( typeof this.journal !== 'object' ) this.journal = [];
+        var currentByte = 2;
+        for(var i = 0; i < 3; i++)
+        {
+            this.journal.push({
+                service_info: this._get_universal_hex_noFF([currentByte]),
+                date_begin: this._get_universal_int_noFF([currentByte+1,currentByte+2,currentByte+3,currentByte+4]),
+                date_end: this._get_universal_int_noFF([currentByte+5,currentByte+6,currentByte+7,currentByte+8]),
+                number_phase_deviation:this._get_number_phase(currentByte+9),
+                min_value:this._get_universal_float_noFF([currentByte+10,currentByte+11],100),
+                max_deviation:this._get_universal_float_negative_noFF([currentByte+12,currentByte+13],100)
+            });
+            var lastItemJournal = this.journal[this.journal.length-1];
+
+            if( this.num_package == 2 && ( i===1 || i===2 ) )
+            {
+                lastItemJournal.number_phase_deviation = this._get_number_phaseV2(currentByte+9);
+            }
+
+            if( lastItemJournal.date_begin === undefined ) lastItemJournal.number_phase_deviation.status_parse = false;
+            currentByte = currentByte+14;
+        }
+        res = res && this._set_universal_hex2( [currentByte,currentByte+1],'UUID' );
+       
+        return res;
+    }
+    spbzip_package_32()
+    {
+
+        var res = true;
+        res = res && this._set_time(1,2,3,4);
+        res = res && this._set_universal_int_noFF( [5,6,7,8],'active_power_A' );
+        res = res && this._set_universal_int_noFF( [9,10,11,12],'active_power_B' );
+        res = res && this._set_universal_int_noFF( [13,14,15,16],'active_power_C' );
+        res = res && this._set_universal_int_noFF( [17,18,19,20],'active_power_summary' );
+
+        res = res && this._set_universal_int_noFF( [21,22,23,24],'reactive_power_A' );
+        res = res && this._set_universal_int_noFF( [25,26,27,28],'reactive_power_B' );
+        res = res && this._set_universal_int_noFF( [29,30,31,32],'reactive_power_C' );
+        res = res && this._set_universal_int_noFF( [33,34,35,36],'reactive_power_summary' );
+
+        res = res && this._set_universal_int_noFF( [37,18,19,40],'total_power_A' );
+        res = res && this._set_universal_int_noFF( [41,42,43,44],'total_power_B' );
+        res = res && this._set_universal_int_noFF( [45,46,47,48],'total_power_C' );
+        res = res && this._set_universal_hex2( [49,50],'UUID' );
+
+        return res;
+    }
+    spbzip_package_33()
+    {
+        var res = true;
+
+        res = res && this._set_universal_int( [1],'special_day_d_17' );
+        res = res && this._set_universal_int( [2],'special_day_m_17' );
+        res = res && this._set_universal_int( [3],'special_day_t_17' );
+        res = res && this._set_universal_int( [4],'special_day_d_18' );
+        res = res && this._set_universal_int( [5],'special_day_m_18' );
+        res = res && this._set_universal_int( [6],'special_day_t_18' );
+        res = res && this._set_universal_int( [7],'special_day_d_19' );
+        res = res && this._set_universal_int( [8],'special_day_m_19' );
+        res = res && this._set_universal_int( [9],'special_day_t_19' );
+        res = res && this._set_universal_int( [10],'special_day_d_20' );
+        res = res && this._set_universal_int( [11],'special_day_m_20' );
+        res = res && this._set_universal_int( [12],'special_day_t_20' );
+        res = res && this._set_universal_int( [13],'special_day_d_21' );
+        res = res && this._set_universal_int( [14],'special_day_m_21' );
+        res = res && this._set_universal_int( [15],'special_day_t_21' );
+        res = res && this._set_universal_int( [16],'special_day_d_22' );
+        res = res && this._set_universal_int( [17],'special_day_m_22' );
+        res = res && this._set_universal_int( [18],'special_day_t_22' );
+        res = res && this._set_universal_int( [19],'special_day_d_23' );
+        res = res && this._set_universal_int( [20],'special_day_m_23' );
+        res = res && this._set_universal_int( [21],'special_day_t_23' );
+        res = res && this._set_universal_int( [22],'special_day_d_24' );
+        res = res && this._set_universal_int( [23],'special_day_m_24' );
+        res = res && this._set_universal_int( [24],'special_day_t_24' );
+        res = res && this._set_universal_int( [25],'special_day_d_25' );
+        res = res && this._set_universal_int( [26],'special_day_m_25' );
+        res = res && this._set_universal_int( [27],'special_day_t_25' );
+        res = res && this._set_universal_int( [28],'special_day_d_26' );
+        res = res && this._set_universal_int( [29],'special_day_m_26' );
+        res = res && this._set_universal_int( [30],'special_day_t_26' );
+        res = res && this._set_universal_int( [31],'special_day_d_27' );
+        res = res && this._set_universal_int( [32],'special_day_m_27' );
+        res = res && this._set_universal_int( [33],'special_day_t_27' );
+        res = res && this._set_universal_int( [34],'special_day_d_28' );
+        res = res && this._set_universal_int( [35],'special_day_m_28' );
+        res = res && this._set_universal_int( [36],'special_day_t_28' );
+        res = res && this._set_universal_int( [37],'special_day_d_29' );
+        res = res && this._set_universal_int( [38],'special_day_m_29' );
+        res = res && this._set_universal_int( [39],'special_day_t_29' );
+        res = res && this._set_universal_int( [40],'special_day_d_30' );
+        res = res && this._set_universal_int( [41],'special_day_m_30' );
+        res = res && this._set_universal_int( [42],'special_day_t_30' );
+        res = res && this._set_universal_int( [43],'special_day_d_31' );
+        res = res && this._set_universal_int( [44],'special_day_m_31' );
+        res = res && this._set_universal_int( [45],'special_day_t_31' );
+
+        res = res && this._set_universal_hex2( [46,47],'UUID' );
+
+        return res;
+    }
     ue_package_1()
     {
         var res = true;
@@ -1847,12 +3464,12 @@ class Parser
         res = res && this._set_time(5,6,7,8);
         res = res && this._set_count_rate_active();
         res = res && this._set_rate_active();
-        res = res && this._set_universal_float( [11,12],100,'kt' );
-        res = res && this._set_universal_float( [13,14,15,16],1000,'sensor_rate_sum' );
-        res = res && this._set_universal_float( [17,18,19,20],1000,'sensor_rate_1' );
-        res = res && this._set_universal_float( [21,22,23,24],1000,'sensor_rate_2' );
-        res = res && this._set_universal_float( [25,26,27,28],1000,'sensor_rate_3' );
-        res = res && this._set_universal_float( [29,30,31,32],1000,'sensor_rate_4' );
+        res = res && this._set_universal_float_noFF( [11,12],100,'kt' );
+        res = res && this._set_universal_float_noFF( [13,14,15,16],1000,'sensor_rate_sum' );
+        res = res && this._set_universal_float_noFF( [17,18,19,20],1000,'sensor_rate_1' );
+        res = res && this._set_universal_float_noFF( [21,22,23,24],1000,'sensor_rate_2' );
+        res = res && this._set_universal_float_noFF( [25,26,27,28],1000,'sensor_rate_3' );
+        res = res && this._set_universal_float_noFF( [29,30,31,32],1000,'sensor_rate_4' );
         res = res && this._set_universal_hex( [33,34],'UUID' );
         return res;
     }
@@ -1914,6 +3531,24 @@ class Parser
         res = res && this._set_universal_int( [25],'sat_visible' );
         res = res && this._set_universal_int( [26],'sat_used' );
         res = res && this._set_universal_boolean( [27],'alarm' );
+        return res;
+    }
+    src_package()
+    {
+        var res = true;
+        res = res && this._set_universal_int( [0], 'reason' );
+        res = res && this._set_time(1,2,3,4);
+        res = res && this._set_universal_hex( [5],'status_state' );
+        res = res && this._set_universal_boolean(6,'state_tamper' );
+        res = res && this._set_universal_int( [7],'led_duty' );
+        res = res && this._set_universal_int( [8],'charge' );
+        res = res && this._set_temperature(9);
+        res = res && this._set_universal_float( [10],1,'angle' );
+        res = res && this._set_universal_int( [11,12],'nomenal_voltage' );
+        res = res && this._set_universal_int( [13,14],'total_power_summary' );
+
+        res = res && this._set_universal_float( [15,16,17,18],1000000,'lat' );
+        res = res && this._set_universal_float( [19,20,21,22],1000000,'lng' );
         return res;
     }
     ug_package_1()
@@ -2119,6 +3754,16 @@ class Parser
          }
          return true;
     }
+    tl11_package()
+    {
+        var res = true;
+        res = res && this._set_universal_int( [0],'charge' );
+        res = res && this._set_time(1,2,3,4);
+        res = res && this._set_universal_float_negative( [5,6],10,'temperature' );
+        res = res && this._set_universal_float_negative( [7,8],10,'temperature_2' );
+        res = res && this._set_switch_state_tl11(9);
+        return res;
+    }
     td12_package()
     {
         var res = true;
@@ -2233,6 +3878,51 @@ class Parser
         res = res && this._set_time(2,3,4,5);
         res = res && this._set_temperature(6);
         res = res && this._set_universal_float( [7,8,9,10],1000, 'sensor_rate_sum' );
+        return res;
+    }
+    gm_1_package_rev2()
+    {
+        var res = true;
+        res = res && this._set_universal_int( [0], 'reason' );
+        res = res && this._set_universal_int( [1], 'charge' );
+        res = res && this._set_time(2,3,4,5);
+        res = res && this._set_temperature(6);
+        res = res && this._set_universal_float( [7,8,9,10],1000, 'sensor_rate_sum' );
+        res = res && this._set_universal_int( [11], 'count' );
+        return res;
+    }
+    um0101_package()
+    {
+        var res = true;
+        res = res && this._set_universal_int( [0], 'reason' );
+        res = res && this._set_universal_int( [1], 'charge' );
+        res = res && this._set_time(2,3,4,5);
+        res = res && this._set_universal_int( [6], 'type_powered' );
+        res = res && this._set_universal_float_negative( [7,8],10,'temperature' );
+        res = res && this._set_universal_int( [9], 'damp' );
+
+        res = res && this._set_universal_int( [10,11], 'lux' );
+        res = res && this._set_universal_int( [12], 'dB' );
+        res = res && this._set_universal_int( [13,14], 'CO2' );
+
+        res = res && this._set_universal_int( [15],'angle' );
+
+
+        res = res && this._set_universal_int( [16],'min_temperature' );
+        res = res && this._set_universal_int( [17],'max_temperature' );
+
+        res = res && this._set_universal_int( [18], 'min_damp' );
+        res = res && this._set_universal_int( [19], 'max_damp' );
+
+        res = res && this._set_universal_int( [20,21], 'min_lux' );
+        res = res && this._set_universal_int( [22,23], 'max_lux' );
+
+        res = res && this._set_universal_int( [24], 'min_dB' );
+        res = res && this._set_universal_int( [25], 'max_dB' );
+
+        res = res && this._set_universal_float( [26],0.1, 'min_CO2' ); //?
+        res = res && this._set_universal_float( [27],0.1, 'max_CO2' ); //?
+
         return res;
     }
     hs0101_package()
@@ -2419,21 +4109,59 @@ class Parser
               //  console.log('Данные си11' );
                 if (this._set_hex(hex))
                 {
-                     switch(this.type_package) {
-                        case 1: 
-                           return this.si_11_package_1();
-                        break;
-                        case 2:  
-                           return this.si_11_package_2();
-                        break;
-                        case 3:  
-                           console.log('3 package is no longer used' );
-                           return true;
-                        break;
-                        default:
-                            return false;
-                        break;
-                     }
+                    let port = this.port;
+                    if( port == 4 )
+                    {
+                        if(this.type_package == 255) return this.package_correction_time();
+                    }
+                    else if( port == 3 )
+                    {
+                        if(this.type_package == 0) return this.package_settings();
+                    }
+                    if ( this.version == 0 && port == 2)
+                    {
+                        
+                        switch(this.type_package) {
+                            case 1: 
+                            return this.si_11_package_1();
+                            break;
+                            case 2:  
+                            return this.si_11_package_2();
+                            break;
+                            case 3:  
+                            console.log('3 package is no longer used' );
+                            return true;
+                            break;
+                            default:
+                                return false;
+                            break;
+                        }
+                    }
+                    else if ( this.version == 1 )
+                    {
+                        if( port == 2 )
+                        {
+                            switch(this.type_package) {
+                                case 1: 
+                                    return this.si_21_or_22_package_1_rev2();
+                                break;
+                                case 2:  
+                                    return this.si_21_or_22_package_2_rev2();
+                                break;
+                                default:
+                                    return false;
+                                break;
+                            }
+                        }
+                        else if( port == 195 && this.type_package == 195 ) 
+                        {
+                            return this.si_21_or_22_package_195_rev2();
+                        }
+                        else if( port == 85 ) 
+                        {
+                            return this.si_21_or_22_package_85_rev2();
+                        }
+                    }
                  }
                  else
                  {
@@ -2444,54 +4172,66 @@ class Parser
              //   console.log('Данные си13' );
                 if (this._set_hex(hex))
                 {
-                    if ( this.version == 0 )
+                    let port = this.port;
+                    if ( port == 2 )
                     {
-                        switch(this.type_package) {
-                            case 1: 
-                            return this.si_13_package_1();
-                            break;
-                            case 2:  
-                            return this.si_13_package_2();
-                            break;
-                            case 3:  
-                            return this.si_13_package_3();
-                            break;
-                            case 4:  
-                            return this.si_13_package_4();
-                            break;
-                            case 5:  
-                            return this.si_13_package_5();
-                            break;
-                            default:
-                                return false;
-                            break;
+                        if ( this.version == 0 )
+                        {
+                            switch(this.type_package) {
+                                case 1: 
+                                return this.si_13_package_1();
+                                break;
+                                case 2:  
+                                return this.si_13_package_2();
+                                break;
+                                case 3:  
+                                return this.si_13_package_3();
+                                break;
+                                case 4:  
+                                return this.si_13_package_4();
+                                break;
+                                case 5:  
+                                return this.si_13_package_5();
+                                break;
+                                default:
+                                    return false;
+                                break;
+                            }
+                        }
+                        else if ( this.version == 1 )
+                        {
+                            switch(this.type_package) {
+                                case 1: 
+                                return this.si_13rev2_package_1();
+                                break;
+                                case 2:  
+                                return this.si_13rev2_package_2();
+                                break;
+                                case 3:  
+                                return this.si_13_package_3();
+                                break;
+                                case 4:  
+                                return this.si_13rev2_package_4();
+                                break;
+                                case 5:  
+                                return this.si_13_package_5();
+                                break;
+                                case 6:  
+                                return this.si_13rev2_package_6();
+                                break;
+                                default:
+                                    return false;
+                                break;
+                            }
                         }
                     }
-                    else if ( this.version == 1 )
+                    else if( port == 4 )
                     {
-                        switch(this.type_package) {
-                            case 1: 
-                            return this.si_13rev2_package_1();
-                            break;
-                            case 2:  
-                            return this.si_13rev2_package_2();
-                            break;
-                            case 3:  
-                            return this.si_13_package_3();
-                            break;
-                            case 4:  
-                            return this.si_13rev2_package_4();
-                            break;
-                            case 5:  
-                            return this.si_13_package_5();
-                            break;
-                            case 6:  
-                            return this.si_13rev2_package_6();
-                            break;
-                            default:
-                                return false;
-                            break;
-                        }
+                        if(this.type_package == 255) return this.package_correction_time();
+                    }
+                    else if( port == 3 )
+                    {
+                        if(this.type_package == 0) return this.package_settings();
                     }
                  }
                  else
@@ -2577,14 +4317,15 @@ class Parser
                 {
                     if ( this.version == 0 )
                     {
-                        switch(this.type_package) {
+                        switch(this.type_package) 
+                        {
                             case 1: 
-                               return this.smart_package_1();
+                                return this.smart_package_1();
                             break;
                             default:
                                 return false;
                             break;
-                         }
+                        }
                     }
                     else if( this.version == 1 )
                     {
@@ -2776,7 +4517,14 @@ class Parser
                 {
                     switch(this.port) {
                         case 2: 
-                           return this.td12_package();
+                            if ( this.version == 0 )
+                            {
+                                return this.td12_package();
+                            }
+                            else
+                            {
+                                return this.tl11_package();
+                            }
                         break;
                         default:
                             return false;
@@ -2792,7 +4540,14 @@ class Parser
                     //   console.log('Данные gm-1' );
                     if (this._set_hex(hex))
                     {
-                        return this.gm_1_package();
+                        if ( this.version == 0 )
+                        {
+                            return this.gm_1_package();
+                        }
+                        else
+                        {
+                            return this.gm_1_package_rev2();
+                        }
                     }
                     else
                     {
@@ -2802,17 +4557,54 @@ class Parser
             case 18:
                 if (this._set_hex(hex))
                 {
-                     switch(this.type_package) {
-                        case 1: 
-                           return this.si_22_package_1();
-                        break;
-                        case 2:  
-                           return this.si_22_package_2();
-                        break;
-                        default:
-                            return false;
-                        break;
-                     }
+                    let port = this.port;
+                    if( port == 4 )
+                    {
+                        if(this.type_package == 255) return this.package_correction_time();
+                    }
+                    else if( port == 3 )
+                    {
+                        if(this.type_package == 0) return this.package_settings();
+                    }
+                    if ( this.version == 0 && port == 2)
+                    {
+                        switch(this.type_package) {
+                            case 1: 
+                                return this.si_22_package_1();
+                            break;
+                            case 2:  
+                                return this.si_22_package_2();
+                            break;
+                            default:
+                                return false;
+                            break;
+                        }
+                    }
+                    else if ( this.version == 1 )
+                    {
+                        if( port == 2 )
+                        {
+                            switch(this.type_package) {
+                                case 1: 
+                                    return this.si_21_or_22_package_1_rev2();
+                                break;
+                                case 2:  
+                                    return this.si_21_or_22_package_2_rev2();
+                                break;
+                                default:
+                                    return false;
+                                break;
+                            }
+                        }
+                        else if( port == 195 && this.type_package == 195 ) 
+                        {
+                            return this.si_21_or_22_package_195_rev2();
+                        }
+                        else if( port == 85 ) 
+                        {
+                            return this.si_21_or_22_package_85_rev2();
+                        }
+                    }
                  }
                  else
                  {
@@ -2878,6 +4670,102 @@ class Parser
                         return false;
                     }
                     break;
+                case 24:
+                    // console.log('Данные spbzip' );
+                    if (this._set_hex(hex))
+                    {
+                        let port = this.port;
+                        let type_package = this.type_package;
+                        if( port == 2 )
+                        {
+                            if(type_package == 1) return this.spbzip_package_1();
+                            if(type_package == 2) return this.spbzip_package_2();
+                            if(type_package == 3) return this.spbzip_package_3();
+                            if(type_package == 4) return this.spbzip_package_4();
+                            if(type_package == 5) return this.spbzip_package_5();
+                            if(type_package == 6) return this.spbzip_package_6();
+                            if(type_package == 7) return this.spbzip_package_7();
+                            if(type_package == 32) return this.spbzip_package_32();
+                        }
+                        else if( port == 5 )
+                        {
+                            if(this.type_package == 8) return this.spbzip_package_8();
+                            if(this.type_package == 9) return this.spbzip_package_9();
+                            if(this.type_package == 10) return this.spbzip_package_10();
+                            if(this.type_package == 11) return this.spbzip_package_11();
+                            if(this.type_package == 12) return this.spbzip_package_12();
+                            if(this.type_package == 13) return this.spbzip_package_13();
+                            if(this.type_package == 14) return this.spbzip_package_14();
+                            if(this.type_package == 15) return this.spbzip_package_15();
+                            if(this.type_package == 33) return this.spbzip_package_33();
+                        }
+                        else if( port == 6 )
+                        {
+                            if(this.type_package == 16) return this.spbzip_package_16();
+                            if(this.type_package == 17) return this.spbzip_package_17();
+                            if(this.type_package == 18) return this.spbzip_package_18();
+                        }
+                        else if( port == 7 )
+                        {
+                            if(this.type_package == 19) return this.spbzip_package_19();
+                            if(this.type_package == 20) return this.spbzip_package_20();
+                            if(this.type_package == 21) return this.spbzip_package_21();
+                            if(this.type_package == 22) return this.spbzip_package_22();
+                            if(this.type_package == 23) return this.spbzip_package_23();
+                            if(this.type_package == 24) return this.spbzip_package_24();
+                            if(this.type_package == 25) return this.spbzip_package_25();
+                            if(this.type_package == 26) return this.spbzip_package_26();
+                            if(this.type_package == 27) return this.spbzip_package_27();
+                            if(this.type_package == 28) return this.spbzip_package_28();
+                            if(this.type_package == 29) return this.spbzip_package_29();
+                            if(this.type_package == 30) return this.spbzip_package_30();
+                            if(this.type_package == 31) return this.spbzip_package_31();
+                        }
+                        else if( port == 4 )
+                        {
+                            if(this.type_package == 255) return this.package_correction_time();
+                        }
+                        else if( port == 3 )
+                        {
+                            if(this.type_package == 0) return this.package_settings();
+                        }
+                    }
+                return false;
+                break;
+            case 25:
+                //   console.log('Данные um0101' );
+                let port = this.port;
+                if ( this._set_hex(hex) && port == 2 )
+                {
+                    return this.um0101_package();
+                }
+                else
+                {
+                    return false;
+                }
+                break;
+            case 26:
+                if (this._set_hex(hex))
+                {
+                    let port = this.port;
+                    if( port == 2 )
+                    {
+                        return this.src_package();
+                    }
+                    else if( port == 4 )
+                    {
+                        if(this.type_package == 255) return this.package_correction_time();
+                    }
+                    else if( port == 3 )
+                    {
+                        if(this.type_package == 0) return this.package_settings();
+                    }   
+                }
+                else
+                {
+                    return false;
+                }
+                break;
             default:
                 console.log('Данные неизвестного для типа' );
                 return false;

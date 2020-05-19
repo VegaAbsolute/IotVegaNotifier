@@ -1,3 +1,4 @@
+//vega_base_data.js version 1.1.5
 var deviceTypes=[
     {
         id:1,
@@ -23,24 +24,24 @@ var deviceTypes=[
             }
         }
     },
-   {
-       id:2,
-       name:'СИ-12',
-       count_channels:4,
-       url_image:'./images/devices/si12.png',
-       versions:{
-            default: 0,
-            first: 0,
-            list: {
-                0:{
-                    id: '0',
-                    name:'Все',
-                    settings: [4, 8, 12, 13, 14, 15, 16, 49, 55],
-                    appEui:['7665676173693132']
+    {
+        id:2,
+        name:'СИ-12',
+        count_channels:4,
+        url_image:'./images/devices/si12.png',
+        versions:{
+                default: 0,
+                first: 0,
+                list: {
+                    0:{
+                        id: '0',
+                        name:'Все',
+                        settings: [4, 8, 12, 13, 14, 15, 16, 49, 55],
+                        appEui:['7665676173693132']
+                    }
                 }
             }
-        }
-   },
+    },
     {
         id:3,
         name:'СИ-13',
@@ -167,7 +168,7 @@ var deviceTypes=[
         count_channels:1,
         url_image:'./images/devices/ms.jpg',
         versions:{
-            default: 1,
+            default: 2,
             first: 0,
             list: {
                 0:{
@@ -178,8 +179,14 @@ var deviceTypes=[
                 },
                 1:{
                     id: '1',
-                    name:'старше 1.0',
+                    name:'старше 1.0 и младше 1.3',
                     settings: [4, 5, 8, 16, 43, 55],
+                    appEui:['766567614D533031']
+                },
+                2:{
+                    id: '2',
+                    name:'старше 1.3',
+                    settings: [4, 5, 8, 16, 43, 55, 124],
                     appEui:['766567614D533031']
                 }
             }
@@ -228,14 +235,20 @@ var deviceTypes=[
         count_channels:4,
         url_image:'./images/devices/si21.png',
         versions:{
-            default: 0,
+            default: 1,
             first: 0,
             list: {
                 0:{
                     id: '0',
-                    name:'Все',
+                    name:'младше 2.0',
                     settings: [4, 8, 12, 13, 14, 15, 16, 49, 55],
                     appEui:['7665676173693231']
+                },
+                1:{
+                    id: '1',
+                    name:'старше 2.0',
+                    settings: [4, 8, 12, 13, 14, 15, 16, 49, 55],
+                    appEui:['3032676173693231']
                 }
             }
         }
@@ -317,16 +330,22 @@ var deviceTypes=[
         id:15,
         name:'TL-11',
         count_channels:1,
-        url_image:'./images/devices/none.png',
+        url_image:'./images/devices/tl11.jpg',
         versions:{
-            default: 0,
+            default: 1,
             first: 0,
             list: {
                 0:{
                     id: '0',
-                    name:'Все',
+                    name:'младше 1.0',
                     settings: new Array(),
-                    appEui:['76656761544C3131']
+                    appEui:['76656761544C3131','30326761544C3131']
+                },
+                1:{
+                    id: '1',
+                    name:'1 и старше',
+                    settings: [4, 5, 8, 16, 49, 55],
+                    appEui:['30326761544C3131']
                 }
             }
         }
@@ -335,15 +354,21 @@ var deviceTypes=[
         id:17,
         name:'GM-1',
         count_channels:1,
-        url_image:'./images/devices/none.png',
+        url_image:'./images/devices/gm1.jpg',
         versions:{
-            default: 0,
+            default: 1,
             first: 0,
             list: {
                 0:{
                     id: '0',
-                    name:'Все',
+                    name:'младше 0.2',
                     settings: [1, 4, 55],
+                    appEui:['76656761474D2D31']
+                },
+                1:{
+                    id: '1',
+                    name:'0.2 и старше',
+                    settings: [ 4, 5, 8, 16, 55 ],
                     appEui:['76656761474D2D31']
                 }
             }
@@ -355,14 +380,20 @@ var deviceTypes=[
         count_channels:4,
         url_image:'./images/devices/si22.png',
         versions:{
-            default: 0,
+            default: 1,
             first: 0,
             list: {
                 0:{
                     id: '0',
-                    name:'Все',
+                    name:'младше 2.0',
                     settings: [4, 8, 12, 13, 14, 15, 16, 49, 55],
                     appEui:['7665676173693232']
+                },
+                1:{
+                    id: '1',
+                    name:'старше 2.0',
+                    settings: [4, 8, 12, 13, 14, 15, 16, 49, 55],
+                    appEui:['3032676173693232']
                 }
             }
         }
@@ -421,5 +452,42 @@ var deviceTypes=[
             }
         }
     },
+    {
+        id:24,
+        name:'Электросчетчик СпбЗИП 2726/2727',
+        count_channels:1,
+        customDevice:true,
+        url_image:'./images/devices/none.png',
+        versions:{
+            default: 0,
+            first: 0,
+            list: {
+                0:{
+                    id: '0',
+                    name:'Все',
+                    settings: [4,5,8,50,52,54,55,114],
+                    appEui:['5350625A49503237']
+                }
+            }
+        }
+    },
+    {
+        id:25,
+        name:'UM-0101',
+        count_channels:1,
+        url_image:'./images/devices/um.jpg',
+        versions:{
+            default: 0,
+            first: 0,
+            list: {
+                0:{
+                    id: '0',
+                    name:'Все',
+                    settings: [ 16, 80, 81, 88, 89, 115, 116, 117, 118, 119, 120],
+                    appEui:['4D554C53454E2031']
+                }
+            }
+        }
+    }
 ];
 module.exports.devicesInfo = deviceTypes;

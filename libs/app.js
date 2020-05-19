@@ -1,4 +1,5 @@
 
+//app.js version 1.1.5 lite
 const VegaSMPP = require('./vega_smpp.js');
 const VegaTelegram = require('./vega_telegram.js');
 const VegaSMTP = require('./vega_smtp.js');
@@ -9,6 +10,7 @@ const Config = require('./config.js');
 const Parser = require('./parser.js');
 const { exec } = require('child_process');
 const CronJob = require('cron').CronJob;
+const CRON_TIME = '*/1 * * * *';
 let moment = require( 'moment' );
 let devices = new Devices();
 let config = {};
@@ -23,6 +25,7 @@ let waitingReboot = false;
 //------------------------------------------------------------------------------
 //Логика
 //------------------------------------------------------------------------------
+//RX пакеты которые приложение будет учитывать
 function checkValidRXType(type)
 {
   try
@@ -41,15 +44,17 @@ function checkValidRXType(type)
     return false;
   }
 }
+//Функция отправки сообщений о тревогах
 function wasAlarm(time,channel,fcnt,devEui)
 {
-  if(!channel.enable_danger) return;
+  if(!channel.enable_danger) return; //Если отправка тревожных событий отключена то следует прекратить выполнение данного сценария.
   if(config.debugMOD) console.log(moment().format('LLL')+': '+' Detected alarm DevEui',devEui,'  fcnt:',fcnt);
   sendSMS(time,channel);
   sendVoiceMessage(time,channel);
   sendTelegram(time,channel);
   sendSMTP(time,channel);
 }
+//Функция валидации и привидение введенного номера телефона к нужному формату.
 function getValidTelephone(num)
 {
   try
@@ -70,6 +75,7 @@ function getValidTelephone(num)
     return false;
   }
 }
+//Функция валидации и привидение введенного email к нужному формату.
 function getValidEmail(email)
 {
   try
@@ -86,6 +92,7 @@ function getValidEmail(email)
     return false;
   }
 }
+//Функция валидации и привидение текстового сообщения к нужному формату.
 function getValidChat(val)
 {
   try
@@ -735,6 +742,55 @@ function rx(obj)
             }
             break;
           }
+
+          case 24:
+          {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SPBZIP 2726/2727');
+            let channel = dev.get_channel(1);
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
+            {
+              let danger = dataDevice.event !== undefined && dataDevice.event !== 1 && dataDevice.event !== 19;
+              if ( dataDevice.type_package==1 && danger )
+              {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+              }
+            }
+            break;
+          }
+          case 25:
+          {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device UM ');
+            let channel = dev.get_channel(1);
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
+            {
+              let danger = dataDevice.reason !== undefined && dataDevice.reason !== 1;
+              if ( danger )
+              {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+              }
+            }
+            break;
+          }
+          case 26:
+          {
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SRC ');
+            let channel = dev.get_channel(1);
+            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
+            if(validChannel)
+            {
+              let danger = dataDevice.reason !== undefined && dataDevice.reason !== 1;
+              if ( danger )
+              {
+                  dev.lastDateSMS = currentDate;
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+              }
+            }
+            break;
+          }
           default:
           {
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device unknown');
@@ -818,7 +874,7 @@ function run(conf)
     if(config.auto_update)
     {
       new CronJob({
-        cronTime: '*/1 * * * *',
+        cronTime: CRON_TIME,
         onTick: updating,
         start: true,
       });
@@ -862,9 +918,16 @@ function updating()
     }
     else
     {
-      if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is updated, restart',stdout);
-      waitingReboot = true;
-      emergencyExit();
+      if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is updated, reinstall',stdout);
+      exec('"npm" install', (err, stdout, stderr) => {
+        if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:',stdout,err,stderr);
+        if(config.debugMOD) console.log('--- ',stdout);
+        if(config.debugMOD) console.log('--- ',err);
+        if(config.debugMOD) console.log('--- ',stderr);
+        waitingReboot = true;
+        emergencyExit();
+      });
+      
     }
   });
 }
