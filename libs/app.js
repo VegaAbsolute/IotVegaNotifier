@@ -23,6 +23,7 @@ let telegram = {};
 let smtp = {};
 let ws = {};
 let waitingReboot = false;
+let npm = 'npm';
 //------------------------------------------------------------------------------
 //Логика
 //------------------------------------------------------------------------------
@@ -892,6 +893,10 @@ function run(conf)
       telegram.on('free',free);
       smtp.on('free',free);
       telegram.on('telegramStarted',telegramStarted);
+      Which('npm', function(error, path){ 
+          if(error) console.log(moment().format('LLL')+': '+'[SYSTEM ERROR]',error);
+          else npm = path;
+      });
     }
     catch (e)
     {
@@ -919,20 +924,14 @@ function updating()
     }
     else
     {
-      if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is updated, reinstall',stdout);
-      Which('npm', function(error, path){ 
-          if(error) console.log(moment().format('LLL')+': '+'[SYSTEM ERROR]',error);
-          console.log(path);
-          // process = require('child_process').spawn(path, 'install');
+      exec(npm+' install', (err, stdout, stderr) => {
+        if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:';
+        if(config.debugMOD) console.log('--- ',stdout);
+        if(config.debugMOD) console.log('--- ',err);
+        if(config.debugMOD) console.log('--- ',stderr);
+        waitingReboot = true;
+        emergencyExit();
       });
-      // exec('npm install', (err, stdout, stderr) => {
-      //   if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:',stdout,err,stderr);
-      //   if(config.debugMOD) console.log('--- ',stdout);
-      //   if(config.debugMOD) console.log('--- ',err);
-      //   if(config.debugMOD) console.log('--- ',stderr);
-      //   waitingReboot = true;
-      //   emergencyExit();
-      // });
       // exec('npm install', (err, stdout, stderr) => {
       //   if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:',stdout,err,stderr);
       //   if(config.debugMOD) console.log('--- ',stdout);
