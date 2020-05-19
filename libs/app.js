@@ -921,8 +921,9 @@ function updating()
     {
       if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is updated, reinstall',stdout);
       Which('npm', function(error, path){ 
-          if(config.debugMOD) console.log(moment().format('LLL')+': '+'[SYSTEM ERROR]',error);
-          process = require('child_process').spawn(path, 'install');
+          if(error) console.log(moment().format('LLL')+': '+'[SYSTEM ERROR]',error);
+          console.log(path);
+          // process = require('child_process').spawn(path, 'install');
       });
       // exec('npm install', (err, stdout, stderr) => {
       //   if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:',stdout,err,stderr);
