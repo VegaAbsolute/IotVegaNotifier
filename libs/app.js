@@ -924,9 +924,9 @@ function updating()
         emergencyExit();
       });
     }
-    else 
+    else
     {
-      spawn_update = spawn(npm, 'install');
+      spawn_update = spawn(npm, ['install']);
       spawn_update.stdout.on('data',(data)=>{
         if(config.debugMOD)  console.log(moment().format('LLL')+': '+data);
       });
