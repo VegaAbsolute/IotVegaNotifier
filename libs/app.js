@@ -9,6 +9,7 @@ const VegaWS = require('./vega_ws.js');
 const Config = require('./config.js');
 const Parser = require('./parser.js');
 const { exec } = require('child_process');
+const { spawn } = require('child_process');
 const CronJob = require('cron').CronJob;
 const Which = require('which');
 const CRON_TIME = '*/1 * * * *';
@@ -24,6 +25,7 @@ let smtp = {};
 let ws = {};
 let waitingReboot = false;
 let npm = 'npm';
+let spawn_update;
 //------------------------------------------------------------------------------
 //Логика
 //------------------------------------------------------------------------------
@@ -924,13 +926,18 @@ function updating()
     }
     else
     {
-      exec(npm+' install', (err, stdout, stderr) => {
-        if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:');
-        if(config.debugMOD) console.log('--- ',stdout);
-        if(config.debugMOD) console.log('--- ',err);
-        if(config.debugMOD) console.log('--- ',stderr);
-        waitingReboot = true;
-        emergencyExit();
+      spawn_update = spawn(npm, 'install');
+      spawn_update.stdout.on('data',(data)=>{
+        if(config.debugMOD)  console.log(moment().format('LLL')+': '+data);
+      });
+      spawn_update.stderr.on('data',(data)=>{
+        if(config.debugMOD)  console.log(moment().format('LLL')+': '+data);
+      });
+      spawn_update.on('close',(code)=>{
+        if(config.debugMOD)  console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall success',code);
+      });
+      spawn_update.on('error',(err)=>{
+        if(config.debugMOD)  console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall error',err);
       });
       // exec('npm install', (err, stdout, stderr) => {
       //   if(config.debugMOD) console.log(moment().format('LLL')+': '+'The IotVegaNotifier is reinstall:',stdout,err,stderr);
