@@ -29,6 +29,41 @@ let spawn_update;
 //------------------------------------------------------------------------------
 //Логика
 //------------------------------------------------------------------------------
+//Проверка текста на пустату
+function isEmptyText(text)
+{
+  return text === undefined || text === '' || text === ' ' || text === null;
+}
+//Функция генерации сообщения формата notifier
+function generationMessage(channel)
+{
+  let messageSMS = '';
+  let nameObject = channel.name_level_1;
+  let room = channel.level_2;
+  let name = channel.name;
+  if(isEmptyText(nameObject)) nameObject = 'который не известен';
+  if(isEmptyText(room)) room = 'которое не известно';
+  if(isEmptyText(name)) name = 'который не известен';
+  messageSMS = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
+  return messageSMS;
+}
+//Функция расшифровки причины
+parseReason(typeDev,version,reason,channel)
+{
+  if ( typeDev == 'td11' )
+  {
+    if ( reason === 0 || reason === '0' ) return 'По времени';
+    if ( reason === 1 ) return channel.security_name;
+    if ( reason === 2 ) return 'Вскрытие';
+    if ( reason === 3 ) return channel.hall_1_name;
+    if ( reason === 4 ) return channel.hall_2_name;
+    if ( version == 1 )
+    {
+      if( reason == 5 ) return 'Отклонение температуры';
+    }
+  }
+  return 'Неизвестна';
+}
 //RX пакеты которые приложение будет учитывать
 function checkValidRXType(type)
 {
@@ -49,14 +84,14 @@ function checkValidRXType(type)
   }
 }
 //Функция отправки сообщений о тревогах
-function wasAlarm(time,channel,fcnt,devEui)
+function wasAlarm(time,channel,fcnt,devEui,otherInfo)
 {
   if(!channel.enable_danger) return; //Если отправка тревожных событий отключена то следует прекратить выполнение данного сценария.
   if(config.debugMOD) console.log(moment().format('LLL')+': '+' Detected alarm DevEui',devEui,'  fcnt:',fcnt);
-  sendSMS(time,channel);
-  sendVoiceMessage(time,channel);
-  sendTelegram(time,channel);
-  sendSMTP(time,channel);
+  sendSMS(time,channel,otherInfo);
+  sendVoiceMessage(time,channel,otherInfo);
+  sendTelegram(time,channel,otherInfo);
+  sendSMTP(time,channel,otherInfo);
 }
 //Функция валидации и привидение введенного номера телефона к нужному формату.
 function getValidTelephone(num)
@@ -113,7 +148,7 @@ function getValidChat(val)
     return false;
   }
 }
-function sendVoiceMessage(time,channel)
+function sendVoiceMessage(time,channel,otherInfoDanger)
 {
   let telephones = [];
   let voiceMess = channel.voice;
@@ -153,7 +188,7 @@ function sendVoiceMessage(time,channel)
     }
   }
 }
-function sendSMS(time,channel)
+function sendSMS(time,channel,otherInfoDanger)
 {
   if(smpp.active)
   {
@@ -193,7 +228,7 @@ function sendSMS(time,channel)
     }
   }
 }
-function sendTelegram(time,channel)
+function sendTelegram(time,channel,otherInfoDanger)
 {
   if(telegram.active)
   {
@@ -233,7 +268,7 @@ function sendTelegram(time,channel)
     }
   }
 }
-function sendSMTP(time,channel)
+function sendSMTP(time,channel,otherInfoDanger)
 {
   if(smtp.active)
   {
@@ -322,6 +357,14 @@ function rx(obj)
     let devEui = obj.devEui;
     let port = obj.port;
     let dev = devices.find(devEui);
+    let otherInfo = {
+      timeServer:timeServerMs,
+      timeDevice: undefined,
+      reason: undefined,
+      reasonText: undefined,
+      num: undefined,
+      value: undefined
+    }
     if(dev.valid)
     {
       let dataDevice = new Parser(dev.type,data,port,dev.version);
@@ -330,6 +373,9 @@ function rx(obj)
       let validBetweenTime =  (dev.lastDateSMS===undefined||(currentDate-lastDateSMS)>config.devices_betweenTimeSMS);
       let validNumChannel = dataDevice.num_channel!==undefined;
       let numChannel = validNumChannel?parseInt(dataDevice.num_channel):1;
+
+      otherInfo.timeDevice = dataDevice.time;
+
       validNumChannel = validNumChannel&&!isNaN(numChannel);
       if(validBetweenTime)
       {
@@ -345,7 +391,12 @@ function rx(obj)
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                let currentSensor = dataDevice['sensor_'+num_channel];
+                otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
+                otherInfo.num = num_channel;
+                otherInfo.value = currentSensor;
+                // reason = 'Был замкнут вход';
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -360,7 +411,11 @@ function rx(obj)
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                let currentSensor = dataDevice['sensor_'+num_channel];
+                otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
+                otherInfo.num = num_channel;
+                otherInfo.value = currentSensor;
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -371,13 +426,18 @@ function rx(obj)
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI13');
             if(validNumChannel)
             {
+              let originalNum = numChannel;
               numChannel = numChannel + 6;
               let channel = dev.get_channel(numChannel);
               let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                let currentSensor = dataDevice['sensor_'+num_channel];
+                otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
+                otherInfo.num = originalNum;
+                otherInfo.value = currentSensor;
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -394,10 +454,21 @@ function rx(obj)
               {
                 let checkEvent = dataDevice.reason!==0;
                 let checkTemperature = dataDevice.limit_exceeded;
+                otherInfo.value = dataDevice.temperature;
+                otherInfo.reasonText = '';
+                otherInfo.reason = dataDevice.reason;
                 if ( checkEvent || checkTemperature )
                 {
+                  if(checkEvent)
+                  {
+                    otherInfo.reasonText += parseReason('td11', dev.version, reason, channel)+'. ';
+                  }
+                  if(checkTemperature && dataDevice.reason != 5 )
+                  {
+                    otherInfo.reasonText += 'Отклонение температуры. ';
+                  }
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
                 }
               }
               else if ( dev.version === 0 )
@@ -409,8 +480,16 @@ function rx(obj)
                 let checkTemperature = t<=t_min||t>=t_max;
                 if(checkEvent||checkTemperature)
                 {
+                  if(checkEvent)
+                  {
+                    otherInfo.reasonText += parseReason('td11', dev.version, reason, channel)+'. ';
+                  }
+                  if(checkTemperature && dataDevice.reason != 5 )
+                  {
+                    otherInfo.reasonText += 'Отклонение температуры. ';
+                  }
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
                 }
               }
               else
@@ -434,7 +513,7 @@ function rx(obj)
                 if ( danger )
                 {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
                 }
               }
               else if ( dev.version === 0 )
@@ -472,7 +551,7 @@ function rx(obj)
                 if(sensorEvent||dangerEvent)
                 {
                     dev.lastDateSMS = currentDate;
-                    wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                    wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
                 }
               }
               else
@@ -494,7 +573,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -511,7 +590,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -528,7 +607,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -545,7 +624,7 @@ function rx(obj)
               if (danger)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -562,7 +641,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,dev.get_channel(1));
+                  wasAlarm(timeServerMs,dev.get_channel(1),obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -577,7 +656,7 @@ function rx(obj)
               if ( validChannel && dataDevice.type_package==2 )
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -595,7 +674,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -612,7 +691,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -628,7 +707,7 @@ function rx(obj)
               if(dataDevice.alarm)
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -651,7 +730,7 @@ function rx(obj)
               if(checkEvent||checkTemperature||checkTemperature_2)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -668,7 +747,7 @@ function rx(obj)
               if(danger)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -685,7 +764,7 @@ function rx(obj)
                 if ( dataDevice.type_package==2 )
                 {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
                 }
               }
             }
@@ -704,7 +783,7 @@ function rx(obj)
                 if ( dataDevice.type_package==5 )
                 {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
                 }
               }
             }
@@ -723,7 +802,7 @@ function rx(obj)
                 if ( dataDevice.type_package==5 )
                 {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
                 }
               }
             }
@@ -741,7 +820,7 @@ function rx(obj)
               if(danger)
               {
                 dev.lastDateSMS = currentDate;
-                wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -758,7 +837,7 @@ function rx(obj)
               if ( dataDevice.type_package==1 && danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -774,7 +853,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
@@ -790,7 +869,7 @@ function rx(obj)
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
-                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui);
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
             break;
