@@ -35,17 +35,26 @@ function isEmptyText(text)
   return text === undefined || text === '' || text === ' ' || text === null;
 }
 //Функция генерации сообщения формата notifier
-function generationMessage(channel)
+function generationMessage(channel,info,type)
 {
-  let messageSMS = '';
-  let nameObject = channel.name_level_1;
-  let room = channel.level_2;
-  let name = channel.name;
-  if(isEmptyText(nameObject)) nameObject = 'который не известен';
-  if(isEmptyText(room)) room = 'которое не известно';
-  if(isEmptyText(name)) name = 'который не известен';
-  messageSMS = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
-  return messageSMS;
+  let message = ''
+    , reason = ''
+    , nameObject = ''
+    , room = ''
+    , name = '';
+  if( !isEmptyText( channel.name_level_1 ) ) nameObject = `Объект: ${channel.name_level_1};`;
+  if( !isEmptyText( channel.level_2 ) ) room = `Помещение: ${channel.level_2};`;
+  if( !isEmptyText( channel.name ) ) name = `Устройство: ${channel.name};`;
+  if( !isEmptyText( info.reasonText ) ) reason = `Причина: ${info.reasonText};`;
+  if(type == 'sms')
+  {
+    message = `Тревога! ${nameObject} ${room} ${name} ${reason}`;
+  }
+  else
+  {
+    message = `Внимание!\r\nПроизошло тревожное событие!\r\n${nameObject}\r\n${room}\r\n${name}\r\n${reason}`;
+  }
+  return message;
 }
 //Функция расшифровки причины
 parseReason(typeDev,version,reason,channel)
