@@ -483,8 +483,7 @@ function rx(obj)
       reasonText: undefined,
       num: undefined,
       value: undefined,
-      unit: undefined,
-      data: {}
+      unit: undefined
     }
     if(dev.valid)
     {
