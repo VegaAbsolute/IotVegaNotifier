@@ -138,6 +138,49 @@ parseReason(typeDev,version,reason,channel)
     else if ( reason === 3 ) return 'Электронный блок не отвечает';
     else if ( reason === 4 ) return 'Перезагрузка электронного блока';
   }
+  else if ( typeDev == 'hs0101' )
+  {
+    if ( reason === 1 ) return 'По времени';
+    else if ( reason === 2 ) return 'По тревоге ' + channel.security_name;
+    else if ( reason === 3 ) return 'По тревоге ' + channel.security_name_2;
+    else if ( reason === 4 ) return 'По акселерометру ';
+    else if ( reason === 5 ) return 'Отклонение влажности';
+    else if ( reason === 6 ) return 'Отклонение температуры';
+  }
+  else if ( typeDev == 'spbzip' )
+  {
+    if ( reason === 1 ) return 'По времени';
+    else if ( reason === 2 ) return 'Вскрытие клеммной крышки';
+    else if ( reason === 3 ) return 'Вскрытие корпуса';
+    else if ( reason === 7 ) return 'Сработало реле ограничения';
+    else if ( reason === 8 ) return 'Превышение напряжения по фазе(ам)';
+    else if ( reason === 11 ) return 'Превышение лимита мощности';
+    else if ( reason === 18 ) return 'Отключение электропитания электросчетчика';
+    else if ( reason === 19 ) return 'По запросу';
+    else if ( reason === 20 ) return 'Включение электропитания электросчетчика';
+    else if ( reason === 21 ) return 'Провал напряжения по фазе(ам)';
+    else if ( reason === 24 ) return 'Отклонение частоты';
+  }
+  else if ( typeDev == 'um0101' )
+  {
+    if ( reason === 1 ) return 'По времени';
+    else if ( reason === 2 ) return 'Отклонение CO2';
+    else if ( reason === 3 ) return 'Отклонение освещенности';
+    else if ( reason === 4 ) return 'По акселерометру ';
+    else if ( reason === 5 ) return 'Отклонение влажности';
+    else if ( reason === 6 ) return 'Отклонение температуры';
+    else if ( reason === 7 ) return 'Отклонение шума';
+    else if ( reason === 8 ) return 'Снятие';
+  }
+  else if ( typeDev == 'srs1' )
+  {
+    if ( reason === 1 ) return 'По времени';
+    else if ( reason === 2 ) return 'Отклонение напряжения';
+    else if ( reason === 3 ) return 'Изменение состояния входного напряжения';
+    else if ( reason === 5 ) return 'Вскрытие корпуса';
+    else if ( reason === 6 ) return 'Движение';
+    else if ( reason === 7 ) return 'Отклонение угла отклонения';
+  }
   return 'Неизвестна';
 }
 //RX пакеты которые приложение будет учитывать
@@ -440,7 +483,8 @@ function rx(obj)
       reasonText: undefined,
       num: undefined,
       value: undefined,
-      unit: undefined
+      unit: undefined,
+      data: {}
     }
     if(dev.valid)
     {
@@ -917,6 +961,7 @@ function rx(obj)
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MBUS-1 ');
             if(validNumChannel)
             {
+              let originalNum = numChannel;
               numChannel = numChannel + 10;
               let channel = dev.get_channel(numChannel);
               let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -924,6 +969,10 @@ function rx(obj)
               {
                 if ( dataDevice.type_package==5 )
                 {
+                  let currentSensor = dataDevice['sensor_'+num_channel];
+                  otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
+                  otherInfo.num = originalNum;
+                  otherInfo.value = currentSensor;
                   dev.lastDateSMS = currentDate;
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
                 }
@@ -936,6 +985,7 @@ function rx(obj)
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MBUS-2 ');
             if(validNumChannel)
             {
+              let originalNum = numChannel;
               numChannel = numChannel + 10;
               let channel = dev.get_channel(numChannel);
               let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -943,6 +993,10 @@ function rx(obj)
               {
                 if ( dataDevice.type_package==5 )
                 {
+                  let currentSensor = dataDevice['sensor_'+num_channel];
+                  otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
+                  otherInfo.num = originalNum;
+                  otherInfo.value = currentSensor;
                   dev.lastDateSMS = currentDate;
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
                 }
@@ -962,6 +1016,9 @@ function rx(obj)
               if(danger)
               {
                 dev.lastDateSMS = currentDate;
+                otherInfo.reasonText = '';
+                otherInfo.reason = dataDevice.reason;
+                otherInfo.reasonText += parseReason('hs0101', dev.version, otherInfo.reason, channel)+'. ';
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
@@ -973,12 +1030,17 @@ function rx(obj)
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SPBZIP 2726/2727');
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
+            otherInfo.reasonText = '';
+            otherInfo.reason = dataDevice.event;
             if(validChannel)
             {
               let danger = dataDevice.event !== undefined && dataDevice.event !== 1 && dataDevice.event !== 19;
               if ( dataDevice.type_package==1 && danger )
               {
                   dev.lastDateSMS = currentDate;
+                  otherInfo.unit = 'кВт⋅ч';
+                  otherInfo.value = dataDevice.sensor_rate_sum;
+                  otherInfo.reasonText += parseReason('spbzip', dev.version, dataDevice.event, channel)+'. ';
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
@@ -992,9 +1054,12 @@ function rx(obj)
             if(validChannel)
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason !== 1;
+              otherInfo.reasonText = '';
+              otherInfo.reason = dataDevice.reason;
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
+                  otherInfo.reasonText += parseReason('um0101', dev.version, otherInfo.reason, channel)+'. ';
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
@@ -1008,9 +1073,12 @@ function rx(obj)
             if(validChannel)
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason !== 1;
+              otherInfo.reasonText = '';
+              otherInfo.reason = dataDevice.reason;
               if ( danger )
               {
                   dev.lastDateSMS = currentDate;
+                  otherInfo.reasonText += parseReason('srs1', dev.version, otherInfo.reason, channel)+'. ';
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
