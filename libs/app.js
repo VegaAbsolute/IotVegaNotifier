@@ -322,20 +322,18 @@ function sendSMS(time,channel,otherInfoDanger)
   {
     let telephones = [];
     let sms = channel.sms;
-    let nameObject = channel.name_level_1;
-    let room = channel.level_2;
-    let name = channel.name;
-    let messageSMS = channel.message_sms;
-    let messageSMS_admin = 'undefined';
+    let message = channel.message_sms;
+    let message_admin = generationMessage(channel,otherInfoDanger,'sms');
+    //Отправлять сообщение формата приложения.
+    let sendMessageApp  = channel.app_message_danger === true;
+    //Отправлять сообщение формата пользователя.
+    let sendMessageUser = channel.user_message_danger === true || channel.user_message_danger === undefined ;
+
+    if(isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
     if(channel.telephones)
     {
       telephones = channel.telephones.split(',');
     }
-    if(!messageSMS)
-    {
-       messageSMS = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
-    }
-    messageSMS_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
     if(sms)
     {
       if(telephones.length>0)
@@ -345,13 +343,28 @@ function sendSMS(time,channel,otherInfoDanger)
           let telephone = getValidTelephone(telephones[i]);
           if(telephone!==false)
           {
-            smpp.pushSMS(messageSMS,telephone,new Date().getTime());
+            let countSendMessage = 0;
+            if ( sendMessageApp ) 
+            {
+              smpp.pushSMS(message_admin,telephone,new Date().getTime());
+              countSendMessage++;
+            }
+            if ( sendMessageUser && !isEmptyText(message) ) 
+            {
+              smpp.pushSMS(message,telephone,new Date().getTime());
+              countSendMessage++;
+            }
+            // В случае если не удалось отправить на отправку ни одного сообщения, отправляем сообщение формата приложения 
+            if ( countSendMessage === 0 && isEmptyText(message) )
+            {
+              smpp.pushSMS(message_admin,telephone,new Date().getTime());
+            }
           }
         }
       }
       if(config.debugMOD&&config.telephoneAdministrator)
       {
-        smpp.pushSMS(messageSMS_admin,config.telephoneAdministrator,new Date().getTime());
+        smpp.pushSMS(message_admin,config.telephoneAdministrator,new Date().getTime());
       }
     }
   }
