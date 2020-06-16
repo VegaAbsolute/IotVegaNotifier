@@ -316,7 +316,7 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
               countSendMessage++;
             }
             // В случае если не удалось отправить на отправку ни одного сообщения, отправляем сообщение формата приложения 
-            if ( countSendMessage === 0 && isEmptyText(message) )
+            if ( countSendMessage === 0 || isEmptyText(message) )
             {
               smsc.pushVoiceMessage(message_admin,telephone,new Date().getTime());
             }
@@ -369,7 +369,7 @@ function sendSMS(time,channel,otherInfoDanger)
               countSendMessage++;
             }
             // В случае если не удалось отправить на отправку ни одного сообщения, отправляем сообщение формата приложения 
-            if ( countSendMessage === 0 && isEmptyText(message) )
+            if ( countSendMessage === 0 || isEmptyText(message) )
             {
               smpp.pushSMS(message_admin,telephone,new Date().getTime());
             }
@@ -426,7 +426,7 @@ function sendTelegram(time,channel,otherInfoDanger)
               countSendMessage++;
             }
             // В случае если не удалось отправить на отправку ни одного сообщения, отправляем сообщение формата приложения 
-            if ( countSendMessage === 0 && isEmptyText(message) )
+            if ( countSendMessage === 0 || isEmptyText(message) )
             {
               telegram.pushMessage(message_admin,chat,new Date().getTime());
             }
@@ -480,7 +480,7 @@ function sendSMTP(time,channel,otherInfoDanger)
               countSendMessage++;
             }
             // В случае если не удалось отправить на отправку ни одного сообщения, отправляем сообщение формата приложения 
-            if ( countSendMessage === 0 && isEmptyText(message) )
+            if ( countSendMessage === 0 || isEmptyText(message) )
             {
               smtp.pushMessage(message_admin,email,new Date().getTime());
             }
