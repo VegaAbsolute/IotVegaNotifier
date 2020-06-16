@@ -41,18 +41,20 @@ function generationMessage(channel,info,type)
     , reason = ''
     , nameObject = ''
     , room = ''
-    , name = '';
+    , name = ''
+    , fcnt = '';
   if( !isEmptyText( channel.name_level_1 ) ) nameObject = `Объект: ${channel.name_level_1};`;
   if( !isEmptyText( channel.level_2 ) ) room = `Помещение: ${channel.level_2};`;
   if( !isEmptyText( channel.name ) ) name = `Устройство: ${channel.name};`;
-  if( !isEmptyText( info.reasonText ) ) reason = `Причина: ${info.reasonText};`;
+  if( !isEmptyText( info.reasonText ) ) reason = `Причина: ${info.reasonText}`;
+  if( !isEmptyText( info.fcnt ) ) reason = `№ пакета: ${info.reasonText};`;
   if(type == 'sms')
   {
     message = `Тревога! ${nameObject} ${room} ${name} ${reason}`;
   }
   else
   {
-    message = `Внимание!\r\nПроизошло тревожное событие!\r\n${nameObject}\r\n${room}\r\n${name}\r\n${reason}`;
+    message = `Внимание!\r\nПроизошло тревожное событие!\r\n${nameObject}\r\n${room}\r\n${name}\r\n${fcnt}\r\n${reason}`;
   }
   return message;
 }
@@ -548,7 +550,8 @@ function rx(obj)
       reasonText: undefined,
       num: undefined,
       value: undefined,
-      unit: undefined
+      unit: undefined,
+      fcnt: undefined
     }
     if(dev.valid)
     {
@@ -560,6 +563,7 @@ function rx(obj)
       let numChannel = validNumChannel?parseInt(dataDevice.num_channel):1;
 
       otherInfo.timeDevice = dataDevice.time;
+      otherInfo.fcnt = dataDevice.fcnt;
 
       validNumChannel = validNumChannel&&!isNaN(numChannel);
       if(validBetweenTime)
