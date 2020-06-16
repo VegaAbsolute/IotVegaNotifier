@@ -47,7 +47,7 @@ function generationMessage(channel,info,type)
   if( !isEmptyText( channel.level_2 ) ) room = `Помещение: ${channel.level_2};`;
   if( !isEmptyText( channel.name ) ) name = `Устройство: ${channel.name};`;
   if( !isEmptyText( info.reasonText ) ) reason = `Причина: ${info.reasonText}`;
-  if( !isEmptyText( info.fcnt ) ) reason = `№ пакета: ${info.reasonText};`;
+  if( !isEmptyText( info.fcnt ) ) fcnt = `№ пакета: ${info.reasonText};`;
   if(type == 'sms')
   {
     message = `Тревога! ${nameObject} ${room} ${name} ${reason}`;
