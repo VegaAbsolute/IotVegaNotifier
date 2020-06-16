@@ -42,19 +42,21 @@ function generationMessage(channel,info,type)
     , nameObject = ''
     , room = ''
     , name = ''
+    , model = ''
     , fcnt = '';
   if( !isEmptyText( channel.name_level_1 ) ) nameObject = `Объект: ${channel.name_level_1};`;
   if( !isEmptyText( channel.level_2 ) ) room = `Помещение: ${channel.level_2};`;
   if( !isEmptyText( channel.name ) ) name = `Устройство: ${channel.name};`;
   if( !isEmptyText( info.reasonText ) ) reason = `Причина: ${info.reasonText}`;
   if( !isEmptyText( info.fcnt ) ) fcnt = `№ пакета: ${info.fcnt};`;
+  if( !isEmptyText( info.model ) ) model = `Модель устройства: ${info.model};`;
   if(type == 'sms')
   {
     message = `Тревога! ${nameObject} ${room} ${name} ${reason}`;
   }
   else
   { 
-    message = `Внимание!\r\nПроизошло тревожное событие!\r\n${nameObject}\r\n${room}\r\n${name}\r\n${fcnt}\r\n${reason}`;
+    message = `Внимание!\r\nПроизошло тревожное событие!\r\n${nameObject}\r\n${room}\r\n${model}\r\n${name}\r\n${fcnt}\r\n${reason}`;
   }
   return message;
 }
@@ -573,6 +575,7 @@ function rx(obj)
           case 1:
           {
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI11');
+            otherInfo.model = 'SI-11';
             if(validNumChannel)
             {
               let channel = dev.get_channel(numChannel);
@@ -593,6 +596,7 @@ function rx(obj)
           case 2:
           {
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI12');
+            otherInfo.model = 'SI-12';
             if(validNumChannel)
             {
               let channel = dev.get_channel(numChannel);
@@ -613,6 +617,7 @@ function rx(obj)
           case 3:
           {
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI13');
+            otherInfo.model = 'SI-13';
             if(validNumChannel)
             {
               let originalNum = numChannel;
@@ -633,6 +638,7 @@ function rx(obj)
           }
           case 4:
           {
+            otherInfo.model = 'TD-11';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TD11');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
@@ -691,6 +697,7 @@ function rx(obj)
           }
           case 5:
           {
+            otherInfo.model = 'TP-11';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TP11');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
@@ -769,6 +776,7 @@ function rx(obj)
           }
           case 6:
           {
+            otherInfo.model = 'MC-0101';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MC');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
@@ -789,6 +797,7 @@ function rx(obj)
           }
           case 7:
           {
+            otherInfo.model = 'AS-0101';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device AS');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
@@ -809,6 +818,7 @@ function rx(obj)
           }
           case 8:
           {
+            otherInfo.model = 'MS-0101';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MS');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
@@ -829,6 +839,7 @@ function rx(obj)
           }
           case 9:
           {
+            otherInfo.model = 'Водосчетчик';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device СВЭ-1');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
@@ -853,6 +864,7 @@ function rx(obj)
           }
           case 10:
           {
+            otherInfo.model = 'SS-0101';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SS ');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
@@ -873,6 +885,7 @@ function rx(obj)
           }
           case 11:
           {
+            otherInfo.model = 'SI-21';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI21');
             if(validNumChannel)
             {
@@ -892,6 +905,7 @@ function rx(obj)
           }
           case 12:
           {
+            otherInfo.model = 'Электросчетчик';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device UE');
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -915,6 +929,7 @@ function rx(obj)
           }
           case 13:
           {
+            otherInfo.model = 'GM-2';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device GM-2 ');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
@@ -937,6 +952,7 @@ function rx(obj)
           }
           case 14:
           {
+            otherInfo.model = 'LM-1';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device LM-1 ');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
@@ -955,6 +971,7 @@ function rx(obj)
           }
           case 15:
           {
+            otherInfo.model = 'TL-11';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TL-11');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
@@ -981,6 +998,7 @@ function rx(obj)
           }
           case 17:
           {
+            otherInfo.model = 'GM-1';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device GM-1 ');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
@@ -1004,6 +1022,7 @@ function rx(obj)
           }
           case 18:
           {
+            otherInfo.model = 'SI-22';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI-22 ');
             if(validNumChannel)
             {
@@ -1026,6 +1045,7 @@ function rx(obj)
           }
           case 20:
           {
+            otherInfo.model = 'M-BUS-1';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MBUS-1 ');
             if(validNumChannel)
             {
@@ -1050,6 +1070,7 @@ function rx(obj)
           }
           case 21:
           {
+            otherInfo.model = 'M-BUS-2';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MBUS-2 ');
             if(validNumChannel)
             {
@@ -1074,6 +1095,7 @@ function rx(obj)
           }
           case 23:
           {
+            otherInfo.model = 'HS-0101';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device HS ');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
@@ -1095,6 +1117,7 @@ function rx(obj)
 
           case 24:
           {
+            otherInfo.model = 'SPBZIP 2726/2727';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SPBZIP 2726/2727');
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -1116,6 +1139,7 @@ function rx(obj)
           }
           case 25:
           {
+            otherInfo.model = 'UM-0101';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device UM ');
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -1135,6 +1159,7 @@ function rx(obj)
           }
           case 26:
           {
+            otherInfo.model = 'SRC-1';
             if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SRC ');
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
