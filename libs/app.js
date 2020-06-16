@@ -280,20 +280,17 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
 {
   let telephones = [];
   let voiceMess = channel.voice;
-  let nameObject = channel.name_level_1;
-  let room = channel.level_2;
-  let name = channel.name;
-  let voiceMessage = channel.voice_message;
-  let voiceMessage_admin = 'undefined';
+  let message = channel.voice_message;
+  let message_admin = generationMessage(channel,otherInfoDanger);
+  //Отправлять сообщение формата приложения.
+  let sendMessageApp  = channel.app_message_danger === true;
+  //Отправлять сообщение формата пользователя.
+  let sendMessageUser = channel.user_message_danger === true || channel.user_message_danger === undefined ;
+  if(isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
   if(channel.telephones)
   {
     telephones = channel.telephones.split(',');
   }
-  if(!voiceMessage)
-  {
-     voiceMessage = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
-  }
-  voiceMessage_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
   if(voiceMess)
   {
     if(smsc.active)
@@ -305,7 +302,22 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
           let telephone = getValidTelephone(telephones[i]);
           if(telephone!==false)
           {
-            smsc.pushVoiceMessage(voiceMessage,telephone,new Date().getTime());
+            let countSendMessage = 0;
+            if ( sendMessageApp ) 
+            {
+              smsc.pushVoiceMessage(message_admin,telephone,new Date().getTime());
+              countSendMessage++;
+            }
+            if ( sendMessageUser && !isEmptyText(message) ) 
+            {
+              smsc.pushVoiceMessage(message,telephone,new Date().getTime());
+              countSendMessage++;
+            }
+            // В случае если не удалось отправить на отправку ни одного сообщения, отправляем сообщение формата приложения 
+            if ( countSendMessage === 0 && isEmptyText(message) )
+            {
+              smsc.pushVoiceMessage(message_admin,telephone,new Date().getTime());
+            }
           }
         }
       }
@@ -379,16 +391,18 @@ function sendTelegram(time,channel,otherInfoDanger)
       chats = channel.telegram_chats.split(',');
     }
     let mytelegram = channel.telegram;
-    let nameObject = channel.name_level_1;
-    let room = channel.level_2;
-    let name = channel.name;
     let message = channel.message_messenger;
-    let message_admin = 'undefined';
+    let message_admin = generationMessage(channel,otherInfoDanger);
+    //Отправлять сообщение формата приложения.
+    let sendMessageApp  = channel.app_message_danger === true;
+    //Отправлять сообщение формата пользователя.
+    let sendMessageUser = channel.user_message_danger === true || channel.user_message_danger === undefined ;
     if(!message)
     {
       message = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
     }
     message_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
+    if(isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
     if(mytelegram)
     {
       if(chats.length>0)
@@ -398,7 +412,22 @@ function sendTelegram(time,channel,otherInfoDanger)
           let chat = getValidChat(chats[i]);
           if(chat!==false)
           {
-            telegram.pushMessage(message,chat,new Date().getTime());
+            let countSendMessage = 0;
+            if ( sendMessageApp ) 
+            {
+              telegram.pushMessage(message_admin,chat,new Date().getTime());
+              countSendMessage++;
+            }
+            if ( sendMessageUser && !isEmptyText(message) ) 
+            {
+              telegram.pushMessage(message,chat,new Date().getTime());
+              countSendMessage++;
+            }
+            // В случае если не удалось отправить на отправку ни одного сообщения, отправляем сообщение формата приложения 
+            if ( countSendMessage === 0 && isEmptyText(message) )
+            {
+              telegram.pushMessage(message_admin,chat,new Date().getTime());
+            }
           }
         }
       }
@@ -419,16 +448,15 @@ function sendSMTP(time,channel,otherInfoDanger)
       emails = channel.emails.split(',');
     }
     let mysmtp = channel.email;
-    let nameObject = channel.name_level_1;
-    let room = channel.level_2;
-    let name = channel.name;
+
     let message = channel.message_messenger;
-    let message_admin = 'undefined';
-    if(!message)
-    {
-      message = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
-    }
-    message_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
+    let message_admin = generationMessage(channel,otherInfoDanger);
+    //Отправлять сообщение формата приложения.
+    let sendMessageApp  = channel.app_message_danger === true;
+    //Отправлять сообщение формата пользователя.
+    let sendMessageUser = channel.user_message_danger === true || channel.user_message_danger === undefined ;
+    
+    if(isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
     if(mysmtp)
     {
       if(emails.length>0)
@@ -438,7 +466,22 @@ function sendSMTP(time,channel,otherInfoDanger)
           let email = getValidEmail(emails[i]);
           if(email!==false)
           {
-            smtp.pushMessage(message,email,new Date().getTime());
+            let countSendMessage = 0;
+            if ( sendMessageApp ) 
+            {
+              smtp.pushMessage(message_admin,email,new Date().getTime());
+              countSendMessage++;
+            }
+            if ( sendMessageUser && !isEmptyText(message) ) 
+            {
+              smtp.pushMessage(message,email,new Date().getTime());
+              countSendMessage++;
+            }
+            // В случае если не удалось отправить на отправку ни одного сообщения, отправляем сообщение формата приложения 
+            if ( countSendMessage === 0 && isEmptyText(message) )
+            {
+              smtp.pushMessage(message_admin,email,new Date().getTime());
+            }
           }
         }
       }
