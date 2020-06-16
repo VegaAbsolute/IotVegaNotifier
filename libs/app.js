@@ -563,7 +563,7 @@ function rx(obj)
       let numChannel = validNumChannel?parseInt(dataDevice.num_channel):1;
 
       otherInfo.timeDevice = dataDevice.time;
-      otherInfo.fcnt = dataDevice.fcnt;
+      otherInfo.fcnt = obj.fcnt;
 
       validNumChannel = validNumChannel&&!isNaN(numChannel);
       if(validBetweenTime)
