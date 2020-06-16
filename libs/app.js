@@ -57,7 +57,7 @@ function generationMessage(channel,info,type)
   return message;
 }
 //Функция расшифровки причины
-parseReason(typeDev,version,reason,channel)
+function parseReason(typeDev,version,reason,channel)
 {
   reason = parseInt(reason);
   if ( typeDev == 'td11' )
