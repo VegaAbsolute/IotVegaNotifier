@@ -102,7 +102,7 @@ class VegaSMPP extends EventEmitter
              {
                if(_self._stack[j].uuid === res.uuid)
                {
-                 console.log(moment().format('LLL')+':  [SMPP]'+'Success to send sms message '+_self._stack[j].telephone);
+                 console.log(moment().format('LLL')+': [SMPP]'+'Success to send sms message '+_self._stack[j].telephone);
                  _self._stack.splice(j,1);
                  _self.checkStackEmptiness();
                }

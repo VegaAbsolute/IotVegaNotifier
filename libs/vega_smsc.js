@@ -83,7 +83,7 @@ class SMSCru extends EventEmitter
                {
                  if(_self._stack[j].uuid === res.uuid)
                  {
-                   console.log(moment().format('LLL')+': '+'Success to send voice message '+_self._stack[j].telephone);
+                   console.log(moment().format('LLL')+': [SMSC_VOICE] '+'Success to send voice message '+_self._stack[j].telephone);
                    _self._stack.splice(j,1);
                    _self.checkStackEmptiness();
                  }
@@ -107,7 +107,7 @@ class SMSCru extends EventEmitter
                      _self.pushVoiceMessage(tmp.message,tmp.telephone,tmp.firstTime);
                    }
                    _self.checkStackEmptiness();
-                   console.log(moment().format('LLL')+': '+'failed to send  voice message '+tmp.telephone);
+                   console.log(moment().format('LLL')+': [SMSC_VOICE] '+'failed to send  voice message '+tmp.telephone);
                  }
                }
 
@@ -115,8 +115,8 @@ class SMSCru extends EventEmitter
          })
          .catch((e)=>{
           //  item.status = false;
-           console.log(moment().format('LLL')+': '+'failed to send  http message. Error 1');
-           console.log(moment().format('LLL')+': ',e);
+           console.log(moment().format('LLL')+': [SMSC_VOICE] '+'failed to send  http message. Error 1');
+           console.log(moment().format('LLL')+': [SMSC_VOICE]',e);
          });
        break;
       }
@@ -132,14 +132,14 @@ class SMSCru extends EventEmitter
             'http://smsc.ru/sys/send.php',
              {form:data},
              function (error, response, body) {
-               console.dir(moment().format('LLL')+': ',body);
-                if (!error && response.statusCode == 200)
+                if (!error && response.statusCode == 200 && body.indexOf('ERROR =') === -1 )
                 {
                     resolve({status:true,uuid:uuid});
                 }
                 else
                 {
-                    resolve({status:false,uuid:uuid});
+                  console.log(moment().format('LLL')+': [SMSC_VOICE]',body);
+                  resolve({status:false,uuid:uuid});
                 }
             }
         );
