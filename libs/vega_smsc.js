@@ -76,16 +76,19 @@ class SMSCru extends EventEmitter
         }
         this.http_request(data,item.uuid)
           .then((res)=>{
-             if(res.status)
+            let bodyRes = res.body;
+            let error4 = bodyRes !== undefined && typeof bodyRes === 'string' && bodyRes.indexOf('ERROR = 4') >= -1;
+             if(res.status || error4 )
              {
 
                for(let j = 0 ; j < _self._stack.length; j++)
                {
                  if(_self._stack[j].uuid === res.uuid)
                  {
-                   console.log(moment().format('LLL')+': [SMSC_VOICE] '+'Success to send voice message '+_self._stack[j].telephone);
-                   _self._stack.splice(j,1);
-                   _self.checkStackEmptiness();
+                  _self._stack.splice(j,1);
+                  _self.checkStackEmptiness();
+                  if(error4) console.log(moment().format('LLL')+': [SMSC_VOICE] '+'ERROR to send voice message '+_self._stack[j].telephone+' , ip is blocked, http://smsc.ru/faq/99/ ');
+                  else console.log(moment().format('LLL')+': [SMSC_VOICE] '+'Success to send voice message '+_self._stack[j].telephone); 
                  }
                }
              }
@@ -139,7 +142,7 @@ class SMSCru extends EventEmitter
                 else
                 {
                   console.log(moment().format('LLL')+': [SMSC_VOICE]',body);
-                  resolve({status:false,uuid:uuid});
+                  resolve({status:false,uuid:uuid,body:body});
                 }
             }
         );
