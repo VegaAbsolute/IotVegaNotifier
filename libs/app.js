@@ -318,7 +318,7 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
             {
               smsc.pushVoiceMessage(message,telephone,new Date().getTime());
             }
-            else ( isEmptyText(message) )
+            else
             {
               smsc.pushVoiceMessage(message_admin,telephone,new Date().getTime());
             }
@@ -428,7 +428,7 @@ function sendTelegram(time,channel,otherInfoDanger)
             {
               telegram.pushMessage(message,chat,new Date().getTime());
             }
-            else ( isEmptyText(message) )
+            else
             {
               telegram.pushMessage(message_admin,chat,new Date().getTime());
             }
@@ -470,20 +470,25 @@ function sendSMTP(time,channel,otherInfoDanger)
           let email = getValidEmail(emails[i]);
           if(email!==false)
           {
+            console.log('email',email);
             if( sendMessageApp && sendMessageUser && !isEmptyText(message) )
             {
+              console.log('send 1');
               smtp.pushMessage(`${message_admin}\r\nПользовательское сообщение: ${message}`,email,new Date().getTime());
             }
             else if ( sendMessageApp ) 
             {
+              console.log('send 2');
               smtp.pushMessage(message_admin,email,new Date().getTime());
             }
             else if ( sendMessageUser && !isEmptyText(message) ) 
             {
+              console.log('send 3');
               smtp.pushMessage(message,email,new Date().getTime());
             } 
-            else ( isEmptyText(message) )
+            else
             {
+              console.log('send 4');
               smtp.pushMessage(message_admin,email,new Date().getTime());
             }
           }
@@ -491,6 +496,7 @@ function sendSMTP(time,channel,otherInfoDanger)
       }
       if(config.debugMOD&&config.smtp_user)
       {
+        console.log('send 5');
         smtp.pushMessage(message_admin,config.smtp_user,new Date().getTime());
       }
     }
