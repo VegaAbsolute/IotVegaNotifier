@@ -318,7 +318,7 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
             {
               smsc.pushVoiceMessage(message,telephone,new Date().getTime());
             }
-            else if ( isEmptyText(message) )
+            else ( isEmptyText(message) )
             {
               smsc.pushVoiceMessage(message_admin,telephone,new Date().getTime());
             }
@@ -428,7 +428,7 @@ function sendTelegram(time,channel,otherInfoDanger)
             {
               telegram.pushMessage(message,chat,new Date().getTime());
             }
-            else if ( isEmptyText(message) )
+            else ( isEmptyText(message) )
             {
               telegram.pushMessage(message_admin,chat,new Date().getTime());
             }
@@ -482,7 +482,7 @@ function sendSMTP(time,channel,otherInfoDanger)
             {
               smtp.pushMessage(message,email,new Date().getTime());
             } 
-            else if ( isEmptyText(message) )
+            else ( isEmptyText(message) )
             {
               smtp.pushMessage(message_admin,email,new Date().getTime());
             }
