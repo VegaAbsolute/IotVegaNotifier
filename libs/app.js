@@ -478,11 +478,11 @@ function sendSMTP(time,channel,otherInfoDanger)
             {
               smtp.pushMessage(message_admin,email,new Date().getTime());
             }
-            if ( sendMessageUser && !isEmptyText(message) ) 
+            else if ( sendMessageUser && !isEmptyText(message) ) 
             {
               smtp.pushMessage(message,email,new Date().getTime());
             } 
-            if ( isEmptyText(message) )
+            else if ( isEmptyText(message) )
             {
               smtp.pushMessage(message_admin,email,new Date().getTime());
             }
