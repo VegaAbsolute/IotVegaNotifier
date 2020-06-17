@@ -85,10 +85,11 @@ class SMSCru extends EventEmitter
                {
                  if(_self._stack[j].uuid === res.uuid)
                  {
-                  _self._stack.splice(j,1);
-                  _self.checkStackEmptiness();
                   if(error4) console.log(moment().format('LLL')+': [SMSC_VOICE] '+'ERROR to send voice message '+_self._stack[j].telephone+' , ip is blocked, http://smsc.ru/faq/99/ ');
                   else console.log(moment().format('LLL')+': [SMSC_VOICE] '+'Success to send voice message '+_self._stack[j].telephone); 
+
+                  _self._stack.splice(j,1);
+                  _self.checkStackEmptiness();
                  }
                }
              }
