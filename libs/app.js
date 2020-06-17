@@ -35,7 +35,7 @@ function isEmptyText(text)
   return text === undefined || text === '' || text === ' ' || text === null;
 }
 //Функция генерации сообщения формата notifier
-function generationMessage(channel,info,type)
+function generationMessageNotifier(channel,info,type)
 {
   let message = ''
     , reason = ''
@@ -285,7 +285,7 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
   let telephones = [];
   let voiceMess = channel.voice;
   let message = channel.voice_message;
-  let message_admin = generationMessage(channel,otherInfoDanger);
+  let message_admin = generationMessageNotifier(channel,otherInfoDanger);
   //Отправлять сообщение формата приложения.
   let sendMessageApp  = channel.app_message_danger === true;
   //Отправлять сообщение формата пользователя.
@@ -306,19 +306,19 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
           let telephone = getValidTelephone(telephones[i]);
           if(telephone!==false)
           {
-            let countSendMessage = 0;
-            if ( sendMessageApp ) 
+            if( sendMessageApp && sendMessageUser && !isEmptyText(message) )
+            {
+              smsc.pushVoiceMessage(`${message_admin}\r\nПользовательское сообщение: ${message}`,telephone,new Date().getTime());
+            }
+            else if ( sendMessageApp ) 
             {
               smsc.pushVoiceMessage(message_admin,telephone,new Date().getTime());
-              countSendMessage++;
             }
-            if ( sendMessageUser && !isEmptyText(message) ) 
+            else if ( sendMessageUser && !isEmptyText(message) ) 
             {
               smsc.pushVoiceMessage(message,telephone,new Date().getTime());
-              countSendMessage++;
             }
-            // В случае если не удалось отправить на отправку ни одного сообщения, отправляем сообщение формата приложения 
-            if ( countSendMessage === 0 || isEmptyText(message) )
+            else if ( isEmptyText(message) )
             {
               smsc.pushVoiceMessage(message_admin,telephone,new Date().getTime());
             }
@@ -339,7 +339,7 @@ function sendSMS(time,channel,otherInfoDanger)
     let telephones = [];
     let sms = channel.sms;
     let message = channel.message_sms;
-    let message_admin = generationMessage(channel,otherInfoDanger,'sms');
+    let message_admin = generationMessageNotifier(channel,otherInfoDanger,'sms');
     //Отправлять сообщение формата приложения.
     let sendMessageApp  = channel.app_message_danger === true;
     //Отправлять сообщение формата пользователя.
@@ -396,7 +396,7 @@ function sendTelegram(time,channel,otherInfoDanger)
     }
     let mytelegram = channel.telegram;
     let message = channel.message_messenger;
-    let message_admin = generationMessage(channel,otherInfoDanger);
+    let message_admin = generationMessageNotifier(channel,otherInfoDanger);
     //Отправлять сообщение формата приложения.
     let sendMessageApp  = channel.app_message_danger === true;
     //Отправлять сообщение формата пользователя.
@@ -416,19 +416,19 @@ function sendTelegram(time,channel,otherInfoDanger)
           let chat = getValidChat(chats[i]);
           if(chat!==false)
           {
-            let countSendMessage = 0;
-            if ( sendMessageApp ) 
+            if( sendMessageApp && sendMessageUser && !isEmptyText(message) )
+            {
+              telegram.pushMessage(`${message_admin}\r\nПользовательское сообщение: ${message}`,chat,new Date().getTime());
+            }
+            else if ( sendMessageApp ) 
             {
               telegram.pushMessage(message_admin,chat,new Date().getTime());
-              countSendMessage++;
             }
-            if ( sendMessageUser && !isEmptyText(message) ) 
+            else if ( sendMessageUser && !isEmptyText(message) ) 
             {
               telegram.pushMessage(message,chat,new Date().getTime());
-              countSendMessage++;
             }
-            // В случае если не удалось отправить на отправку ни одного сообщения, отправляем сообщение формата приложения 
-            if ( countSendMessage === 0 || isEmptyText(message) )
+            else if ( isEmptyText(message) )
             {
               telegram.pushMessage(message_admin,chat,new Date().getTime());
             }
@@ -454,7 +454,7 @@ function sendSMTP(time,channel,otherInfoDanger)
     let mysmtp = channel.email;
 
     let message = channel.message_messenger;
-    let message_admin = generationMessage(channel,otherInfoDanger);
+    let message_admin = generationMessageNotifier(channel,otherInfoDanger);
     //Отправлять сообщение формата приложения.
     let sendMessageApp  = channel.app_message_danger === true;
     //Отправлять сообщение формата пользователя.
@@ -470,19 +470,19 @@ function sendSMTP(time,channel,otherInfoDanger)
           let email = getValidEmail(emails[i]);
           if(email!==false)
           {
-            let countSendMessage = 0;
-            if ( sendMessageApp ) 
+            if( sendMessageApp && sendMessageUser && !isEmptyText(message) )
+            {
+              smtp.pushMessage(`${message_admin}\r\nПользовательское сообщение: ${message}`,email,new Date().getTime());
+            }
+            else if ( sendMessageApp ) 
             {
               smtp.pushMessage(message_admin,email,new Date().getTime());
-              countSendMessage++;
             }
             if ( sendMessageUser && !isEmptyText(message) ) 
             {
               smtp.pushMessage(message,email,new Date().getTime());
-              countSendMessage++;
-            }
-            // В случае если не удалось отправить на отправку ни одного сообщения, отправляем сообщение формата приложения 
-            if ( countSendMessage === 0 || isEmptyText(message) )
+            } 
+            if ( isEmptyText(message) )
             {
               smtp.pushMessage(message_admin,email,new Date().getTime());
             }
