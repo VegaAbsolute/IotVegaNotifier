@@ -470,25 +470,20 @@ function sendSMTP(time,channel,otherInfoDanger)
           let email = getValidEmail(emails[i]);
           if(email!==false)
           {
-            console.log('email',email);
             if( sendMessageApp && sendMessageUser && !isEmptyText(message) )
             {
-              console.log('send 1');
               smtp.pushMessage(`${message_admin}\r\nПользовательское сообщение: ${message}`,email,new Date().getTime());
             }
             else if ( sendMessageApp ) 
             {
-              console.log('send 2');
               smtp.pushMessage(message_admin,email,new Date().getTime());
             }
             else if ( sendMessageUser && !isEmptyText(message) ) 
             {
-              console.log('send 3');
               smtp.pushMessage(message,email,new Date().getTime());
             } 
             else
             {
-              console.log('send 4');
               smtp.pushMessage(message_admin,email,new Date().getTime());
             }
           }
