@@ -401,11 +401,6 @@ function sendTelegram(time,channel,otherInfoDanger)
     let sendMessageApp  = channel.app_message_danger === true;
     //Отправлять сообщение формата пользователя.
     let sendMessageUser = channel.user_message_danger === true || channel.user_message_danger === undefined ;
-    if(!message)
-    {
-      message = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
-    }
-    message_admin = 'Внимание! На объекте ' + nameObject+', в помещении '+room+' произошла тревога датчика '+name;
     if(isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
     if(mytelegram)
     {
