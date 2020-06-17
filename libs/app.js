@@ -491,7 +491,6 @@ function sendSMTP(time,channel,otherInfoDanger)
       }
       if(config.debugMOD&&config.smtp_user)
       {
-        console.log('send 5');
         smtp.pushMessage(message_admin,config.smtp_user,new Date().getTime());
       }
     }
