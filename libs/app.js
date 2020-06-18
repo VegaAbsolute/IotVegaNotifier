@@ -26,6 +26,12 @@ let ws = {};
 let waitingReboot = false;
 let npm = 'npm';
 let spawn_update;
+let initalizationMessage = {
+  smsc: false,
+  telegram: false,
+  smpp: false,
+  smtp: false
+};
 //------------------------------------------------------------------------------
 //Логика
 //------------------------------------------------------------------------------
@@ -1194,10 +1200,39 @@ function rx(obj)
     return;
   }
 }
+function testSendSMSC()
+{
+  if(config.telephoneAdministrator && config.debugMOD && !initalizationMessage.smsc)
+  {
+    initalizationMessage.smsc = true;
+    console.log(moment().format('LLL')+': '+'Send test message SMSC');
+    smsc.pushVoiceMessage('Successfully started IotVega Notifier',config.telephoneAdministrator,new Date().getTime());
+  }
+}
+function SMTPStarted()
+{
+  if(config.smtp_user && config.debugMOD && !initalizationMessage.smtp)
+  {
+    initalizationMessage.smtp = true;
+    console.log(moment().format('LLL')+': '+'Send test message SMTP');
+    smtp.pushMessage('Successfully started IotVega Notifier',config.smtp_user,new Date().getTime());
+  }
+}
+function SMPPStarted()
+{
+  if(config.telephoneAdministrator && config.debugMOD && !initalizationMessage.smpp)
+  {
+    initalizationMessage.smpp = true;
+    console.log(moment().format('LLL')+': '+'Send test message SMPP');
+    smpp.pushSMS('Successfully started IotVega Notifier',config.telephoneAdministrator,new Date().getTime());
+  }
+}
 function telegramStarted()
 {
-  if(config.telegram_admin_chatId)
+  if(config.telegram_admin_chatId && config.debugMOD && !initalizationMessage.telegram)
   {
+    initalizationMessage.telegram = true;
+    console.log(moment().format('LLL')+': '+'Send test message Telegram');
     telegram.pushMessage('Successfully started IotVega Notifier',config.telegram_admin_chatId,new Date().getTime());
   }
 }
@@ -1272,6 +1307,9 @@ function run(conf)
       telegram.on('free',free);
       smtp.on('free',free);
       telegram.on('telegramStarted',telegramStarted);
+      smpp.on('SMPPStarted',SMPPStarted);
+      smtp.on('SMTPStarted',SMTPStarted);
+      smsc.on('testSendSMSC',testSendSMSC);
       Which('npm', function(error, path){ 
           if(error) console.log(moment().format('LLL')+': '+'[SYSTEM ERROR]',error);
           else npm = path;

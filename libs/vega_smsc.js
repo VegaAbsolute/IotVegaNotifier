@@ -12,12 +12,17 @@ class SMSCru extends EventEmitter
     this._debugMOD = debugMOD;
     this._active = status;
     this._stack = [];
+    this._test = false;
     if(status)
     {
       this._login = system.login;
       this._password = system.password;
       this._settings = settings;
       setInterval(()=>{
+        if(!this._test)
+        {
+          this.test();
+        }
         if(this.employment)
         {
           this.checkStack();
@@ -32,6 +37,11 @@ class SMSCru extends EventEmitter
   get active()
   {
     return this._active;
+  }
+  test()
+  {
+    this._test = true;
+    this.emit('testSendSMSC');
   }
   checkStackEmptiness()
   {
@@ -118,7 +128,6 @@ class SMSCru extends EventEmitter
              }
          })
          .catch((e)=>{
-          //  item.status = false;
            console.log(moment().format('LLL')+': [SMSC_VOICE] '+'failed to send  http message. Error 1');
            console.log(moment().format('LLL')+': [SMSC_VOICE]',e);
          });
