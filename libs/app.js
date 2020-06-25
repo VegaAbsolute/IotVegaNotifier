@@ -519,6 +519,15 @@ function get_device_appdata_req()
   ws.send_json(message);
   return;
 }
+function get_gateways_req()
+{
+  let message = {
+    cmd:'get_gateways_req'
+  };
+  ws.send_json(message);
+  return;
+}
+
 //------------------------------------------------------------------------------
 //commands iotvega.com
 //------------------------------------------------------------------------------
@@ -531,6 +540,17 @@ function get_device_appdata_resp(obj)
     if(config.debugMOD) console.log(moment().format('LLL')+': '+'devices list updated');
     devices.list = devices_list;
   }
+}
+function get_gateways_resp(obj)
+{
+  console.log(obj);
+  // let devices_list = obj.devices_list;
+  // let validDevicesList = typeof devices_list==='object'&&devices_list.length>0;
+  // if(validDevicesList)
+  // {
+  //   if(config.debugMOD) console.log(moment().format('LLL')+': '+'devices list updated');
+  //   devices.list = devices_list;
+  // }
 }
 function rx(obj)
 {
@@ -1281,6 +1301,7 @@ function initWS()
   ws.on('rx',rx);
   ws.on('alter_user_resp',get_device_appdata_req);
   ws.on('get_device_appdata_resp',get_device_appdata_resp);
+  ws.on('get_gateways_resp',get_gateways_resp);
 }
 function run(conf)
 {
@@ -1370,6 +1391,7 @@ setInterval(()=>{
   if(ws.status&&statusAuth)
   {
     get_device_appdata_req();
+    get_gateways_req();
   }
 }, 30000);
 module.exports.config = config;
