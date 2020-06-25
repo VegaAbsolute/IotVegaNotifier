@@ -32,6 +32,7 @@ let initalizationMessage = {
   smpp: false,
   smtp: false
 };
+let gateways = {};
 //------------------------------------------------------------------------------
 //Логика
 //------------------------------------------------------------------------------
@@ -543,14 +544,30 @@ function get_device_appdata_resp(obj)
 }
 function get_gateways_resp(obj)
 {
-  console.log(obj);
-  // let devices_list = obj.devices_list;
-  // let validDevicesList = typeof devices_list==='object'&&devices_list.length>0;
-  // if(validDevicesList)
-  // {
-  //   if(config.debugMOD) console.log(moment().format('LLL')+': '+'devices list updated');
-  //   devices.list = devices_list;
-  // }
+  if(obj.status)
+  {
+    let firstList = Object.keys(gateways).length === 0;
+    if(config.debugMOD) console.log(moment().format('LLL')+': '+'List of gateways successfully updated!');
+    obj.gateway_list.forEach(gateway => {
+      let gatewayId = gateway.gatewayId;
+      let active = gateway.active;
+      if(firstList)
+      {
+        gateways[gatewayId] = active;
+      }
+      else
+      {
+        if ( gateways[gatewayId] === undefined ) console.log('New gateway detected! GatewayID =',gatewayId);
+        else if(gateways[gatewayId] != active) console.log('Gateway status changed! GatewayID =',gatewayId);
+        // else console.log('Не изменилось',gatewayId);
+        gateways[gatewayId] = active;
+      }
+    });
+  }
+  else
+  {
+    console.log(moment().format('LLL')+': '+' List of gateways is not updated! ERROR:',obj.err_string);
+  }
 }
 function rx(obj)
 {
@@ -1281,6 +1298,7 @@ function auth_resp(obj)
     }
     statusAuth = true;
     get_device_appdata_req();
+    get_gateways_req();
     console.log(moment().format('LLL')+': '+'Success authorization on server iotvega');
   }
   else
