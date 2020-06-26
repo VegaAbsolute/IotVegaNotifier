@@ -58,12 +58,46 @@ class Config
         type: 'socks5'
       }
     };
+    this._administrator = {
+      status:false,
+      settings:{
+        gateway_active: false,
+        gateway_inactive: false,
+        server_not_available: false,
+        test_startup_message: false,
+        phone: undefined
+      }
+    };
     this._debugMOD = {
       status:false,
       settings:{}
     };
   }
   //setters-------------------------
+  set administrator_enabled(val)
+  {
+    this._administrator.status = val;
+  }
+  set administrator_gateway_active(val)
+  {
+    this._administrator.settings.gateway_active = val;
+  }
+  set administrator_gateway_inactive(val)
+  {
+    this._administrator.settings.gateway_inactive = val;
+  }
+  set administrator_server_not_available(val)
+  {
+    this._administrator.settings.server_not_available = val;
+  }
+  set administrator_test_startup_message(val)
+  {
+    this._administrator.settings.test_startup_message = val;
+  }
+  set administrator_administrator_phone(val)
+  {
+    this._administrator.settings.phone = val;
+  }
   set smtp_enabled(val)
   {
     this._smtp.status = val;
@@ -131,11 +165,6 @@ class Config
   set other_debug_enabled(val)
   {
     this._debugMOD.status = val;
-  }
-
-  set other_debug_phone(val)
-  {
-    this._debugMOD.settings.telephone = val;
   }
   set smpp_enabled(val)
   {
@@ -344,7 +373,7 @@ class Config
   }
   get telephoneAdministrator()
   {
-    return this._debugMOD.settings.telephone
+    return this._administrator.settings.phone
   }
   get address_smpp()
   {
@@ -381,6 +410,26 @@ class Config
   get telegram_proxy()
   {
     return this._telegram.proxy;
+  }
+  get administrator()
+  {
+    return this._administrator.status;
+  }
+  get gateway_active()
+  {
+    return this._administrator.settings.gateway_active;
+  }
+  get gateway_inactive()
+  {
+    return this._administrator.settings.gateway_inactive;
+  }
+  get server_not_available()
+  {
+    return this._administrator.settings.server_not_available;
+  }
+  get test_startup_message()
+  {
+    return this._administrator.settings.test_startup_message;
   }
   //methods
   setFromConfig(config)

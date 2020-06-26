@@ -1326,6 +1326,7 @@ function run(conf)
   config = conf;
   if(config.valid())
   {
+    console.log(config);
     if(config.auto_update)
     {
       new CronJob({
