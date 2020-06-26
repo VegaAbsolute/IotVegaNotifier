@@ -1,0 +1,63 @@
+header
+{
+    background: #0cb8e2;
+    color: white;
+    border-bottom: 1px solid white !important;
+}
+/* a,a:focus,a:hover
+{
+    color: white;
+} */
+.icon-bar
+{
+    background-color: white;
+}
+/* .nav>li>a
+{
+    
+} */
+/* .nav>li>a:hover,.nav>li>a:focus
+{
+    border-bottom: 4px solid white;
+    background: transparent;
+} */
+.a_header
+{
+    background: transparent;
+    border-bottom: 4px solid transparent;
+    color: white;
+}
+.a_header:hover, .a_header:focus
+{
+    background: transparent !important;
+    border-bottom: 4px solid white;
+    color: white;
+}
+.navbar-brand,.navbar-brand:hover, .navbar-brand:focus
+{
+    border: none;
+}
+.setting_form
+{
+    padding-bottom: 1rem;
+}
+.p_container_checkbox,.p_container_checkbox>input[type='checkbox'],.p_container_checkbox>label
+{
+    cursor: pointer;
+}
+input[type='checkbox']
+{
+    /* padding-top: 5px; */
+}
+.text-checkbox
+{
+    padding-left: 0.5rem;
+}
+.required
+{
+    color:red;
+}
+.button_settings
+{
+    margin-bottom: 1.5rem;
+}

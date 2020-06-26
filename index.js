@@ -7,6 +7,7 @@ let moment = require( 'moment' );
 let config = new Config();
 let myConfig = {};
 let path = './config.ini';
+let homeDir = __dirname;
 console.log('IoTVega Notifier Lite v'+pjson.version, ' launched!')
 if(!fs.existsSync(path))
 {
@@ -34,7 +35,7 @@ else
     }
     else
     {
-      app.run(config);
+      app.run(config,homeDir);
     }
   }
 }

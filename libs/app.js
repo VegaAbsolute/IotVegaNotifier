@@ -1,5 +1,6 @@
 
 //app.js version 1.1.5 lite
+// const VegaHttpServer = require('./vega_http_server/vega_http_server.js');
 const VegaSMPP = require('./vega_smpp.js');
 const VegaTelegram = require('./vega_telegram.js');
 const VegaSMTP = require('./vega_smtp.js');
@@ -13,10 +14,21 @@ const { spawn } = require('child_process');
 const CronJob = require('cron').CronJob;
 const Which = require('which');
 const CRON_TIME = '*/1 * * * *';
+
+//---
+const fs = require('fs').promises;
+const ini = require('ini');
+const express = require('express');
+let homeDirApp = undefined;
+let http = {};
+
+//---
+
 let moment = require( 'moment' );
 let devices = new Devices();
 let config = {};
 let statusAuth = false;
+
 let premission = {};
 let smpp = {};
 let smsc = {};
@@ -1237,6 +1249,12 @@ function rx(obj)
     return;
   }
 }
+function getCurrentSettings(request,response)
+{
+  response.setHeader('Content-Type','application/json');
+  response.writeHead('200');
+  response.end(JSON.stringify(config));
+}
 function testSendSMSC()
 {
   if(config.telephoneAdministrator && config.debugMOD && !initalizationMessage.smsc)
@@ -1321,12 +1339,12 @@ function initWS()
   ws.on('get_device_appdata_resp',get_device_appdata_resp);
   ws.on('get_gateways_resp',get_gateways_resp);
 }
-function run(conf)
+function run(conf,homeDir)
 {
+  homeDirApp = homeDir;
   config = conf;
   if(config.valid())
   {
-    console.log(config);
     if(config.auto_update)
     {
       new CronJob({
@@ -1342,6 +1360,14 @@ function run(conf)
       smsc = new SMSCru(config.smsc_auth,config.smsc,config.smsc_settings,config.debugMOD);
       telegram = new VegaTelegram(config.telegram_bot_token,config.telegram,config.telegram_proxy,config.debugMOD);
       smtp = new VegaSMTP(config.smtp,config.smtp_host,config.smtp_port,config.smtp_secure,config.smtp_user,config.smtp_password,config.debugMOD);
+      // http = new VegaHttpServer(4000,homeDirApp);
+      // http.on('getCurrentSettings',getCurrentSettings);
+      http = express();
+      http.use(express.static(homeDirApp+'/www'));
+      http.get('/',get_home);
+      http.get('/currentSettings',getCurrentSettings);
+      http.listen(4000,started);
+
       smpp.on('free',free);
       smsc.on('free',free);
       telegram.on('free',free);
@@ -1363,6 +1389,27 @@ function run(conf)
     }
   }
   return;
+}
+function started(err)
+{
+  if(err)
+  {
+      console.log('error http server',err);
+  }
+  else
+  {
+      console.log('success http server');
+  }
+}
+
+function get_home(request,response)
+{
+  fs.readFile(homeDirApp + '/www/index.html')
+  .then((contents) => {
+    response.setHeader('Content-Type','text/html');
+    response.writeHead('200');
+    response.end(contents);
+  })
 }
 function updating()
 {
