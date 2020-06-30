@@ -1,6 +1,7 @@
 const fs = require('fs');
 const ini = require('ini');
 const copyFile = require('fs-copy-file');
+const logger = require('./libs/vega_logger.js');
 function refreshConfig()
 {
   try
@@ -9,11 +10,21 @@ function refreshConfig()
         if (err)
         {
           console.log('error',err);
+          logger.log({
+            level:'error',
+            message:'ERROR 1',
+            module:'[CONFIGURING]'
+          });
         }
     });
   }
   catch (e)
   {
+    logger.log({
+      level:'error',
+      message:'ERROR 2',
+      module:'[CONFIGURING]'
+    });
     console.error(e)
   }
 }
@@ -29,6 +40,11 @@ else if(process.argv[2]=='refresh')
   }
   catch (e)
   {
+    logger.log({
+      level:'error',
+      message:'ERROR 3',
+      module:'[CONFIGURING]'
+    });
     console.error(e)
   }
   finally
