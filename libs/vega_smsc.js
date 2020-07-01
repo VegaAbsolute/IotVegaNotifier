@@ -4,6 +4,7 @@ var http = require('http');
 const uuidv4 = require('uuid/v4');
 const EventEmitter = require('events');
 let moment = require( 'moment' );
+const logger = require('./vega_logger.js');
 class SMSCru extends EventEmitter
 {
   constructor(system,status,settings,debugMOD)
@@ -65,7 +66,6 @@ class SMSCru extends EventEmitter
       var item = this._stack[i];
       if(!item.status)
       {
-        //  console.log('Можно было бы отправить');
         item.status = true;
         let data = {
           login:this._login,
@@ -95,8 +95,24 @@ class SMSCru extends EventEmitter
                {
                  if(_self._stack[j].uuid === res.uuid)
                  {
-                  if(error4) console.log(moment().format('LLL')+': [SMSC_VOICE] '+'ERROR to send voice message '+_self._stack[j].telephone+' , ip is blocked, http://smsc.ru/faq/99/ ');
-                  else console.log(moment().format('LLL')+': [SMSC_VOICE] '+'Success to send voice message '+_self._stack[j].telephone); 
+                  if(error4) 
+                  {
+                    logger.log({
+                      level:'error',
+                      message:'ERROR to send voice message '+_self._stack[j].telephone+' , ip is blocked, http://smsc.ru/faq/99/ ',
+                      module:'[SMSC_VOICE]'
+                    });
+                    console.log(moment().format('LLL')+': [SMSC_VOICE] '+'ERROR to send voice message '+_self._stack[j].telephone+' , ip is blocked, http://smsc.ru/faq/99/ ');
+                  }
+                  else 
+                  {
+                    logger.log({
+                      level:'info',
+                      message:'Success to send voice message '+_self._stack[j].telephone,
+                      module:'[SMSC_VOICE]'
+                    })
+                    console.log(moment().format('LLL')+': [SMSC_VOICE] '+'Success to send voice message '+_self._stack[j].telephone); 
+                  }
 
                   _self._stack.splice(j,1);
                   _self.checkStackEmptiness();
@@ -121,6 +137,11 @@ class SMSCru extends EventEmitter
                      _self.pushVoiceMessage(tmp.message,tmp.telephone,tmp.firstTime);
                    }
                    _self.checkStackEmptiness();
+                   logger.log({
+                    level:'warn',
+                    message:'failed to send  voice message '+tmp.telephone,
+                    module:'[SMSC_VOICE]'
+                  })
                    console.log(moment().format('LLL')+': [SMSC_VOICE] '+'failed to send  voice message '+tmp.telephone);
                  }
                }
@@ -128,8 +149,14 @@ class SMSCru extends EventEmitter
              }
          })
          .catch((e)=>{
-           console.log(moment().format('LLL')+': [SMSC_VOICE] '+'failed to send  http message. Error 1');
-           console.log(moment().format('LLL')+': [SMSC_VOICE]',e);
+          _self.checkStackEmptiness();
+          logger.log({
+            level:'error',
+            message:'Failed to send  http message. Error 1',
+            module:'[SMSC_VOICE]'
+          })
+          console.log(moment().format('LLL')+': [SMSC_VOICE] '+'failed to send  http message. Error 1');
+          console.log(moment().format('LLL')+': [SMSC_VOICE]',e);
          });
        break;
       }
@@ -151,6 +178,11 @@ class SMSCru extends EventEmitter
                 }
                 else
                 {
+                  logger.log({
+                    level:'warn',
+                    message:'Failed to send  http message. Error 229',
+                    module:'[SMSC_VOICE]'
+                  })
                   console.log(moment().format('LLL')+': [SMSC_VOICE]',body);
                   resolve({status:false,uuid:uuid,body:body});
                 }

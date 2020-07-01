@@ -6,6 +6,7 @@ const MAX_DELAY_PING = 120000;
 let WebSocket = require( 'ws' );
 let EventEmitter = require( 'events' );
 let moment = require( 'moment' );
+const logger = require('./vega_logger.js');
 
 class VegaWS extends EventEmitter
 {
@@ -77,6 +78,11 @@ class VegaWS extends EventEmitter
     }
     catch (e)
     {
+      logger.log({
+        level:'error',
+        message:'Error initialization WS. ERROR 199',
+        module:'[WS]'
+      });
       console.log( moment().format('LLL')+': [WS]', e );
     }
   }
@@ -93,6 +99,11 @@ class VegaWS extends EventEmitter
     }
     catch ( e )
     {
+      logger.log({
+        level:'error',
+        message:'Error format message WS. ERROR 191',
+        module:'[WS]'
+      });
       console.log( moment().format('LLL') + ': [WS]', e );
     }
     finally
@@ -102,18 +113,33 @@ class VegaWS extends EventEmitter
   }
   _error ()
   {
+    logger.log({
+      level:'error',
+      message:'WS error',
+      module:'[WS]'
+    });
     console.log( moment().format('LLL') + ': [WS]', 'WS error');
     this._status = false;
     this._self.emit( 'no_connect' );
   }
   _close ( code )
   {
+    logger.log({
+      level:'warn',
+      message:'WS close',
+      module:'[WS]'
+    });
     console.log( moment().format('LLL') + ': [WS]', 'WS close' );
     this._status = false;
     this._self.emit( 'no_connect' );
   }
   _open ()
   {
+    logger.log({
+      level:'info',
+      message:'Successful connection on WS',
+      module:'[WS]'
+    });
     console.log( moment().format('LLL') + ': [WS]', 'Successful connection on WS' );
     this._status = true;
     this._self.emit( 'run' );
@@ -129,6 +155,11 @@ class VegaWS extends EventEmitter
     this._connect.send( JSON.stringify( obj ), function( e ) {
       if ( e )
       {
+        logger.log({
+          level:'warn',
+          message:'Error send message. ERROR 878',
+          module:'[WS]'
+        });
         console.log( moment().format('LLL')+': [WS] ', e );
         try
         {
@@ -136,6 +167,11 @@ class VegaWS extends EventEmitter
         }
         catch (e)
         {
+          logger.log({
+            level:'error',
+            message:'Error send message. ERROR 888',
+            module:'[WS]'
+          });
           console.log( moment().format('LLL')+': [WS] ', e );
         }
       }

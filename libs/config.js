@@ -1,4 +1,5 @@
 let moment = require( 'moment' );
+const logger = require('./vega_logger.js');
 class Config
 {
   constructor()
@@ -445,6 +446,11 @@ class Config
       }
       catch (e)
       {
+        logger.log({
+          level:'error',
+          message:'ERROR 1',
+          module:'[PARS_CONFIG]'
+        });
         console.error(moment().format('LLL')+': ',e);
         return false;
       }

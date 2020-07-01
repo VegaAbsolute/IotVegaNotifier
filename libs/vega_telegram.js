@@ -4,6 +4,7 @@ const uuidv4 = require('uuid/v4');
 const EventEmitter = require('events');
 const TelegramBot = require('node-telegram-bot-api');
 const Agent = require('socks5-https-client/lib/Agent');
+const logger = require('./vega_logger.js');
 let moment = require( 'moment' );
 let linkBot = undefined;
 class VegaTelegram extends EventEmitter
@@ -87,6 +88,11 @@ class VegaTelegram extends EventEmitter
       {
         this._connect.getMe()
         .then((info)=>{
+          logger.log({
+            level:'info',
+            message:'Successfully started telegram bot management '+ info.username,
+            module:'[TELEGRAM]'
+          });
           console.log(moment().format('LLL')+': '+'[Telegram] Successfully started telegram bot management '+ info.username);
         })
         .catch(this._error);
@@ -101,14 +107,29 @@ class VegaTelegram extends EventEmitter
     {
       linkBot.sendMessage(chatId, "ChatID: "+chatId.toString());
     }
+    logger.log({
+      level:'info',
+      message:'ChatID: '+ chatId.toString(),
+      module:'[TELEGRAM]'
+    });
     console.log(moment().format('LLL')+': '+'[Telegram] ChatID: '+ chatId.toString());
   }
   _error(err)
   {
+    logger.log({
+      level:'error',
+      message:'Error '+err.code+' . '+err.message,
+      module:'[TELEGRAM]'
+    });
     console.log(moment().format('LLL')+': '+'[Telegram] Error '+err.code+' . '+err.message);
     linkBot._status = false;  
     linkBot._timeLastUpdate = new Date().getTime();
     linkBot.stopPolling().then(()=>{
+      logger.log({
+        level:'warn',
+        message:'Unavailable telegram',
+        module:'[TELEGRAM]'
+      });
       console.log(moment().format('LLL')+': '+'[Telegram] Unavailable telegram');
     });
   }
@@ -143,9 +164,14 @@ class VegaTelegram extends EventEmitter
                         {
                             if(_self._stack[j].uuid === res.uuid)
                             {
-                                console.log(moment().format('LLL')+': '+'[Telegram] Success to send message '+_self._stack[j].chatId+'( '+res.username+' )');
-                                _self._stack.splice(j,1);
-                                _self.checkStackEmptiness();
+                              logger.log({
+                                level:'info',
+                                message:'Success to send message '+_self._stack[j].chatId+'( '+res.username+' )',
+                                module:'[TELEGRAM]'
+                              });
+                              console.log(moment().format('LLL')+': '+'[Telegram] Success to send message '+_self._stack[j].chatId+'( '+res.username+' )');
+                              _self._stack.splice(j,1);
+                              _self.checkStackEmptiness();
                             }
                         }
                     }
@@ -166,6 +192,11 @@ class VegaTelegram extends EventEmitter
                                 {
                                     _self.pushMessage(tmp.message,tmp.chatId,tmp.firstTime);
                                 }
+                                logger.log({
+                                  level:'warn',
+                                  message:'Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message,
+                                  module:'[TELEGRAM]'
+                                });
                                 console.log(moment().format('LLL')+': '+'[Telegram] Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message);
                                 _self.checkStackEmptiness();
                             }
@@ -173,8 +204,13 @@ class VegaTelegram extends EventEmitter
                     }
                 })
                 .catch((e)=>{
-                    console.log(moment().format('LLL')+': '+'[Telegram] Failed to send message. Error 1');
-                    console.log(moment().format('LLL')+': [Telegram]',e);
+                  logger.log({
+                    level:'error',
+                    message:'Failed to send message. Error 1',
+                    module:'[TELEGRAM]'
+                  });
+                  console.log(moment().format('LLL')+': '+'[Telegram] Failed to send message. Error 1');
+                  console.log(moment().format('LLL')+': [Telegram]',e);
                 });
                 break;
             }

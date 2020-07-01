@@ -9,7 +9,7 @@ const Logger = winston.createLogger({
     defaultMeta: { time:moment().format('LLL'), timestamp:parseInt(moment().format('x')), uuid:uuidv4() },
     transports:[
         // new winston.transports.Console({handleExceptions:true}),
-        new winston.transports.File({filename:'./logs/logs_notifier.log',timestamp:true,handleExceptions:true,maxsize:10485760,maxFiles:5})
+        new winston.transports.File({filename:'./logs/logs_notifier.log',timestamp:true,handleExceptions:true,maxsize:10485760,maxFiles:5,json:true})
     ]
 });
 // if ( process.env.NODE_ENV !== 'production' )
@@ -20,5 +20,10 @@ const Logger = winston.createLogger({
 //         })
 //     );
 // }
-
+console.log( moment().format('LLL')+': [LOGGER] '+'Started to write logs to the ./logs/logs_notifier.log');
+Logger.log({
+    level:'info',
+    message:'Started to write logs to the ./logs/logs_notifier.log',
+    module:'[LOGGER]'
+  });
 module.exports = Logger;
