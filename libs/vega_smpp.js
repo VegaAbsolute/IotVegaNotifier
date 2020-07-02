@@ -105,7 +105,10 @@ class VegaSMPP extends EventEmitter
                  logger.log({
                     level:'info',
                     message:'Success to send sms message '+_self._stack[j].telephone,
-                    module:'[SMPP]'
+                    module:'[SMPP]',
+                    time:moment().format('LLL'),
+                    timestamp:parseInt(moment().format('x')),
+                    uuid:uuidv4()
                   });
                  _self._stack.splice(j,1);
                  _self.checkStackEmptiness();
@@ -134,7 +137,10 @@ class VegaSMPP extends EventEmitter
                  logger.log({
                     level:'warn',
                     message:'Failed to send  sms message '+tmp.telephone,
-                    module:'[SMPP]'
+                    module:'[SMPP]',
+                    time:moment().format('LLL'),
+                    timestamp:parseInt(moment().format('x')),
+                    uuid:uuidv4()
                   });
                }
              }
@@ -146,7 +152,10 @@ class VegaSMPP extends EventEmitter
            logger.log({
               level:'error',
               message:'Failed to send  sms message. Error 1',
-              module:'[SMPP]'
+              module:'[SMPP]',
+              time:moment().format('LLL'),
+              timestamp:parseInt(moment().format('x')),
+              uuid:uuidv4()
             });
            console.log(moment().format('LLL')+':  [SMPP] '+'failed to send  sms message. Error 1');
            console.log(moment().format('LLL')+':  [SMPP]',e);
@@ -183,7 +192,10 @@ class VegaSMPP extends EventEmitter
           logger.log({
             level:'info',
             message:'Successful connection on SMPP ',
-            module:'[SMPP]'
+            module:'[SMPP]',
+            time:moment().format('LLL'),
+            timestamp:parseInt(moment().format('x')),
+            uuid:uuidv4()
           });
       }
       else if(pdu.command_status == 5) {
@@ -193,7 +205,10 @@ class VegaSMPP extends EventEmitter
         logger.log({
           level:'warn',
           message:'Not successful connection on SMPP, status = 5',
-          module:'[SMPP]'
+          module:'[SMPP]',
+          time:moment().format('LLL'),
+          timestamp:parseInt(moment().format('x')),
+          uuid:uuidv4()
         });
       }
       else
@@ -202,7 +217,10 @@ class VegaSMPP extends EventEmitter
         logger.log({
           level:'warn',
           message:'Not successful connection on SMPP, status ='+pdu.command_status,
-          module:'[SMPP]'
+          module:'[SMPP]',
+          time:moment().format('LLL'),
+          timestamp:parseInt(moment().format('x')),
+          uuid:uuidv4()
         });
         console.log(moment().format('LLL')+':  [SMPP] '+'Not successful connection on SMPP, status ='+pdu.command_status);
       }
@@ -225,7 +243,10 @@ class VegaSMPP extends EventEmitter
         logger.log({
           level:'info',
           message:'SMS ' + fromNumber + ' -> ' + toNumber + ': ' + text,
-          module:'[SMPP]'
+          module:'[SMPP]',
+          time:moment().format('LLL'),
+          timestamp:parseInt(moment().format('x')),
+          uuid:uuidv4()
         });
         console.log(moment().format('LLL')+':  [SMPP] '+'SMS ' + fromNumber + ' -> ' + toNumber + ': ' + text);
         // Reply to SMSC that we received and processed the SMS
@@ -236,7 +257,10 @@ class VegaSMPP extends EventEmitter
         logger.log({
           level:'error',
           message:'Error event pdu deliver_sm',
-          module:'[SMPP]'
+          module:'[SMPP]',
+          time:moment().format('LLL'),
+          timestamp:parseInt(moment().format('x')),
+          uuid:uuidv4()
         });
         console.log(moment().format('LLL')+':  [SMPP] '+'Error event pdu deliver_sm, ',err);
         console.dir(moment().format('LLL')+':  [SMPP] '+'pdu',pdu);
@@ -248,7 +272,10 @@ class VegaSMPP extends EventEmitter
     logger.log({
       level:'warn',
       message:'Status smpp disconnected',
-      module:'[SMPP]'
+      module:'[SMPP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
     console.log(moment().format('LLL')+':  [SMPP] '+'smpp disconnected');
     this._status = false;
@@ -258,7 +285,10 @@ class VegaSMPP extends EventEmitter
     logger.log({
       level:'error',
       message:'smpp error 555',
-      module:'[SMPP]'
+      module:'[SMPP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
     console.log(moment().format('LLL')+':  [SMPP] '+'smpp error', error);
     this._status = false;
@@ -305,7 +335,10 @@ class VegaSMPP extends EventEmitter
               logger.log({
                 level:'warn',
                 message:'PDU status smpp '+pdu.command_status,
-                module:'[SMPP]'
+                module:'[SMPP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
               console.log(moment().format('LLL')+':  [SMPP]'+pdu.command_status);
               resolve({status:false,uuid:uuid});

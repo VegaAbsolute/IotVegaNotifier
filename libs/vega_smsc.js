@@ -100,7 +100,10 @@ class SMSCru extends EventEmitter
                     logger.log({
                       level:'error',
                       message:'ERROR to send voice message '+_self._stack[j].telephone+' , ip is blocked, http://smsc.ru/faq/99/ ',
-                      module:'[SMSC_VOICE]'
+                      module:'[SMSC_VOICE]',
+                      time:moment().format('LLL'),
+                      timestamp:parseInt(moment().format('x')),
+                      uuid:uuidv4()
                     });
                     console.log(moment().format('LLL')+': [SMSC_VOICE] '+'ERROR to send voice message '+_self._stack[j].telephone+' , ip is blocked, http://smsc.ru/faq/99/ ');
                   }
@@ -109,7 +112,10 @@ class SMSCru extends EventEmitter
                     logger.log({
                       level:'info',
                       message:'Success to send voice message '+_self._stack[j].telephone,
-                      module:'[SMSC_VOICE]'
+                      module:'[SMSC_VOICE]',
+                      time:moment().format('LLL'),
+                      timestamp:parseInt(moment().format('x')),
+                      uuid:uuidv4()
                     })
                     console.log(moment().format('LLL')+': [SMSC_VOICE] '+'Success to send voice message '+_self._stack[j].telephone); 
                   }
@@ -140,7 +146,10 @@ class SMSCru extends EventEmitter
                    logger.log({
                     level:'warn',
                     message:'failed to send  voice message '+tmp.telephone,
-                    module:'[SMSC_VOICE]'
+                    module:'[SMSC_VOICE]',
+                    time:moment().format('LLL'),
+                    timestamp:parseInt(moment().format('x')),
+                    uuid:uuidv4()
                   })
                    console.log(moment().format('LLL')+': [SMSC_VOICE] '+'failed to send  voice message '+tmp.telephone);
                  }
@@ -153,7 +162,10 @@ class SMSCru extends EventEmitter
           logger.log({
             level:'error',
             message:'Failed to send  http message. Error 1',
-            module:'[SMSC_VOICE]'
+            module:'[SMSC_VOICE]',
+            time:moment().format('LLL'),
+            timestamp:parseInt(moment().format('x')),
+            uuid:uuidv4()
           })
           console.log(moment().format('LLL')+': [SMSC_VOICE] '+'failed to send  http message. Error 1');
           console.log(moment().format('LLL')+': [SMSC_VOICE]',e);
@@ -181,7 +193,10 @@ class SMSCru extends EventEmitter
                   logger.log({
                     level:'warn',
                     message:'Failed to send  http message. Error 229',
-                    module:'[SMSC_VOICE]'
+                    module:'[SMSC_VOICE]',
+                    time:moment().format('LLL'),
+                    timestamp:parseInt(moment().format('x')),
+                    uuid:uuidv4()
                   })
                   console.log(moment().format('LLL')+': [SMSC_VOICE]',body);
                   resolve({status:false,uuid:uuid,body:body});

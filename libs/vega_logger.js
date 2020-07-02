@@ -6,7 +6,7 @@ const Logger = winston.createLogger({
     // level:'info',
     format: winston.format.json(),
     // format: combine(timestamp(),prettyPrint()),
-    defaultMeta: { time:moment().format('LLL'), timestamp:parseInt(moment().format('x')), uuid:uuidv4() },
+    // defaultMeta: { time:moment().format('LLL'), timestamp:parseInt(moment().format('x')), uuid:uuidv4() },
     transports:[
         // new winston.transports.Console({handleExceptions:true}),
         new winston.transports.File({filename:'./logs/logs_notifier.log',timestamp:true,handleExceptions:true,maxsize:10485760,maxFiles:5,json:true})
@@ -24,6 +24,12 @@ console.log( moment().format('LLL')+': [LOGGER] '+'Started to write logs to the 
 Logger.log({
     level:'info',
     message:'Started to write logs to the ./logs/logs_notifier.log',
-    module:'[LOGGER]'
+    module:'[LOGGER]',
+    time:moment().format('LLL'),
+    timestamp:parseInt(moment().format('x')),
+    uuid:uuidv4(),
+    time:moment().format('LLL'),
+    timestamp:parseInt(moment().format('x')),
+    uuid:uuidv4()
   });
 module.exports = Logger;

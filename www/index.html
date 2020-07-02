@@ -10,8 +10,14 @@
     <link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/moment.min.js"></script>
+    <script src="./js/moment-with-locales.js"></script>
 </head>
 <body ng-controller='AppController'>
+    <script>
+        moment.lang('ru');
+    </script>
     <header class="navbar navbar-static-top" role="banner">
         <div class="container">
             <div class='navbar-header'>
@@ -28,7 +34,7 @@
                     <div class="col-md-10 col-sm-10 col-xs-6">
                         <ul class="nav navbar-nav">
                             <li ng-click='page=1'><a href="" class="a_header">Настройки</a></li>
-                            <li ng-click='page=2'><a href="" class="a_header">Логи</a></li>
+                            <li ng-click='(page=2)&&getLogs()'><a href="" class="a_header">Логи</a></li>
                         </ul>
                     </div>
                 </div>
@@ -341,10 +347,53 @@
                 <div class="col-sm-12 col-md-12 col-xs-12">
                     <h1>Логи</h1>
                 </div>
+                <div class="col-sm-12 col-md-12 col-xs-12 padding0">
+                    <div class="col-sm-4 col-md-4 col-xs-12 padding-bottom-0_5r">
+                        <div class="input-group">
+                            <input class='form-control' placeholder="Искать">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default"><span class='fa fa-search'></span></button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-5 col-md-3 col-xs-8 padding-bottom-0_5r">
+                        <div class="btn-group button_settings">
+                            <button type="button" class="btn btn-success">Выгрузить <span class="fa fa-save"></span></button>
+                            <button type="button" class="btn btn-default" ng-click='clearLog()'>Очистить</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-3 col-xs-4 padding-bottom-0_5r">
+                        <label for="autoscroll" class="checkbox">
+                            <input type="checkbox" id="autoscroll"> Автопромотка
+                        </label>
+                    </div>
+                    
+                </div>
+                <div class="col-sm-12 col-md-12 col-xs-12 table-logs-container">
+                    <table class="table table-logs">
+                        <thead>
+                            <tr>
+                                <td></td>
+                                <td>Дата</td>
+                                <td>Время</td>
+                                <td>Модуль</td>
+                                <td>Сообщение</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat = "log in logs">
+                                <td title="{{titleLog(log.level)}}" class="help"><span class="fa fa-circle" ng-class='classLog(log.level)'></span></td>
+                                <td>{{convertTime(log.timestamp,'DD MMMM YYYY')}}</td>
+                                <td>{{convertTime(log.timestamp,'HH:mm')}}</td>
+                                <td>{{log.module}}</td>
+                                <td>{{log.message}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>
-    <script src="./js/jquery.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/angular.min.js"></script>
     <script src="./js/angular-sanitize.min.js"></script>

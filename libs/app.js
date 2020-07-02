@@ -15,6 +15,7 @@ const CronJob = require('cron').CronJob;
 const Which = require('which');
 const CRON_TIME = '*/1 * * * *';
 const logger = require('./vega_logger.js');
+const url = require('url');
 
 //---
 // const { Console } = require('console');
@@ -37,7 +38,7 @@ let http = {};
 // console2.log('test');
 // console.log(stdout);
 //---
-
+const uuidv4 = require('uuid/v4');
 let moment = require( 'moment' );
 let devices = new Devices();
 let config = {};
@@ -275,7 +276,10 @@ function wasAlarm(time,channel,fcnt,devEui,otherInfo)
     logger.log({
       level:'info',
       message:'Detected alarm DevEui' + devEui + '  fcnt:' + fcnt,
-      module:'[APP]'
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
   }
   sendSMS(time,channel,otherInfo);
@@ -595,7 +599,10 @@ function get_device_appdata_resp(obj)
       logger.log({
         level:'info',
         message:'devices list updated',
-        module:'[APP]'
+        module:'[APP]',
+        time:moment().format('LLL'),
+        timestamp:parseInt(moment().format('x')),
+        uuid:uuidv4()
       });
     }
     devices.list = devices_list;
@@ -612,7 +619,10 @@ function get_gateways_resp(obj)
       logger.log({
         level:'info',
         message:'List of gateways successfully updated!',
-        module:'[APP]'
+        module:'[APP]',
+        time:moment().format('LLL'),
+        timestamp:parseInt(moment().format('x')),
+        uuid:uuidv4()
       });
     }
     obj.gateway_list.forEach(gateway => {
@@ -626,7 +636,10 @@ function get_gateways_resp(obj)
           logger.log({
             level:'info',
             message:'New gateway detected! GatewayID ='+gatewayId,
-            module:'[APP]'
+            module:'[APP]',
+            time:moment().format('LLL'),
+            timestamp:parseInt(moment().format('x')),
+            uuid:uuidv4()
           });
         }
         else if(gateways[gatewayId] != active) 
@@ -635,7 +648,10 @@ function get_gateways_resp(obj)
           logger.log({
             level:'info',
             message:'Gateway status changed! GatewayID ='+gatewayId,
-            module:'[APP]'
+            module:'[APP]',
+            time:moment().format('LLL'),
+            timestamp:parseInt(moment().format('x')),
+            uuid:uuidv4()
           });
         }
         // else console.log('Не изменилось',gatewayId);
@@ -650,7 +666,10 @@ function get_gateways_resp(obj)
     logger.log({
       level:'error',
       message:' List of gateways is not updated! ERROR:'+obj.err_string,
-      module:'[APP]'
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
   }
 }
@@ -703,7 +722,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device SI11',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             otherInfo.model = 'SI-11';
@@ -732,7 +754,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device SI12',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             otherInfo.model = 'SI-12';
@@ -761,7 +786,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device SI13',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             otherInfo.model = 'SI-13';
@@ -792,7 +820,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device TD11',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if( port !== 2 ) return;
@@ -851,7 +882,10 @@ function rx(obj)
                   logger.log({
                     level:'info',
                     message:'An unknown version of the device device TD11',
-                    module:'[APP]'
+                    module:'[APP]',
+                    time:moment().format('LLL'),
+                    timestamp:parseInt(moment().format('x')),
+                    uuid:uuidv4()
                   });
                 }
               }
@@ -867,7 +901,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device TP11',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if( port !== 2 ) return;
@@ -946,7 +983,10 @@ function rx(obj)
                   logger.log({
                     level:'info',
                     message:'data from device TP11',
-                    module:'[APP]'
+                    module:'[APP]',
+                    time:moment().format('LLL'),
+                    timestamp:parseInt(moment().format('x')),
+                    uuid:uuidv4()
                   });
                 }
               }
@@ -962,7 +1002,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device MC0101',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if( port !== 2 ) return;
@@ -991,7 +1034,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device AS0101',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if( port !== 2 ) return;
@@ -1020,7 +1066,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device MS0101',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if( port !== 2 ) return;
@@ -1049,7 +1098,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device СВЭ-1',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if( port !== 2 ) return;
@@ -1082,7 +1134,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device SS0101',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if( port !== 2 ) return;
@@ -1111,7 +1166,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device SI21',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if(validNumChannel)
@@ -1136,7 +1194,7 @@ function rx(obj)
             if(config.debugMOD) 
             {
               console.log(moment().format('LLL')+': '+'data from device UE');
-              logger.log({
+              ({
                 level:'info',
                 message:'data from device UE',
                 module:'[APP]'
@@ -1171,7 +1229,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device GM-2',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if( port !== 2 ) return;
@@ -1202,7 +1263,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device LM-1',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if( port !== 2 ) return;
@@ -1229,7 +1293,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device TL-11',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if( port !== 2 ) return;
@@ -1264,7 +1331,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device GM-1',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if( port !== 2 ) return;
@@ -1296,7 +1366,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device SI-22',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if(validNumChannel)
@@ -1327,7 +1400,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device MBUS-1',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if(validNumChannel)
@@ -1360,7 +1436,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device MBUS-2',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if(validNumChannel)
@@ -1393,7 +1472,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device HS0101',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             if( port !== 2 ) return;
@@ -1423,7 +1505,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device SPBZIP 2726/2727',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             let channel = dev.get_channel(1);
@@ -1453,7 +1538,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device UM0101',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             let channel = dev.get_channel(1);
@@ -1481,7 +1569,10 @@ function rx(obj)
               logger.log({
                 level:'info',
                 message:'data from device SRC',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             let channel = dev.get_channel(1);
@@ -1508,7 +1599,10 @@ function rx(obj)
               logger.log({
                 level:'warn',
                 message:'data from device unknown',
-                module:'[APP]'
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
             }
             break;
@@ -1523,7 +1617,10 @@ function rx(obj)
           logger.log({
             level:'info',
             message:'Do not put in the queue',
-            module:'[APP]'
+            module:'[APP]',
+            time:moment().format('LLL'),
+            timestamp:parseInt(moment().format('x')),
+            uuid:uuidv4()
           });
         }
       }
@@ -1535,7 +1632,10 @@ function rx(obj)
     logger.log({
       level:'error',
       message:'ERROR 11',
-      module:'[APP]'
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
   }
   finally
@@ -1549,6 +1649,30 @@ function getCurrentSettings(request,response)
   response.writeHead('200');
   response.end(JSON.stringify(config));
 }
+function getLogs(request,response)
+{
+  let params = url.parse(request.url,true).query;
+  // console.log(params.limit)
+  let result = {
+    status:true,
+    cmd:'getLogs'
+  };
+  var option = {
+    limit:params.limit,
+    order:'desc'
+  }
+  if(params.from) option.from = params.from;
+  logger.query(option,(err,res)=>{
+    result.data = res.file;
+    response.setHeader('Content-Type','application/json');
+    response.writeHead('200');
+    response.end(JSON.stringify(result));
+  });
+  // logger.query({limit:1,until:1593503131328},(err,res)=>{
+  //   console.log('!!!!!',res)
+  // })
+  
+}
 function testSendSMSC()
 {
   if(config.telephoneAdministrator && config.debugMOD && !initalizationMessage.smsc)
@@ -1558,7 +1682,10 @@ function testSendSMSC()
     logger.log({
       level:'info',
       message:'Send test message SMSC',
-      module:'[APP]'
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
     smsc.pushVoiceMessage('Successfully started IotVega Notifier',config.telephoneAdministrator,new Date().getTime());
   }
@@ -1572,7 +1699,10 @@ function SMTPStarted()
     logger.log({
       level:'info',
       message:'Send test message SMTP',
-      module:'[APP]'
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
     smtp.pushMessage('Successfully started IotVega Notifier',config.smtp_user,new Date().getTime());
   }
@@ -1586,7 +1716,10 @@ function SMPPStarted()
     logger.log({
       level:'info',
       message:'Send test message SMPP',
-      module:'[APP]'
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
     smpp.pushSMS('Successfully started IotVega Notifier',config.telephoneAdministrator,new Date().getTime());
   }
@@ -1600,7 +1733,10 @@ function telegramStarted()
     logger.log({
       level:'info',
       message:'Send test message Telegram',
-      module:'[APP]'
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
     telegram.pushMessage('Successfully started IotVega Notifier',config.telegram_admin_chatId,new Date().getTime());
   }
@@ -1635,7 +1771,10 @@ function auth_resp(obj)
     logger.log({
       level:'info',
       message:'Success authorization on server iotvega',
-      module:'[APP]'
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
   }
   else
@@ -1644,7 +1783,10 @@ function auth_resp(obj)
     logger.log({
       level:'error',
       message:'Not successful authorization on server iotvega',
-      module:'[APP]'
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
     emergencyExit();
   //  process.exit(1);
@@ -1690,6 +1832,7 @@ function run(conf,homeDir)
       http.use(express.static(homeDirApp+'/www'));
       http.get('/',get_home);
       http.get('/currentSettings',getCurrentSettings);
+      http.get('/getLogs',getLogs);
       http.listen(4000,started);
 
       smpp.on('free',free);
@@ -1707,7 +1850,10 @@ function run(conf,homeDir)
             logger.log({
               level:'error',
               message:'ERROR 33',
-              module:'[APP]'
+              module:'[APP]',
+              time:moment().format('LLL'),
+              timestamp:parseInt(moment().format('x')),
+              uuid:uuidv4()
             });
           }
           else 
@@ -1723,7 +1869,10 @@ function run(conf,homeDir)
       logger.log({
         level:'info',
         message:'Initializing the application was a mistake',
-        module:'[APP]'
+        module:'[APP]',
+        time:moment().format('LLL'),
+        timestamp:parseInt(moment().format('x')),
+        uuid:uuidv4()
       });
       emergencyExit();
     }
@@ -1738,7 +1887,10 @@ function started(err)
       logger.log({
         level:'info',
         message:'Error http server',
-        module:'[APP]'
+        module:'[APP]',
+        time:moment().format('LLL'),
+        timestamp:parseInt(moment().format('x')),
+        uuid:uuidv4()
       });
   }
   else
@@ -1747,7 +1899,10 @@ function started(err)
       logger.log({
         level:'info',
         message:'Success http server',
-        module:'[APP]'
+        module:'[APP]',
+        time:moment().format('LLL'),
+        timestamp:parseInt(moment().format('x')),
+        uuid:uuidv4()
       });
   }
 }
@@ -1773,7 +1928,10 @@ function updating()
         logger.log({
           level:'info',
           message:'Updates not detected',
-          module:'[APP]'
+          module:'[APP]',
+          time:moment().format('LLL'),
+          timestamp:parseInt(moment().format('x')),
+          uuid:uuidv4()
         });
       }
     }
@@ -1782,7 +1940,10 @@ function updating()
       logger.log({
         level:'info',
         message:'ERROR 44',
-        module:'[APP]'
+        module:'[APP]',
+        time:moment().format('LLL'),
+        timestamp:parseInt(moment().format('x')),
+        uuid:uuidv4()
       });
       exec('"git" reset --hard HEAD', (err, stdout, stderr) => {
         if(config.debugMOD) 
@@ -1791,7 +1952,10 @@ function updating()
           logger.log({
             level:'info',
             message:'Error updating IotVegaNotifier, restart',
-            module:'[APP]'
+            module:'[APP]',
+            time:moment().format('LLL'),
+            timestamp:parseInt(moment().format('x')),
+            uuid:uuidv4()
           });
         }
         emergencyExit();
@@ -1819,7 +1983,10 @@ function updating()
           logger.log({
             level:'info',
             message:'The IotVegaNotifier is reinstall success',
-            module:'[APP]'
+            module:'[APP]',
+            time:moment().format('LLL'),
+            timestamp:parseInt(moment().format('x')),
+            uuid:uuidv4()
           });
           waitingReboot = true;
           emergencyExit();
@@ -1831,7 +1998,10 @@ function updating()
             logger.log({
               level:'info',
               message:'The IotVegaNotifier is reinstall close, code'+code,
-              module:'[APP]'
+              module:'[APP]',
+              time:moment().format('LLL'),
+              timestamp:parseInt(moment().format('x')),
+              uuid:uuidv4()
             });
             console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall close, code',code);
           } 
@@ -1842,7 +2012,10 @@ function updating()
         logger.log({
           level:'info',
           message:'The IotVegaNotifier is reinstall error',
-          module:'[APP]'
+          module:'[APP]',
+          time:moment().format('LLL'),
+          timestamp:parseInt(moment().format('x')),
+          uuid:uuidv4()
         });
       });
     }

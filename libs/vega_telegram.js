@@ -91,7 +91,10 @@ class VegaTelegram extends EventEmitter
           logger.log({
             level:'info',
             message:'Successfully started telegram bot management '+ info.username,
-            module:'[TELEGRAM]'
+            module:'[TELEGRAM]',
+            time:moment().format('LLL'),
+            timestamp:parseInt(moment().format('x')),
+            uuid:uuidv4()
           });
           console.log(moment().format('LLL')+': '+'[Telegram] Successfully started telegram bot management '+ info.username);
         })
@@ -110,7 +113,10 @@ class VegaTelegram extends EventEmitter
     logger.log({
       level:'info',
       message:'ChatID: '+ chatId.toString(),
-      module:'[TELEGRAM]'
+      module:'[TELEGRAM]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
     console.log(moment().format('LLL')+': '+'[Telegram] ChatID: '+ chatId.toString());
   }
@@ -119,7 +125,10 @@ class VegaTelegram extends EventEmitter
     logger.log({
       level:'error',
       message:'Error '+err.code+' . '+err.message,
-      module:'[TELEGRAM]'
+      module:'[TELEGRAM]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
     });
     console.log(moment().format('LLL')+': '+'[Telegram] Error '+err.code+' . '+err.message);
     linkBot._status = false;  
@@ -128,7 +137,10 @@ class VegaTelegram extends EventEmitter
       logger.log({
         level:'warn',
         message:'Unavailable telegram',
-        module:'[TELEGRAM]'
+        module:'[TELEGRAM]',
+        time:moment().format('LLL'),
+        timestamp:parseInt(moment().format('x')),
+        uuid:uuidv4()
       });
       console.log(moment().format('LLL')+': '+'[Telegram] Unavailable telegram');
     });
@@ -167,7 +179,10 @@ class VegaTelegram extends EventEmitter
                               logger.log({
                                 level:'info',
                                 message:'Success to send message '+_self._stack[j].chatId+'( '+res.username+' )',
-                                module:'[TELEGRAM]'
+                                module:'[TELEGRAM]',
+                                time:moment().format('LLL'),
+                                timestamp:parseInt(moment().format('x')),
+                                uuid:uuidv4()
                               });
                               console.log(moment().format('LLL')+': '+'[Telegram] Success to send message '+_self._stack[j].chatId+'( '+res.username+' )');
                               _self._stack.splice(j,1);
@@ -195,7 +210,10 @@ class VegaTelegram extends EventEmitter
                                 logger.log({
                                   level:'warn',
                                   message:'Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message,
-                                  module:'[TELEGRAM]'
+                                  module:'[TELEGRAM]',
+                                  time:moment().format('LLL'),
+                                  timestamp:parseInt(moment().format('x')),
+                                  uuid:uuidv4()
                                 });
                                 console.log(moment().format('LLL')+': '+'[Telegram] Failed to send message '+tmp.chatId+'. Error '+ res.err.code+'. '+res.err.message);
                                 _self.checkStackEmptiness();
@@ -207,7 +225,10 @@ class VegaTelegram extends EventEmitter
                   logger.log({
                     level:'error',
                     message:'Failed to send message. Error 1',
-                    module:'[TELEGRAM]'
+                    module:'[TELEGRAM]',
+                    time:moment().format('LLL'),
+                    timestamp:parseInt(moment().format('x')),
+                    uuid:uuidv4()
                   });
                   console.log(moment().format('LLL')+': '+'[Telegram] Failed to send message. Error 1');
                   console.log(moment().format('LLL')+': [Telegram]',e);

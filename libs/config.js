@@ -1,4 +1,5 @@
 let moment = require( 'moment' );
+const uuidv4 = require('uuid/v4');
 const logger = require('./vega_logger.js');
 class Config
 {
@@ -449,7 +450,10 @@ class Config
         logger.log({
           level:'error',
           message:'ERROR 1',
-          module:'[PARS_CONFIG]'
+          module:'[PARS_CONFIG]',
+          time:moment().format('LLL'),
+          timestamp:parseInt(moment().format('x')),
+          uuid:uuidv4()
         });
         console.error(moment().format('LLL')+': ',e);
         return false;

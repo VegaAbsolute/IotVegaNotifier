@@ -74,7 +74,10 @@ class VegaSMTP extends EventEmitter
               logger.log({
                 level:'error',
                 message:'Error connect SMTP. ERROR 113',
-                module:'[SMTP]'
+                module:'[SMTP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
               });
               console.log(moment().format('LLL')+': '+'[SMTP] Error ',err);
               this._connect._status = false;  
@@ -87,7 +90,10 @@ class VegaSMTP extends EventEmitter
                 logger.log({
                   level:'info',
                   message:'Successfully started SMTP',
-                  module:'[SMTP]'
+                  module:'[SMTP]',
+                  time:moment().format('LLL'),
+                  timestamp:parseInt(moment().format('x')),
+                  uuid:uuidv4()
                 });
                 console.log(moment().format('LLL')+': '+'[SMTP] Successfully started SMTP');
                 self.emit('SMTPStarted');
@@ -129,7 +135,10 @@ class VegaSMTP extends EventEmitter
                               logger.log({
                                 level:'info',
                                 message:'Success to send message '+_self._stack[j].email,
-                                module:'[SMTP]'
+                                module:'[SMTP]',
+                                time:moment().format('LLL'),
+                                timestamp:parseInt(moment().format('x')),
+                                uuid:uuidv4()
                               });
                               console.log(moment().format('LLL')+': '+'[SMTP] Success to send message '+_self._stack[j].email);
                               _self._stack.splice(j,1);
@@ -157,7 +166,10 @@ class VegaSMTP extends EventEmitter
                                 logger.log({
                                   level:'warn',
                                   message:'Failed to send message '+tmp.email,
-                                  module:'[SMTP]'
+                                  module:'[SMTP]',
+                                  time:moment().format('LLL'),
+                                  timestamp:parseInt(moment().format('x')),
+                                  uuid:uuidv4()
                                 });
                                 console.log(moment().format('LLL')+': '+'[SMTP] Failed to send message '+tmp.email, res.err);
                                 _self.checkStackEmptiness();
@@ -169,7 +181,10 @@ class VegaSMTP extends EventEmitter
                     logger.log({
                       level:'error',
                       message:'Failed to send message. Error 1',
-                      module:'[SMTP]'
+                      module:'[SMTP]',
+                      time:moment().format('LLL'),
+                      timestamp:parseInt(moment().format('x')),
+                      uuid:uuidv4()
                     });
                     console.log(moment().format('LLL')+': '+'[SMTP] Failed to send message. Error 1');
                     console.log(moment().format('LLL')+': [SMTP]',e);
