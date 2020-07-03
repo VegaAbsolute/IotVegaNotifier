@@ -50,7 +50,11 @@ app.controller('AppController',function($scope,$interval,$http){
     }
     $scope.downloadLog = function()
     {
-
+        var link = document.createElement('a');
+        link.setAttribute('href','/downloadLogFile');
+        link.setAttribute('target','_blank');
+        link.click();
+        return false;
     }
     $scope.getSettings = function()
     {

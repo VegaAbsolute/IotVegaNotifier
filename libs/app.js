@@ -1835,6 +1835,7 @@ function run(conf,homeDir)
       http.get('/',get_home);
       http.get('/currentSettings',getCurrentSettings);
       http.get('/getLogs',getLogs);
+      http.get('/downloadLogFile',downloadLogFile);
       http.listen(4000,started);
 
       smpp.on('free',free);
@@ -1908,7 +1909,10 @@ function started(err)
       });
   }
 }
-
+function downloadLogFile(request,response)
+{
+  response.download(homeDirApp + '/logs/logs_notifier.log');
+}
 function get_home(request,response)
 {
   fs.readFile(homeDirApp + '/www/index.html')
