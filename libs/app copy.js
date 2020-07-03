@@ -7,38 +7,23 @@ const VegaSMTP = require('./vega_smtp.js');
 const SMSCru = require('./vega_smsc.js');
 const Devices = require('./devices.js');
 const VegaWS = require('./vega_ws.js');
-// const Config = require('./config.js');
+const Config = require('./config.js');
 const Parser = require('./parser.js');
 const { exec } = require('child_process');
 const { spawn } = require('child_process');
 const CronJob = require('cron').CronJob;
 const Which = require('which');
 const CRON_TIME = '*/1 * * * *';
-const logger = require('./vega_logger.js');
-const url = require('url');
 
 //---
-// const { Console } = require('console');
-// const fss = require('fs');
-
 const fs = require('fs').promises;
-// const ini = require('ini');
+const ini = require('ini');
 const express = require('express');
 let homeDirApp = undefined;
 let http = {};
 
-
-// var stdout = ''; 
-// var stderr = '';
-// const stdout = fss.createWriteStream('./logs/stdout.log');
-// const stderr = fss.createWriteStream('./logs/stderr.log');
-// process.stdout.pipe(stdout);
-// process.stderr.pipe(stderr);
-// console2 = new Console({stdout:stdout,stderr:stderr});
-// console2.log('test');
-// console.log(stdout);
 //---
-const uuidv4 = require('uuid/v4');
+
 let moment = require( 'moment' );
 let devices = new Devices();
 let config = {};
@@ -60,23 +45,6 @@ let initalizationMessage = {
   smtp: false
 };
 let gateways = {};
-// logger.log({
-//   level:'info',
-//   message:'testlog',
-//   module:'[APP]'
-// });
-//logger.info('info222',33333);
-// logger.info('info222');
-// logger.error('error222');
-// logger.warn('warn22');
-// logger.info(VegaSMPP);
-// logger.query({limit:1,until:1593503131328},(err,res)=>{
-//   console.log('!!!!!',res)
-// })
-// logger.query({until:new Date()-1000*60*60*1},(err,res)=>{
-//   console.log('?????',err)  
-//   console.log('!!!!!',res)
-//   })
 //------------------------------------------------------------------------------
 //Логика
 //------------------------------------------------------------------------------
@@ -270,18 +238,7 @@ function checkValidRXType(type)
 function wasAlarm(time,channel,fcnt,devEui,otherInfo)
 {
   if(!channel.enable_danger) return; //Если отправка тревожных событий отключена то следует прекратить выполнение данного сценария.
-  if(config.debugMOD) 
-  { 
-    console.log(moment().format('LLL')+': '+' Detected alarm DevEui',devEui,'  fcnt:',fcnt);
-    logger.log({
-      level:'info',
-      message:'Detected alarm DevEui' + devEui + '  fcnt:' + fcnt,
-      module:'[APP]',
-      time:moment().format('LLL'),
-      timestamp:parseInt(moment().format('x')),
-      uuid:uuidv4()
-    });
-  }
+  if(config.debugMOD) console.log(moment().format('LLL')+': '+' Detected alarm DevEui',devEui,'  fcnt:',fcnt);
   sendSMS(time,channel,otherInfo);
   sendVoiceMessage(time,channel,otherInfo);
   sendTelegram(time,channel,otherInfo);
@@ -593,18 +550,7 @@ function get_device_appdata_resp(obj)
   let validDevicesList = typeof devices_list==='object'&&devices_list.length>0;
   if(validDevicesList)
   {
-    if(config.debugMOD) 
-    {
-      console.log(moment().format('LLL')+': '+'devices list updated');
-      logger.log({
-        level:'info',
-        message:'devices list updated',
-        module:'[APP]',
-        time:moment().format('LLL'),
-        timestamp:parseInt(moment().format('x')),
-        uuid:uuidv4()
-      });
-    }
+    if(config.debugMOD) console.log(moment().format('LLL')+': '+'devices list updated');
     devices.list = devices_list;
   }
 }
@@ -613,64 +559,26 @@ function get_gateways_resp(obj)
   if(obj.status)
   {
     let firstList = Object.keys(gateways).length === 0;
-    if(config.debugMOD) 
-    {
-      console.log(moment().format('LLL')+': '+'List of gateways successfully updated!');
-      logger.log({
-        level:'info',
-        message:'List of gateways successfully updated!',
-        module:'[APP]',
-        time:moment().format('LLL'),
-        timestamp:parseInt(moment().format('x')),
-        uuid:uuidv4()
-      });
-    }
+    if(config.debugMOD) console.log(moment().format('LLL')+': '+'List of gateways successfully updated!');
     obj.gateway_list.forEach(gateway => {
       let gatewayId = gateway.gatewayId;
       let active = gateway.active;
-      if(!firstList)
+      if(firstList)
       {
-        if ( gateways[gatewayId] === undefined ) 
-        {
-          console.log('New gateway detected! GatewayID =',gatewayId);
-          logger.log({
-            level:'info',
-            message:'New gateway detected! GatewayID ='+gatewayId,
-            module:'[APP]',
-            time:moment().format('LLL'),
-            timestamp:parseInt(moment().format('x')),
-            uuid:uuidv4()
-          });
-        }
-        else if(gateways[gatewayId] != active) 
-        {
-          console.log('Gateway status changed! GatewayID =',gatewayId);
-          logger.log({
-            level:'info',
-            message:'Gateway status changed! GatewayID ='+gatewayId,
-            module:'[APP]',
-            time:moment().format('LLL'),
-            timestamp:parseInt(moment().format('x')),
-            uuid:uuidv4()
-          });
-        }
-        // else console.log('Не изменилось',gatewayId);
-        
+        gateways[gatewayId] = active;
       }
-      gateways[gatewayId] = active;
+      else
+      {
+        if ( gateways[gatewayId] === undefined ) console.log('New gateway detected! GatewayID =',gatewayId);
+        else if(gateways[gatewayId] != active) console.log('Gateway status changed! GatewayID =',gatewayId);
+        // else console.log('Не изменилось',gatewayId);
+        gateways[gatewayId] = active;
+      }
     });
   }
   else
   {
     console.log(moment().format('LLL')+': '+' List of gateways is not updated! ERROR:',obj.err_string);
-    logger.log({
-      level:'error',
-      message:' List of gateways is not updated! ERROR:'+obj.err_string,
-      module:'[APP]',
-      time:moment().format('LLL'),
-      timestamp:parseInt(moment().format('x')),
-      uuid:uuidv4()
-    });
   }
 }
 function rx(obj)
@@ -716,18 +624,7 @@ function rx(obj)
         {
           case 1:
           {
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device SI11');
-              logger.log({
-                level:'info',
-                message:'data from device SI11',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI11');
             otherInfo.model = 'SI-11';
             if(validNumChannel)
             {
@@ -748,18 +645,7 @@ function rx(obj)
           }
           case 2:
           {
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device SI12');
-              logger.log({
-                level:'info',
-                message:'data from device SI12',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI12');
             otherInfo.model = 'SI-12';
             if(validNumChannel)
             {
@@ -780,18 +666,7 @@ function rx(obj)
 
           case 3:
           {
-            if(config.debugMOD) 
-            { 
-              console.log(moment().format('LLL')+': '+'data from device SI13');
-              logger.log({
-                level:'info',
-                message:'data from device SI13',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI13');
             otherInfo.model = 'SI-13';
             if(validNumChannel)
             {
@@ -814,18 +689,7 @@ function rx(obj)
           case 4:
           {
             otherInfo.model = 'TD-11';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device TD11');
-              logger.log({
-                level:'info',
-                message:'data from device TD11',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TD11');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel = dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -876,18 +740,7 @@ function rx(obj)
               }
               else
               {
-                if(config.debugMOD) 
-                {
-                  console.log(moment().format('LLL')+': '+' An unknown version of the device device TD11');
-                  logger.log({
-                    level:'info',
-                    message:'An unknown version of the device device TD11',
-                    module:'[APP]',
-                    time:moment().format('LLL'),
-                    timestamp:parseInt(moment().format('x')),
-                    uuid:uuidv4()
-                  });
-                }
+                if(config.debugMOD) console.log(moment().format('LLL')+': '+' An unknown version of the device device TD11');
               }
             }
             break;
@@ -895,18 +748,7 @@ function rx(obj)
           case 5:
           {
             otherInfo.model = 'TP-11';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device TP11');
-              logger.log({
-                level:'info',
-                message:'data from device TP11',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TP11');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -977,18 +819,7 @@ function rx(obj)
               }
               else
               {
-                if(config.debugMOD) 
-                {
-                  console.log(moment().format('LLL')+': '+' An unknown version of the device device TP11');
-                  logger.log({
-                    level:'info',
-                    message:'data from device TP11',
-                    module:'[APP]',
-                    time:moment().format('LLL'),
-                    timestamp:parseInt(moment().format('x')),
-                    uuid:uuidv4()
-                  });
-                }
+                if(config.debugMOD) console.log(moment().format('LLL')+': '+' An unknown version of the device device TP11');
               }
             }
             break;
@@ -996,18 +827,7 @@ function rx(obj)
           case 6:
           {
             otherInfo.model = 'MC-0101';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device MC');
-              logger.log({
-                level:'info',
-                message:'data from device MC0101',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MC');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -1028,18 +848,7 @@ function rx(obj)
           case 7:
           {
             otherInfo.model = 'AS-0101';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device AS');
-              logger.log({
-                level:'info',
-                message:'data from device AS0101',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device AS');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -1060,18 +869,7 @@ function rx(obj)
           case 8:
           {
             otherInfo.model = 'MS-0101';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device MS');
-              logger.log({
-                level:'info',
-                message:'data from device MS0101',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MS');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -1092,18 +890,7 @@ function rx(obj)
           case 9:
           {
             otherInfo.model = 'Водосчетчик';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device СВЭ-1');
-              logger.log({
-                level:'info',
-                message:'data from device СВЭ-1',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device СВЭ-1');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -1128,18 +915,7 @@ function rx(obj)
           case 10:
           {
             otherInfo.model = 'SS-0101';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device SS ');
-              logger.log({
-                level:'info',
-                message:'data from device SS0101',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SS ');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -1160,18 +936,7 @@ function rx(obj)
           case 11:
           {
             otherInfo.model = 'SI-21';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device SI21');
-              logger.log({
-                level:'info',
-                message:'data from device SI21',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI21');
             if(validNumChannel)
             {
               let channel = dev.get_channel(numChannel);
@@ -1191,15 +956,7 @@ function rx(obj)
           case 12:
           {
             otherInfo.model = 'Электросчетчик';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device UE');
-              ({
-                level:'info',
-                message:'data from device UE',
-                module:'[APP]'
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device UE');
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
@@ -1223,18 +980,7 @@ function rx(obj)
           case 13:
           {
             otherInfo.model = 'GM-2';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device GM-2 ');
-              logger.log({
-                level:'info',
-                message:'data from device GM-2',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device GM-2 ');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -1257,18 +1003,7 @@ function rx(obj)
           case 14:
           {
             otherInfo.model = 'LM-1';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device LM-1 ');
-              logger.log({
-                level:'info',
-                message:'data from device LM-1',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device LM-1 ');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel = dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -1287,18 +1022,7 @@ function rx(obj)
           case 15:
           {
             otherInfo.model = 'TL-11';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device TL-11');
-              logger.log({
-                level:'info',
-                message:'data from device TL-11',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device TL-11');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -1325,18 +1049,7 @@ function rx(obj)
           case 17:
           {
             otherInfo.model = 'GM-1';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device GM-1 ');
-              logger.log({
-                level:'info',
-                message:'data from device GM-1',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device GM-1 ');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -1360,18 +1073,7 @@ function rx(obj)
           case 18:
           {
             otherInfo.model = 'SI-22';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device SI-22 ');
-              logger.log({
-                level:'info',
-                message:'data from device SI-22',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SI-22 ');
             if(validNumChannel)
             {
               let channel = dev.get_channel(numChannel);
@@ -1394,18 +1096,7 @@ function rx(obj)
           case 20:
           {
             otherInfo.model = 'M-BUS-1';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device MBUS-1 ');
-              logger.log({
-                level:'info',
-                message:'data from device MBUS-1',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MBUS-1 ');
             if(validNumChannel)
             {
               let originalNum = numChannel;
@@ -1430,18 +1121,7 @@ function rx(obj)
           case 21:
           {
             otherInfo.model = 'M-BUS-2';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device MBUS-2 ');
-              logger.log({
-                level:'info',
-                message:'data from device MBUS-2',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device MBUS-2 ');
             if(validNumChannel)
             {
               let originalNum = numChannel;
@@ -1466,18 +1146,7 @@ function rx(obj)
           case 23:
           {
             otherInfo.model = 'HS-0101';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device HS ');
-              logger.log({
-                level:'info',
-                message:'data from device HS0101',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device HS ');
             if( port !== 2 ) return;
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
@@ -1499,18 +1168,7 @@ function rx(obj)
           case 24:
           {
             otherInfo.model = 'SPBZIP 2726/2727';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device SPBZIP 2726/2727');
-              logger.log({
-                level:'info',
-                message:'data from device SPBZIP 2726/2727',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SPBZIP 2726/2727');
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             otherInfo.reasonText = '';
@@ -1532,18 +1190,7 @@ function rx(obj)
           case 25:
           {
             otherInfo.model = 'UM-0101';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device UM ');
-              logger.log({
-                level:'info',
-                message:'data from device UM0101',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device UM ');
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
@@ -1563,18 +1210,7 @@ function rx(obj)
           case 26:
           {
             otherInfo.model = 'SRC-1';
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device SRC ');
-              logger.log({
-                level:'info',
-                message:'data from device SRC',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device SRC ');
             let channel = dev.get_channel(1);
             let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
             if(validChannel)
@@ -1593,50 +1229,20 @@ function rx(obj)
           }
           default:
           {
-            if(config.debugMOD) 
-            {
-              console.log(moment().format('LLL')+': '+'data from device unknown');
-              logger.log({
-                level:'warn',
-                message:'data from device unknown',
-                module:'[APP]',
-                time:moment().format('LLL'),
-                timestamp:parseInt(moment().format('x')),
-                uuid:uuidv4()
-              });
-            }
+            if(config.debugMOD) console.log(moment().format('LLL')+': '+'data from device unknown');
             break;
           }
         }
       }
       else
       {
-        if(config.debugMOD) 
-        {
-          console.log(moment().format('LLL')+': '+'Do not put in the queue');
-          logger.log({
-            level:'info',
-            message:'Do not put in the queue',
-            module:'[APP]',
-            time:moment().format('LLL'),
-            timestamp:parseInt(moment().format('x')),
-            uuid:uuidv4()
-          });
-        }
+        if(config.debugMOD) console.log(moment().format('LLL')+': '+'Do not put in the queue');
       }
     }
   }
   catch (e)
   {
     console.error(e);
-    logger.log({
-      level:'error',
-      message:'ERROR 11',
-      module:'[APP]',
-      time:moment().format('LLL'),
-      timestamp:parseInt(moment().format('x')),
-      uuid:uuidv4()
-    });
   }
   finally
   {
@@ -1654,46 +1260,12 @@ function getCurrentSettings(request,response)
   response.writeHead('200');
   response.end(JSON.stringify(res));
 }
-function getLogs(request,response)
-{
-  let params = url.parse(request.url,true).query;
-  // console.log(params.limit)
-  let result = {
-    status:true,
-    cmd:'getLogs'
-  };
-  var option = {
-    limit:params.limit,
-    order:'desc'
-  }
-  if(params.from) option.from = parseInt(params.from);
-  // console.log('options',option);
-  logger.query(option,(err,res)=>{
-    // console.log('result',res);
-    result.data = res.file;
-    response.setHeader('Content-Type','application/json');
-    response.writeHead('200');
-    response.end(JSON.stringify(result));
-  });
-  // logger.query({limit:1,until:1593503131328},(err,res)=>{
-  //   console.log('!!!!!',res)
-  // })
-  
-}
 function testSendSMSC()
 {
   if(config.telephoneAdministrator && config.debugMOD && !initalizationMessage.smsc)
   {
     initalizationMessage.smsc = true;
     console.log(moment().format('LLL')+': '+'Send test message SMSC');
-    logger.log({
-      level:'info',
-      message:'Send test message SMSC',
-      module:'[APP]',
-      time:moment().format('LLL'),
-      timestamp:parseInt(moment().format('x')),
-      uuid:uuidv4()
-    });
     smsc.pushVoiceMessage('Successfully started IotVega Notifier',config.telephoneAdministrator,new Date().getTime());
   }
 }
@@ -1703,14 +1275,6 @@ function SMTPStarted()
   {
     initalizationMessage.smtp = true;
     console.log(moment().format('LLL')+': '+'Send test message SMTP');
-    logger.log({
-      level:'info',
-      message:'Send test message SMTP',
-      module:'[APP]',
-      time:moment().format('LLL'),
-      timestamp:parseInt(moment().format('x')),
-      uuid:uuidv4()
-    });
     smtp.pushMessage('Successfully started IotVega Notifier',config.smtp_user,new Date().getTime());
   }
 }
@@ -1720,14 +1284,6 @@ function SMPPStarted()
   {
     initalizationMessage.smpp = true;
     console.log(moment().format('LLL')+': '+'Send test message SMPP');
-    logger.log({
-      level:'info',
-      message:'Send test message SMPP',
-      module:'[APP]',
-      time:moment().format('LLL'),
-      timestamp:parseInt(moment().format('x')),
-      uuid:uuidv4()
-    });
     smpp.pushSMS('Successfully started IotVega Notifier',config.telephoneAdministrator,new Date().getTime());
   }
 }
@@ -1737,14 +1293,6 @@ function telegramStarted()
   {
     initalizationMessage.telegram = true;
     console.log(moment().format('LLL')+': '+'Send test message Telegram');
-    logger.log({
-      level:'info',
-      message:'Send test message Telegram',
-      module:'[APP]',
-      time:moment().format('LLL'),
-      timestamp:parseInt(moment().format('x')),
-      uuid:uuidv4()
-    });
     telegram.pushMessage('Successfully started IotVega Notifier',config.telegram_admin_chatId,new Date().getTime());
   }
 }
@@ -1775,26 +1323,10 @@ function auth_resp(obj)
     get_device_appdata_req();
     get_gateways_req();
     console.log(moment().format('LLL')+': '+'Success authorization on server iotvega');
-    logger.log({
-      level:'info',
-      message:'Success authorization on server iotvega',
-      module:'[APP]',
-      time:moment().format('LLL'),
-      timestamp:parseInt(moment().format('x')),
-      uuid:uuidv4()
-    });
   }
   else
   {
     console.log(moment().format('LLL')+': '+'Not successful authorization on server iotvega');
-    logger.log({
-      level:'error',
-      message:'Not successful authorization on server iotvega',
-      module:'[APP]',
-      time:moment().format('LLL'),
-      timestamp:parseInt(moment().format('x')),
-      uuid:uuidv4()
-    });
     emergencyExit();
   //  process.exit(1);
   }
@@ -1839,8 +1371,6 @@ function run(conf,homeDir)
       http.use(express.static(homeDirApp+'/www'));
       http.get('/',get_home);
       http.get('/currentSettings',getCurrentSettings);
-      http.get('/getLogs',getLogs);
-      http.get('/downloadLogFile',downloadLogFile);
       http.listen(4000,started);
 
       smpp.on('free',free);
@@ -1852,36 +1382,14 @@ function run(conf,homeDir)
       smtp.on('SMTPStarted',SMTPStarted);
       smsc.on('testSendSMSC',testSendSMSC);
       Which('npm', function(error, path){ 
-          if(error) 
-          {
-            console.log(moment().format('LLL')+': '+'[SYSTEM ERROR]',error);
-            logger.log({
-              level:'error',
-              message:'ERROR 33',
-              module:'[APP]',
-              time:moment().format('LLL'),
-              timestamp:parseInt(moment().format('x')),
-              uuid:uuidv4()
-            });
-          }
-          else 
-          {
-            npm = path;
-          }
+          if(error) console.log(moment().format('LLL')+': '+'[SYSTEM ERROR]',error);
+          else npm = path;
       });
     }
     catch (e)
     {
       console.log(moment().format('LLL')+': '+'Initializing the application was a mistake');
       console.error(moment().format('LLL'),e);
-      logger.log({
-        level:'info',
-        message:'Initializing the application was a mistake',
-        module:'[APP]',
-        time:moment().format('LLL'),
-        timestamp:parseInt(moment().format('x')),
-        uuid:uuidv4()
-      });
       emergencyExit();
     }
   }
@@ -1892,32 +1400,13 @@ function started(err)
   if(err)
   {
       console.log('error http server',err);
-      logger.log({
-        level:'info',
-        message:'Error http server',
-        module:'[APP]',
-        time:moment().format('LLL'),
-        timestamp:parseInt(moment().format('x')),
-        uuid:uuidv4()
-      });
   }
   else
   {
       console.log('success http server');
-      logger.log({
-        level:'info',
-        message:'Success http server',
-        module:'[APP]',
-        time:moment().format('LLL'),
-        timestamp:parseInt(moment().format('x')),
-        uuid:uuidv4()
-      });
   }
 }
-function downloadLogFile(request,response)
-{
-  response.download(homeDirApp + '/logs/logs_notifier.log');
-}
+
 function get_home(request,response)
 {
   fs.readFile(homeDirApp + '/www/index.html')
@@ -1933,42 +1422,12 @@ function updating()
   exec('"git" pull', (err, stdout, stderr) => {
     if(stdout&&(stdout.indexOf('Already up to date')>-1||stdout.indexOf('Already up-to-date')>-1)||stdout.indexOf('Уже обновлено')>-1)
     {
-      if(config.debugMOD) 
-      {
-        console.log(moment().format('LLL')+': '+'Updates not detected');
-        logger.log({
-          level:'info',
-          message:'Updates not detected',
-          module:'[APP]',
-          time:moment().format('LLL'),
-          timestamp:parseInt(moment().format('x')),
-          uuid:uuidv4()
-        });
-      }
+      if(config.debugMOD) console.log(moment().format('LLL')+': '+'Updates not detected');
     }
     else if (err) {
       console.log(err);
-      logger.log({
-        level:'info',
-        message:'ERROR 44',
-        module:'[APP]',
-        time:moment().format('LLL'),
-        timestamp:parseInt(moment().format('x')),
-        uuid:uuidv4()
-      });
       exec('"git" reset --hard HEAD', (err, stdout, stderr) => {
-        if(config.debugMOD) 
-        {
-          console.log(moment().format('LLL')+': '+'Error updating IotVegaNotifier, restart',err);
-          logger.log({
-            level:'info',
-            message:'Error updating IotVegaNotifier, restart',
-            module:'[APP]',
-            time:moment().format('LLL'),
-            timestamp:parseInt(moment().format('x')),
-            uuid:uuidv4()
-          });
-        }
+        if(config.debugMOD) console.log(moment().format('LLL')+': '+'Error updating IotVegaNotifier, restart',err);
         emergencyExit();
       });
     }
@@ -1976,58 +1435,25 @@ function updating()
     {
       spawn_update = spawn(npm, ['install']);
       spawn_update.stdout.on('data',(data)=>{
-        if(config.debugMOD)  
-        {
-          console.log(moment().format('LLL')+': '+data);
-        }
+        if(config.debugMOD)  console.log(moment().format('LLL')+': '+data);
       });
       spawn_update.stderr.on('data',(data)=>{
-        if(config.debugMOD)  
-        {
-          console.log(moment().format('LLL')+': '+data);
-        }
+        if(config.debugMOD)  console.log(moment().format('LLL')+': '+data);
       });
       spawn_update.on('close',(code)=>{
         if(code == 0)
         {
           console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall success');
-          logger.log({
-            level:'info',
-            message:'The IotVegaNotifier is reinstall success',
-            module:'[APP]',
-            time:moment().format('LLL'),
-            timestamp:parseInt(moment().format('x')),
-            uuid:uuidv4()
-          });
           waitingReboot = true;
           emergencyExit();
         }
         else
         {
-          if(config.debugMOD) 
-          {
-            logger.log({
-              level:'info',
-              message:'The IotVegaNotifier is reinstall close, code'+code,
-              module:'[APP]',
-              time:moment().format('LLL'),
-              timestamp:parseInt(moment().format('x')),
-              uuid:uuidv4()
-            });
-            console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall close, code',code);
-          } 
+          if(config.debugMOD)  console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall close, code',code);
         }
       });
       spawn_update.on('error',(err)=>{
         console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall error',err);
-        logger.log({
-          level:'info',
-          message:'The IotVegaNotifier is reinstall error',
-          module:'[APP]',
-          time:moment().format('LLL'),
-          timestamp:parseInt(moment().format('x')),
-          uuid:uuidv4()
-        });
       });
     }
   });
