@@ -19,7 +19,7 @@ logger.log({
   timestamp:parseInt(moment().format('x')),
   uuid:uuidv4()
 });
-console.log('IoTVega Notifier Lite v'+pjson.version, ' launched!')
+console.log(moment().format('LLL') + ' [INITIALIZATION]: IoTVega Notifier Lite v'+pjson.version, ' launched!')
 if(!fs.existsSync(path))
 {
   console.error( moment().format('LLL') + ':'+' Error accessing config.ini file');

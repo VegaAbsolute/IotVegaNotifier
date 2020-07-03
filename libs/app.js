@@ -1661,8 +1661,10 @@ function getLogs(request,response)
     limit:params.limit,
     order:'desc'
   }
-  if(params.from) option.from = params.from;
+  if(params.from) option.from = parseInt(params.from);
+  // console.log('options',option);
   logger.query(option,(err,res)=>{
+    // console.log('result',res);
     result.data = res.file;
     response.setHeader('Content-Type','application/json');
     response.writeHead('200');

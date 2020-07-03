@@ -350,7 +350,7 @@
                 <div class="col-sm-12 col-md-12 col-xs-12 padding0">
                     <div class="col-sm-4 col-md-4 col-xs-12 padding-bottom-0_5r">
                         <div class="input-group">
-                            <input class='form-control' placeholder="Искать">
+                            <input class='form-control' placeholder="Искать" ng-model='filterLog'>
                             <span class="input-group-btn">
                                 <button class="btn btn-default"><span class='fa fa-search'></span></button>
                             </span>
@@ -358,13 +358,13 @@
                     </div>
                     <div class="col-sm-5 col-md-3 col-xs-8 padding-bottom-0_5r">
                         <div class="btn-group button_settings">
-                            <button type="button" class="btn btn-success">Выгрузить <span class="fa fa-save"></span></button>
+                            <button type="button" class="btn btn-success" ng-click='downloadLog()'>Выгрузить <span class="fa fa-save"></span></button>
                             <button type="button" class="btn btn-default" ng-click='clearLog()'>Очистить</button>
                         </div>
                     </div>
                     <div class="col-sm-3 col-md-3 col-xs-4 padding-bottom-0_5r">
                         <label for="autoscroll" class="checkbox">
-                            <input type="checkbox" id="autoscroll"> Автопромотка
+                            <input type="checkbox" id="autoscroll" ng-model='autoScrollLogs'> Автопромотка
                         </label>
                     </div>
                     
@@ -381,7 +381,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat = "log in logs">
+                            <tr ng-repeat = "log in logs | filter_object | orderBy:'timestamp'" ng-if='findLog(log)'>
                                 <td title="{{titleLog(log.level)}}" class="help"><span class="fa fa-circle" ng-class='classLog(log.level)'></span></td>
                                 <td>{{convertTime(log.timestamp,'DD MMMM YYYY')}}</td>
                                 <td>{{convertTime(log.timestamp,'HH:mm')}}</td>
