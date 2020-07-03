@@ -50,6 +50,7 @@
                 <div class="col-sm-3 col-md-3 col-xs-5">
                     <ul class="nav nav-pills nav-stacked">
                         <li ng-class='page_settings==1?"active":""' ng-click='selectGroupSettings(1)'><a href="">WebSocket</a></li>
+                        <li ng-class='page_settings==11?"active":""' ng-click='selectGroupSettings(11)'><a href="">Web интерфейс</a></li>
                         <li ng-class='page_settings==2?"active":""' ng-click='selectGroupSettings(2)'><a href="">SMTP</a></li>
                         <li ng-class='page_settings==3?"active":""' ng-click='selectGroupSettings(3)'><a href="">Telegram</a></li>
                         <li ng-class='page_settings==4?"active":""' ng-click='selectGroupSettings(4)'><a href="">SMSC</a></li>
@@ -62,7 +63,7 @@
                     <div class="btn-group button_settings">
                         <button type="button" class="btn btn-danger">Сброс</button>
                         <button type="button" class="btn btn-default" ng-click='getSettings()'>Текущие</button>
-                        <button type="button" class="btn btn-success">Сохранить</button>
+                        <button type="button" class="btn btn-success" ng-click='saveSettings()'>Сохранить</button>
                     </div>
                     <div class="panel panel-primary" ng-show='page_settings==1'>
                         <div class="panel-heading">
@@ -71,15 +72,33 @@
                         <div class="panel-body">
                             <div class='col-sm-12 setting_form'>
                                 <label class="text-info">Адрес WebSocket API<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-model='edit_settings.ws.url' type="text" class="form-control" placeholder="ws://example.com/ws"  title="Адрес WebSocket API">
+                                <input ng-model='edit_settings._ws.url' type="text" class="form-control" placeholder="ws://example.com/ws"  title="Адрес WebSocket API">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Пользователь<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-model='edit_settings.ws.login' type="text" class="form-control" placeholder="demo"  title="Пользователь/Login">
+                                <input ng-model='edit_settings._ws.login' type="text" class="form-control" placeholder="demo"  title="Пользователь/Login">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Пароль<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-model='edit_settings.ws.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
+                                <input ng-model='edit_settings._ws.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-primary" ng-show='page_settings==11'>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Настройки интерфейса http</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class='col-sm-12' >
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._http.status' type="checkbox"  id="http_enabled"> <label class="text-info text-checkbox" for="http_enabled">Включить Web интерфейс</p>
+                            </div>
+                            <div class='col-sm-8 setting_form'>
+                                <label class="text-info">IP адрес (Рекомендуем 127.0.0.1)<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._http.status' ng-model='edit_settings._http.ip' type="text" class="form-control" placeholder="127.0.0.1"  title="IP адрес, на котором следует запустить интерфейс(Рекомендуем 127.0.0.1)">
+                            </div>
+                            <div class='col-sm-4 setting_form'>
+                                <label class="text-info">Порт<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._http.status' ng-model='edit_settings._http.port' type="text" class="form-control" placeholder="4040"  title="Порт">
                             </div>
                         </div>
                     </div>
@@ -89,26 +108,26 @@
                         </div>
                         <div class="panel-body">
                             <div class='col-sm-12' >
-                                <p class="p_container_checkbox"><input ng-model='edit_settings.smtp.status' type="checkbox"  id="smtp_enabled"> <label class="text-info text-checkbox" for="smtp_enabled">Включить отправку email сообщений</p>
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._smtp.status' type="checkbox"  id="smtp_enabled"> <label class="text-info text-checkbox" for="smtp_enabled">Включить отправку email сообщений</p>
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Адрес cервера исходящей почты(SMTP-сервер)<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-model='edit_settings.smtp.host' ng-disabled='!edit_settings.smtp.status' type="text" class="form-control" placeholder="smtp.example.com"  title="Адрес cервера исходящей почты(SMTP-сервер)">
+                                <input ng-model='edit_settings._smtp.status' ng-disabled='!edit_settings._smtp.status' type="text" class="form-control" placeholder="smtp.example.com"  title="Адрес cервера исходящей почты(SMTP-сервер)">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Порт cервера исходящей почты(SMTP-сервер)<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings.smtp.status' ng-model='edit_settings.smtp.port' type="text" class="form-control" placeholder="465"  title="Порт cервера исходящей почты(SMTP-сервер)">
+                                <input ng-disabled='!edit_settings._smtp.status' ng-model='edit_settings._smtp.port' type="text" class="form-control" placeholder="465"  title="Порт cервера исходящей почты(SMTP-сервер)">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Полное имя почтового ящика<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings.smtp.status' ng-model='edit_settings.smtp.user' type="text" class="form-control" placeholder="name@example.com"  title="Полное имя почтового ящика, включая логин, @ и домен">
+                                <input ng-disabled='!edit_settings._smtp.status' ng-model='edit_settings._smtp.user' type="text" class="form-control" placeholder="name@example.com"  title="Полное имя почтового ящика, включая логин, @ и домен">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Пароль<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings.smtp.status' ng-model='edit_settings.smtp.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
+                                <input ng-disabled='!edit_settings._smtp.status' ng-model='edit_settings._smtp.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
                             </div>
                             <div class='col-sm-12' >
-                                <p ng-disabled='!edit_settings.smtp.status'  class="p_container_checkbox"><input ng-disabled='!edit_settings.smtp.status' ng-model='edit_settings.smtp.secure' type="checkbox"  id="smtp_secure"> <label class="text-info text-checkbox" for="smtp_secure">SMTP сервер защищен</p>
+                                <p ng-disabled='!edit_settings._smtp.status'  class="p_container_checkbox"><input ng-disabled='!edit_settings._smtp.status' ng-model='edit_settings._smtp.secure' type="checkbox"  id="smtp_secure"> <label class="text-info text-checkbox" for="smtp_secure">SMTP сервер защищен</p>
                             </div>
                         </div>
                     </div>
@@ -118,34 +137,34 @@
                         </div>
                         <div class="panel-body">
                             <div class='col-sm-12' >
-                                <p class="p_container_checkbox"><input ng-model='edit_settings.telegram.status' type="checkbox"  id="telegram_enabled"> <label class="text-info text-checkbox" for="telegram_enabled">Включить отправку telagram сообщений</p>
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._telegram.status' type="checkbox"  id="telegram_enabled"> <label class="text-info text-checkbox" for="telegram_enabled">Включить отправку telagram сообщений</p>
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Бот токен<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings.telegram.status' ng-model='edit_settings.telegram.token' type="text" class="form-control" placeholder="999999999:AAAAAAAAAAAAAAA-ooooooooooooooooooo"  title="Бот токен">
+                                <input ng-disabled='!edit_settings._telegram.status' ng-model='edit_settings._telegram.token' type="text" class="form-control" placeholder="999999999:AAAAAAAAAAAAAAA-ooooooooooooooooooo"  title="Бот токен">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Чат ID администратора</label>
-                                <input ng-disabled='!edit_settings.telegram.status' ng-model='edit_settings.telegram.chatId' type="text" class="form-control" placeholder="333333333"  title="Чат ID администратора">
+                                <input ng-disabled='!edit_settings._telegram.status' ng-model='edit_settings._telegram.chatId' type="text" class="form-control" placeholder="333333333"  title="Чат ID администратора">
                             </div>
                             <div class='col-sm-12' >
-                                <p class="p_container_checkbox" ng-disabled='!edit_settings.telegram.status'><input ng-disabled='!edit_settings.telegram.status' ng-model='edit_settings.telegram.proxy.status' type="checkbox"  id="proxy_socks5_enabled"> <label class="text-info text-checkbox" for="proxy_socks5_enabled">Использовать SOCKS5 прокси сервер</p>
+                                <p class="p_container_checkbox" ng-disabled='!edit_settings._telegram.status'><input ng-disabled='!edit_settings._telegram.status' ng-model='edit_settings._telegram.proxy_status' type="checkbox"  id="proxy_socks5_enabled"> <label class="text-info text-checkbox" for="proxy_socks5_enabled">Использовать SOCKS5 прокси сервер</p>
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Адрес SOCKS5 прокси сервера </label>
-                                <input ng-disabled='!edit_settings.telegram.status||!edit_settings.telegram.proxy.status' ng-model='edit_settings.telegram.proxy.host' type="text" class="form-control" placeholder="example.com"  title="Адрес SOCKS5 прокси сервера">
+                                <input ng-disabled='!edit_settings._telegram.status||!edit_settings._telegram.proxy_status' ng-model='edit_settings._telegram.proxy_host' type="text" class="form-control" placeholder="example.com"  title="Адрес SOCKS5 прокси сервера">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Порт SOCKS5 прокси сервера</label>
-                                <input ng-disabled='!edit_settings.telegram.status||!edit_settings.telegram.proxy.status' ng-model='edit_settings.telegram.proxy.port' type="text" class="form-control" placeholder="1080"  title="Порт SOCKS5 прокси сервера">
+                                <input ng-disabled='!edit_settings._telegram.status||!edit_settings._telegram.proxy_status' ng-model='edit_settings._telegram.proxy_port' type="text" class="form-control" placeholder="1080"  title="Порт SOCKS5 прокси сервера">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Пользователь SOCKS5</label>
-                                <input ng-disabled='!edit_settings.telegram.status||!edit_settings.telegram.proxy.status' ng-model='edit_settings.telegram.proxy.login' type="text" class="form-control" placeholder="name"  title="Полное имя почтового ящика, включая логин, @ и домен">
+                                <input ng-disabled='!edit_settings._telegram.status||!edit_settings._telegram.proxy_status' ng-model='edit_settings._telegram.proxy_login' type="text" class="form-control" placeholder="name"  title="Полное имя почтового ящика, включая логин, @ и домен">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Пароль пользователя SOCKS5</label>
-                                <input ng-disabled='!edit_settings.telegram.status||!edit_settings.telegram.proxy.status' ng-model='edit_settings.telegram.proxy.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
+                                <input ng-disabled='!edit_settings._telegram.status||!edit_settings._telegram.proxy_status' ng-model='edit_settings._telegram.proxy_password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
                             </div>
                         </div>
                     </div>
@@ -155,19 +174,19 @@
                         </div>
                         <div class="panel-body">
                             <div class='col-sm-12' >
-                                <p class="p_container_checkbox"><input ng-model='edit_settings.smsc.status' type="checkbox"  id="smsc_enabled"> <label class="text-info text-checkbox" for="smsc_enabled">Включить отправку голосовых дозвонов SMSC</p>
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._smsc.status' type="checkbox"  id="smsc_enabled"> <label class="text-info text-checkbox" for="smsc_enabled">Включить отправку голосовых дозвонов SMSC</p>
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Логин API SMSC.ru<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings.smsc.status' ng-model='edit_settings.smsc.login' type="text" class="form-control" placeholder="login"  title="Логин API SMSC.ru">
+                                <input ng-disabled='!edit_settings._smsc.status' ng-model='edit_settings._smsc.login' type="text" class="form-control" placeholder="login"  title="Логин API SMSC.ru">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Пароль API SMSC.ru<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings.smsc.status' ng-model='edit_settings.smsc.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
+                                <input ng-disabled='!edit_settings._smsc.status' ng-model='edit_settings._smsc.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
                             </div>
                             <div class='col-sm-6'>
                                 <label class="text-info">Голос</label>
-                                <select ng-disabled='!edit_settings.smsc.status' ng-model='edit_settings.smsc.voice' title="Голос" class="form-control">
+                                <select ng-disabled='!edit_settings._smsc.status' ng-model='edit_settings._smsc.voice' title="Голос" class="form-control">
                                     <option value='m' > Мужской №1</option>
                                     <option value='m2'> Мужской №2</option>
                                     <option value='w' > Женский №1</option>
@@ -178,7 +197,7 @@
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Отправитель</label>
-                                <input ng-disabled='!edit_settings.smsc.status' ng-model='edit_settings.smsc.sender' type="text" class="form-control" placeholder="-"  title="Отправитель">
+                                <input ng-disabled='!edit_settings._smsc.status' ng-model='edit_settings._smsc.sender' type="text" class="form-control" placeholder="-"  title="Отправитель">
                             </div>
                         </div>
                     </div>
@@ -188,104 +207,104 @@
                         </div>
                         <div class="panel-body">
                             <div class='col-sm-12' >
-                                <p class="p_container_checkbox"><input ng-model='edit_settings.smpp.status' type="checkbox"  id="smpp_enabled"> <label class="text-info text-checkbox" for="smpp_enabled">Включить отправку SMS сообщений</p>
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._smpp.status' type="checkbox"  id="smpp_enabled"> <label class="text-info text-checkbox" for="smpp_enabled">Включить отправку SMS сообщений</p>
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Адрес SMPP шлюза<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.host' type="text" class="form-control" placeholder="smpp.example.ru"  title="Адрес SMPP шлюза">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.host' type="text" class="form-control" placeholder="smpp.example.ru"  title="Адрес SMPP шлюза">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Порт SMPP шлюза<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.port' type="text" class="form-control" placeholder="3340"  title="Порт SMPP шлюза">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.port' type="text" class="form-control" placeholder="3340"  title="Порт SMPP шлюза">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Логин/Пользователь/SystemId<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.system_id' type="text" class="form-control" placeholder="SystemId"  title="Логин/Пользователь/SystemId">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.system_id' type="text" class="form-control" placeholder="SystemId"  title="Логин/Пользователь/SystemId">
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Пароль<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
                             </div>
                             <div class='col-sm-12 setting_form'><hr></div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">system_type</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.system_type' type="text" class="form-control" placeholder="null"  title="Identifies the type of ESME system requesting to bind as a transceiver with the MC. [VMS,OTA,null]">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.system_type' type="text" class="form-control" placeholder="null"  title="Identifies the type of ESME system requesting to bind as a transceiver with the MC. [VMS,OTA,null]">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">interface_version</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.interface_version' type="text" class="form-control" placeholder="52"  title="Identifies the version of the SMPP protocol supported by the ESME.">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.interface_version' type="text" class="form-control" placeholder="52"  title="Identifies the version of the SMPP protocol supported by the ESME.">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">address_range</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.address_range' type="text" class="form-control" placeholder="null"  title="A single ESME address or a range of ESME addresses served via this SMPP transceiver session. Set to NULL if not known.">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.address_range' type="text" class="form-control" placeholder="null"  title="A single ESME address or a range of ESME addresses served via this SMPP transceiver session. Set to NULL if not known.">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">addr_ton</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.addr_ton' type="text" class="form-control" placeholder="null"  title="Type of Number (TON) for ESME address(es) served via this SMPP transceiver session. Set to NULL (Unknown) if not known.">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.addr_ton' type="text" class="form-control" placeholder="null"  title="Type of Number (TON) for ESME address(es) served via this SMPP transceiver session. Set to NULL (Unknown) if not known.">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">addr_npi</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.addr_npi' type="text" class="form-control" placeholder="null"  title="Numbering Plan Indicator (NPI) for ESME address(es) served via this SMPP transceiver session. Set to NULL (Unknown) if not known">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.addr_npi' type="text" class="form-control" placeholder="null"  title="Numbering Plan Indicator (NPI) for ESME address(es) served via this SMPP transceiver session. Set to NULL (Unknown) if not known">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">source_addr</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.source_addr' type="text" class="form-control" placeholder="example"  title="The sender of the message">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.source_addr' type="text" class="form-control" placeholder="example"  title="The sender of the message">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">source_addr_ton</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.source_addr_ton' type="text" class="form-control" placeholder="5"  title="Type of Number for source address. If not known, set to NULL (Unknown).">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.source_addr_ton' type="text" class="form-control" placeholder="5"  title="Type of Number for source address. If not known, set to NULL (Unknown).">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">service_type</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.service_type' type="text" class="form-control" placeholder="null"  title="The service_type parameter can be used to indicate the SMS Application service associated with the message. Specifying the service_type allows theESME to avail of enhanced messaging services such as “replace by service_type” or to control the teleservice used on the air interface. Set to NULL for default MC settings">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.service_type' type="text" class="form-control" placeholder="null"  title="The service_type parameter can be used to indicate the SMS Application service associated with the message. Specifying the service_type allows theESME to avail of enhanced messaging services such as “replace by service_type” or to control the teleservice used on the air interface. Set to NULL for default MC settings">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">source_addr_npi</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.source_addr_npi' type="text" class="form-control" placeholder="null"  title="Numbering Plan Indicator for source address. If not known, set to NULL(Unknown).">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.source_addr_npi' type="text" class="form-control" placeholder="null"  title="Numbering Plan Indicator for source address. If not known, set to NULL(Unknown).">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">dest_addr_ton</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.dest_addr_ton' type="text" class="form-control" placeholder="1"  title="Type of Number for destination">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.dest_addr_ton' type="text" class="form-control" placeholder="1"  title="Type of Number for destination">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">dest_addr_npi</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.dest_addr_npi' type="text" class="form-control" placeholder="1"  title="Numbering Plan Indicator for destination">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.dest_addr_npi' type="text" class="form-control" placeholder="1"  title="Numbering Plan Indicator for destination">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">esm_class</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.esm_class' type="text" class="form-control" placeholder="5"  title="Indicates Message Mode and Message Type">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.esm_class' type="text" class="form-control" placeholder="5"  title="Indicates Message Mode and Message Type">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">protocol_id</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.protocol_id' type="text" class="form-control" placeholder="5"  title="Protocol Identifier. Network specific field.">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.protocol_id' type="text" class="form-control" placeholder="5"  title="Protocol Identifier. Network specific field.">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">priority_flag</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.priority_flag' type="text" class="form-control" placeholder="5"  title="Designates the priority level of the message">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.priority_flag' type="text" class="form-control" placeholder="5"  title="Designates the priority level of the message">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">schedule_delivery_time</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.schedule_delivery_time' type="text" class="form-control" placeholder="null"  title="The short message is to be scheduled by the MC for delivery. Set to NULL for immediate message delivery">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.schedule_delivery_time' type="text" class="form-control" placeholder="null"  title="The short message is to be scheduled by the MC for delivery. Set to NULL for immediate message delivery">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">validity_period</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.validity_period' type="text" class="form-control" placeholder="null"  title="The validity period of this message. Set to NULL to request the MC default validity period">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.validity_period' type="text" class="form-control" placeholder="null"  title="The validity period of this message. Set to NULL to request the MC default validity period">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">registered_delivery</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.registered_delivery' type="text" class="form-control" placeholder="0"  title="Indicator to signify if a MC delivery receipt, manual ACK, delivery ACK or an intermediate notification is required.">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.registered_delivery' type="text" class="form-control" placeholder="0"  title="Indicator to signify if a MC delivery receipt, manual ACK, delivery ACK or an intermediate notification is required.">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">replace_if_present_flag</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.replace_if_present_flag' type="text" class="form-control" placeholder="5"  title="Flag indicating if the submitted message shouldn replace an existing message.">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.replace_if_present_flag' type="text" class="form-control" placeholder="5"  title="Flag indicating if the submitted message shouldn replace an existing message.">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">data_coding</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.data_coding' type="text" class="form-control" placeholder="5"  title="Defines the encoding scheme of the short message user data">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.data_coding' type="text" class="form-control" placeholder="5"  title="Defines the encoding scheme of the short message user data">
                             </div>
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">sm_default_msg_id</label>
-                                <input ng-disabled='!edit_settings.smpp.status' ng-model='edit_settings.smpp.sm_default_msg_id' type="text" class="form-control" placeholder="null"  title="Indicates the short message to send from a list of pre- defined (‘canned’) short messages stored on the MC. If not using a MC canned message, set to NULL.">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.sm_default_msg_id' type="text" class="form-control" placeholder="null"  title="Indicates the short message to send from a list of pre- defined (‘canned’) short messages stored on the MC. If not using a MC canned message, set to NULL.">
                             </div>
                         </div>
 
@@ -297,26 +316,26 @@
                         </div>
                         <div class="panel-body">
                             <div class='col-sm-12' >
-                                <p class="p_container_checkbox"><input ng-model='edit_settings.administrator.status' type="checkbox"  id="administrator_enabled"> <label class="text-info text-checkbox" for="administrator_enabled">Включить возможности администратора сети</p>
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._administrator.status' type="checkbox"  id="administrator_enabled"> <label class="text-info text-checkbox" for="administrator_enabled">Включить возможности администратора сети</p>
                             </div>
                             <div class='col-sm-12 setting_form'>
                                 <label class="text-info">Телефонный номер администратора сети</label>
-                                <input ng-disabled='!edit_settings.administrator.status'  ng-model='edit_settings.administrator.phone' type="text" class="form-control" placeholder="+7**********"  title="Телефонный номер администратора сети. На этот номер будут приходить сообщения от smpp и smsc.">
+                                <input ng-disabled='!edit_settings._administrator.status'  ng-model='edit_settings._administrator.phone' type="text" class="form-control" placeholder="+7**********"  title="Телефонный номер администратора сети. На этот номер будут приходить сообщения от smpp и smsc.">
                             </div>
                             <div class='col-sm-12' >
                                 <p class="text-info">Типы сообщений для администраторов:</p>
                             </div>
                             <div class='col-sm-12' >
-                                <p class="p_container_checkbox" ng-disabled='!edit_settings.administrator.status'><input ng-disabled='!edit_settings.administrator.status' ng-model='edit_settings.administrator.gateway_active' type="checkbox"  id="gateway_active"> <label class="text-info text-checkbox" for="gateway_active">Статус базовой станции изменился на активный</p>
+                                <p class="p_container_checkbox" ng-disabled='!edit_settings._administrator.status'><input ng-disabled='!edit_settings._administrator.status' ng-model='edit_settings._administrator.gateway_active' type="checkbox"  id="gateway_active"> <label class="text-info text-checkbox" for="gateway_active">Статус базовой станции изменился на активный</p>
                             </div>
                             <div class='col-sm-12' >
-                                <p class="p_container_checkbox" ng-disabled='!edit_settings.administrator.status'><input ng-disabled='!edit_settings.administrator.status' ng-model='edit_settings.administrator.gateway_inactive' type="checkbox"  id="gateway_inactive"> <label class="text-info text-checkbox" for="gateway_inactive">Статус базовой станции изменился на не активный</p>
+                                <p class="p_container_checkbox" ng-disabled='!edit_settings.administrator.status'><input ng-disabled='!edit_settings._administrator.status' ng-model='edit_settings._administrator.gateway_inactive' type="checkbox"  id="gateway_inactive"> <label class="text-info text-checkbox" for="gateway_inactive">Статус базовой станции изменился на не активный</p>
                             </div>
                             <div class='col-sm-12' >
-                                <p class="p_container_checkbox" ng-disabled='!edit_settings.administrator.status'><input ng-disabled='!edit_settings.administrator.status' ng-model='edit_settings.administrator.server_not_available' type="checkbox"  id="server_not_available"> <label class="text-info text-checkbox" for="server_not_available">Потеряна связь с сервером</p>
+                                <p class="p_container_checkbox" ng-disabled='!edit_settings._administrator.status'><input ng-disabled='!edit_settings._administrator.status' ng-model='edit_settings._administrator.server_not_available' type="checkbox"  id="server_not_available"> <label class="text-info text-checkbox" for="server_not_available">Потеряна связь с сервером</p>
                             </div>
                             <div class='col-sm-12' >
-                                <p class="p_container_checkbox" ng-disabled='!edit_settings.administrator.status'><input ng-disabled='!edit_settings.administrator.status' ng-model='edit_settings.administrator.test_startup_message' type="checkbox"  id="test_startup_message"> <label class="text-info text-checkbox" for="test_startup_message">При запуске, проверять каналы связи</p>
+                                <p class="p_container_checkbox" ng-disabled='!edit_settings._administrator.status'><input ng-disabled='!edit_settings._administrator.status' ng-model='edit_settings._administrator.test_startup_message' type="checkbox"  id="test_startup_message"> <label class="text-info text-checkbox" for="test_startup_message">При запуске, проверять каналы связи</p>
                             </div>
                         </div>
                     </div>
@@ -326,14 +345,14 @@
                         </div>
                         <div class="panel-body">
                             <div class='col-sm-12' >
-                                <p class="p_container_checkbox"><input ng-model='edit_settings.system.debug' type="checkbox"  id="debug_enabled"> <label class="text-info text-checkbox" for="debug_enabled">Режим отладки<span class='required' title="Поле обязательное для заполнения"> *</span></p>
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._system.debugMOD' type="checkbox"  id="debug_enabled"> <label class="text-info text-checkbox" for="debug_enabled">Режим отладки<span class='required' title="Поле обязательное для заполнения"> *</span></p>
                             </div>
                             <div class='col-sm-12' >
-                                <p class="p_container_checkbox"><input ng-model='edit_settings.system.auto_update' type="checkbox"  id="auto_update"> <label class="text-info text-checkbox" for="auto_update">Автообновление приложения<span class='required' title="Поле обязательное для заполнения"> *</span></p>
+                                <p class="p_container_checkbox"><input ng-model='edit_settings._system.auto_update' type="checkbox"  id="auto_update"> <label class="text-info text-checkbox" for="auto_update">Автообновление приложения<span class='required' title="Поле обязательное для заполнения"> *</span></p>
                             </div>
                             <div class='col-sm-12 setting_form'>
                                 <label class="text-info">Время задержки между отправками СМС сообщений, в миллисекундах. (-1 без задержки)<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-model='edit_settings.system.between_time_sms' type="text" class="form-control" placeholder="30000"  title="Время задержки между отправками СМС сообщений, в миллисекундах">
+                                <input ng-model='edit_settings._system.betweenTimeSMS' type="text" class="form-control" placeholder="30000"  title="Время задержки между отправками СМС сообщений, в миллисекундах">
                             </div>
                         </div>
                     </div>

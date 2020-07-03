@@ -1,6 +1,5 @@
 
 //app.js version 1.1.5 lite
-// const VegaHttpServer = require('./vega_http_server/vega_http_server.js');
 const VegaSMPP = require('./vega_smpp.js');
 const VegaTelegram = require('./vega_telegram.js');
 const VegaSMTP = require('./vega_smtp.js');
@@ -16,6 +15,8 @@ const Which = require('which');
 const CRON_TIME = '*/1 * * * *';
 const logger = require('./vega_logger.js');
 const url = require('url');
+const http = require('http');
+const bodyParser = require('body-parser');
 
 //---
 // const { Console } = require('console');
@@ -25,7 +26,7 @@ const fs = require('fs').promises;
 // const ini = require('ini');
 const express = require('express');
 let homeDirApp = undefined;
-let http = {};
+let myHttpServer = {};
 
 
 // var stdout = ''; 
@@ -1643,43 +1644,6 @@ function rx(obj)
     return;
   }
 }
-function getCurrentSettings(request,response)
-{
-  let res = {
-    cmd:'currentSettings',
-    status:true,
-    data:config
-  };
-  response.setHeader('Content-Type','application/json');
-  response.writeHead('200');
-  response.end(JSON.stringify(res));
-}
-function getLogs(request,response)
-{
-  let params = url.parse(request.url,true).query;
-  // console.log(params.limit)
-  let result = {
-    status:true,
-    cmd:'getLogs'
-  };
-  var option = {
-    limit:params.limit,
-    order:'desc'
-  }
-  if(params.from) option.from = parseInt(params.from);
-  // console.log('options',option);
-  logger.query(option,(err,res)=>{
-    // console.log('result',res);
-    result.data = res.file;
-    response.setHeader('Content-Type','application/json');
-    response.writeHead('200');
-    response.end(JSON.stringify(result));
-  });
-  // logger.query({limit:1,until:1593503131328},(err,res)=>{
-  //   console.log('!!!!!',res)
-  // })
-  
-}
 function testSendSMSC()
 {
   if(config.telephoneAdministrator && config.debugMOD && !initalizationMessage.smsc)
@@ -1833,16 +1797,19 @@ function run(conf,homeDir)
       smsc = new SMSCru(config.smsc_auth,config.smsc,config.smsc_settings,config.debugMOD);
       telegram = new VegaTelegram(config.telegram_bot_token,config.telegram,config.telegram_proxy,config.debugMOD);
       smtp = new VegaSMTP(config.smtp,config.smtp_host,config.smtp_port,config.smtp_secure,config.smtp_user,config.smtp_password,config.debugMOD);
-      // http = new VegaHttpServer(4000,homeDirApp);
-      // http.on('getCurrentSettings',getCurrentSettings);
-      http = express();
-      http.use(express.static(homeDirApp+'/www'));
-      http.get('/',get_home);
-      http.get('/currentSettings',getCurrentSettings);
-      http.get('/getLogs',getLogs);
-      http.get('/downloadLogFile',downloadLogFile);
-      http.listen(4000,started);
-
+      if(config.http)
+      {
+        myHttpServer = express();
+        myHttpServer.use(express.static(homeDirApp+'/www'));
+        myHttpServer.use(bodyParser.urlencoded({extended:true}));
+        myHttpServer.use(bodyParser.json());
+        myHttpServer.get('/',get_home);
+        myHttpServer.get('/currentSettings',getCurrentSettings);
+        myHttpServer.get('/getLogs',getLogs);
+        myHttpServer.get('/downloadLogFile',downloadLogFile);
+        myHttpServer.post('/saveSettings',saveSettings);
+        http.createServer(myHttpServer).listen(config.http_port,config.http_ip,started);
+      }
       smpp.on('free',free);
       smsc.on('free',free);
       telegram.on('free',free);
@@ -1891,7 +1858,7 @@ function started(err)
 {
   if(err)
   {
-      console.log('error http server',err);
+      console.log(moment().format('LLL')+': '+'Error running http server, ip='+config.http_ip+', port='+config.http_port+' . ',err);
       logger.log({
         level:'info',
         message:'Error http server',
@@ -1903,16 +1870,63 @@ function started(err)
   }
   else
   {
-      console.log('success http server');
+      console.log(moment().format('LLL')+': '+'Success running http server, http://'+config.http_ip+':'+config.http_port);
       logger.log({
         level:'info',
-        message:'Success http server',
+        message:'Success running http server, http://'+config.http_ip+':'+config.http_port,
         module:'[APP]',
         time:moment().format('LLL'),
         timestamp:parseInt(moment().format('x')),
         uuid:uuidv4()
       });
   }
+}
+function getCurrentSettings(request,response)
+{
+  let res = {
+    cmd:'currentSettings',
+    status:true,
+    data:config
+  };
+  response.setHeader('Content-Type','application/json');
+  response.writeHead('200');
+  response.end(JSON.stringify(res));
+}
+function getLogs(request,response)
+{
+  let params = url.parse(request.url,true).query;
+  // console.log(params.limit)
+  let result = {
+    status:true,
+    cmd:'getLogs'
+  };
+  var option = {
+    limit:params.limit,
+    order:'desc'
+  }
+  if(params.from) option.from = parseInt(params.from);
+  // console.log('options',option);
+  logger.query(option,(err,res)=>{
+    // console.log('result',res);
+    result.data = res.file;
+    response.setHeader('Content-Type','application/json');
+    response.writeHead('200');
+    response.end(JSON.stringify(result));
+  });
+  // logger.query({limit:1,until:1593503131328},(err,res)=>{
+  //   console.log('!!!!!',res)
+  // })
+  
+}
+function saveSettings(request,response)
+{
+  console.log(request.body);
+  response.setHeader('Content-Type','application/json');
+  response.writeHead('200');
+  response.end(JSON.stringify({
+    cmd:'saveSettings',
+    status:false
+  }));
 }
 function downloadLogFile(request,response)
 {

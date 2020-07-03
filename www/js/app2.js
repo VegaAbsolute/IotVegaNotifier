@@ -44,6 +44,39 @@ class Settings
         this.copyObject(conf._telegram,'telegram');
         this.copyObject(conf._ws,'ws');
     }
+    // convertWebToAppSettings(config)
+    // {
+    //     let resultConfig = {
+    //         _administrator:{},
+    //         _debugMOD:{},
+    //         _devices:{},
+    //         _sip:{},
+    //         _smpp:{},
+    //         _smsc:{},
+    //         _smtp:{},
+    //         _system:{},
+    //         _telegram:{},
+    //         _ws:{}
+    //     }
+    //     resultConfig._administrator.status = config.administrator.status;
+    //     resultConfig._administrator.settings = {
+    //         gateway_active: config.administrator.gateway_active,
+    //         gateway_inactive: config.administrator.gateway_inactive,
+    //         phone: config.administrator.phone,
+    //         server_not_available: config.administrator.server_not_available,
+    //         test_startup_message: config.administrator.test_startup_message
+    //     };
+    //     resultConfig._debugMOD.status = config.system.debug;
+    //     resultConfig._devices.betweenTimeSMS = config.system.between_time_sms;
+    //     resultConfig._sip.status = config.administrator.status;
+    //     resultConfig._sip.settings = {
+    //         gateway_active: config.administrator.gateway_active,
+    //         gateway_inactive: config.administrator.gateway_inactive,
+    //         phone: config.administrator.phone,
+    //         server_not_available: config.administrator.server_not_available,
+    //         test_startup_message: config.administrator.test_startup_message
+    //     };
+    // }
     clone()
     {
         var clone = {};
