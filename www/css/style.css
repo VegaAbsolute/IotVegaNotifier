@@ -103,3 +103,13 @@ input[type='checkbox']
 {
     cursor: help;
 }
+.btn-dowload-logs
+{
+    float: left;
+    margin-top: 2.5rem;
+    margin-left: 1.5rem;
+}
+.h1-logs
+{
+    float: left;
+}

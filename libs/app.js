@@ -6,7 +6,7 @@ const VegaSMTP = require('./vega_smtp.js');
 const SMSCru = require('./vega_smsc.js');
 const Devices = require('./devices.js');
 const VegaWS = require('./vega_ws.js');
-// const Config = require('./config.js');
+const Config = require('./config.js');
 const Parser = require('./parser.js');
 const { exec } = require('child_process');
 const { spawn } = require('child_process');
@@ -20,10 +20,10 @@ const bodyParser = require('body-parser');
 
 //---
 // const { Console } = require('console');
-// const fss = require('fs');
+ const fss = require('fs');
 
 const fs = require('fs').promises;
-// const ini = require('ini');
+const ini = require('ini');
 const express = require('express');
 let homeDirApp = undefined;
 let myHttpServer = {};
@@ -1795,7 +1795,7 @@ function run(conf,homeDir)
       initWS();
       smpp = new VegaSMPP(config.address_smpp,config.system_smpp,config.smpp_info,config.smpp,config.debugMOD);
       smsc = new SMSCru(config.smsc_auth,config.smsc,config.smsc_settings,config.debugMOD);
-      telegram = new VegaTelegram(config.telegram_bot_token,config.telegram,config.telegram_proxy,config.debugMOD);
+      telegram = new VegaTelegram(config.telegram_token,config.telegram,config.telegram_proxy,config.debugMOD);
       smtp = new VegaSMTP(config.smtp,config.smtp_host,config.smtp_port,config.smtp_secure,config.smtp_user,config.smtp_password,config.debugMOD);
       if(config.http)
       {
@@ -1895,7 +1895,6 @@ function getCurrentSettings(request,response)
 function getLogs(request,response)
 {
   let params = url.parse(request.url,true).query;
-  // console.log(params.limit)
   let result = {
     status:true,
     cmd:'getLogs'
@@ -1905,28 +1904,64 @@ function getLogs(request,response)
     order:'desc'
   }
   if(params.from) option.from = parseInt(params.from);
-  // console.log('options',option);
   logger.query(option,(err,res)=>{
-    // console.log('result',res);
     result.data = res.file;
     response.setHeader('Content-Type','application/json');
     response.writeHead('200');
     response.end(JSON.stringify(result));
   });
-  // logger.query({limit:1,until:1593503131328},(err,res)=>{
-  //   console.log('!!!!!',res)
-  // })
-  
+}
+function parseSettings(settings)
+{
+  let newSettings = {};
+  for(var key in settings)
+  {
+    let setting = settings[key];
+    if(key[0] === '_')
+    {
+      newSettings[key.slice(1)] = setting;
+    }
+  }
+  return newSettings;
 }
 function saveSettings(request,response)
-{
-  console.log(request.body);
-  response.setHeader('Content-Type','application/json');
-  response.writeHead('200');
-  response.end(JSON.stringify({
+{ 
+  let setting = {};
+  let result = {
     cmd:'saveSettings',
     status:false
-  }));
+  };
+  let newConfigIni = undefined;
+  try
+  {
+    setting = parseSettings(request.body);
+    newConfigIni = ini.stringify(setting);
+  }
+  catch(e)
+  {
+    console.log(moment().format('LLL')+': '+'Error save settings. ERROR 767.');
+    logger.log({
+      level:'info',
+      message:'Error save settings. ERROR 767.',
+      module:'[HTTP APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
+    });
+  }
+  finally
+  {
+    response.setHeader('Content-Type','application/json');
+    response.writeHead('200');
+    if(newConfigIni)
+    {
+      fss.writeFileSync('config.ini', newConfigIni);
+      result.status = true;
+    }
+    response.end(JSON.stringify(result));
+    waitingReboot = true;
+    emergencyExit();
+  }
 }
 function downloadLogFile(request,response)
 {

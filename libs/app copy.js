@@ -1363,7 +1363,7 @@ function run(conf,homeDir)
       initWS();
       smpp = new VegaSMPP(config.address_smpp,config.system_smpp,config.smpp_info,config.smpp,config.debugMOD);
       smsc = new SMSCru(config.smsc_auth,config.smsc,config.smsc_settings,config.debugMOD);
-      telegram = new VegaTelegram(config.telegram_bot_token,config.telegram,config.telegram_proxy,config.debugMOD);
+      telegram = new VegaTelegram(config.telegram_token,config.telegram,config.telegram_proxy,config.debugMOD);
       smtp = new VegaSMTP(config.smtp,config.smtp_host,config.smtp_port,config.smtp_secure,config.smtp_user,config.smtp_password,config.debugMOD);
       // http = new VegaHttpServer(4000,homeDirApp);
       // http.on('getCurrentSettings',getCurrentSettings);

@@ -56,7 +56,7 @@ class Config
     };
   }
   //setters-------------------------
-  set administrator_enabled(val)
+  set administrator_status(val)
   {
     this._administrator.status = val;
   }
@@ -76,11 +76,11 @@ class Config
   {
     this._administrator.test_startup_message = val;
   }
-  set administrator_administrator_phone(val)
+  set administrator_phone(val)
   {
     this._administrator.phone = val;
   }
-  set http_enabled(val)
+  set http_status(val)
   {
     this._http.status = val;
   }
@@ -92,7 +92,7 @@ class Config
   {
     this._http.port = val;
   }
-  set smtp_enabled(val)
+  set smtp_status(val)
   {
     this._smtp.status = val;
   }
@@ -116,7 +116,7 @@ class Config
   {
     this._smtp.password = val;
   }
-  set ws_user(val)
+  set ws_login(val)
   {
     this._ws.login = val;
   }
@@ -124,11 +124,11 @@ class Config
   {
     this._ws.password = val;
   }
-  set ws_address(val)
+  set ws_url(val)
   {
     this._ws.url = val;
   }
-  set smsc_enabled(val)
+  set smsc_status(val)
   {
     this._smsc.status = val;
   }
@@ -148,23 +148,23 @@ class Config
   {
     this._smsc.sender = val;
   }
-  set other_auto_update(val)
+  set system_auto_update(val)
   {
     this._system.auto_update = val;
   }
-  set other_between_time(val)
+  set system_betweenTimeSMS(val)
   {
     this._system.betweenTimeSMS = val;
   }
-  set other_debug_enabled(val)
+  set system_debugMOD(val)
   {
     this._system.debugMOD = val;
   }
-  set smpp_enabled(val)
+  set smpp_status(val)
   {
     this._smpp.status = val;
   }
-  set smpp_address(val)
+  set smpp_host(val)
   {
     this._smpp.host = val;
   }
@@ -260,15 +260,15 @@ class Config
   {
     this._smpp.sm_default_msg_id = val;
   }
-  set telegram_enabled(val)
+  set telegram_status(val)
   {
     this._telegram.status = val;
   }
-  set telegram_bot_token(val)
+  set telegram_token(val)
   {
     this._telegram.token = val;
   }
-  set telegram_administartor_chat_id(val)
+  set telegram_chatId(val)
   {
     this._telegram.chatId = val;
   }
@@ -276,7 +276,7 @@ class Config
   {
     this._telegram.proxy_host = val;
   }
-  set telegram_proxy_socks5_enabled(val)
+  set telegram_proxy_socks5_status(val)
   {
     this._telegram.proxy_status = val;
   }
@@ -411,7 +411,7 @@ class Config
   {
     return this._telegram.status;
   }
-  get telegram_bot_token()
+  get telegram_token()
   {
     return this._telegram.token;
   }
