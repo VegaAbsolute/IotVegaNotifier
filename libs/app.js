@@ -1787,6 +1787,7 @@ function run(conf,homeDir)
   {
     if(config.auto_update)
     {
+      updating();
       new CronJob({
         cronTime: CRON_TIME,
         onTick: updating,
