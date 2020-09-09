@@ -2119,7 +2119,12 @@ function downloadLogFile(request,response)
     response.end('Unauthorized!')
     return;
   }
-  response.download(homeDirApp + '/logs/logs_notifier.log');
+  else
+  {
+    //response.setHeader('Content-Type','application/json');
+    //response.writeHead(200);
+    response.download(homeDirApp + '/logs/logs_notifier.log');
+  }
 }
 function get_home(request,response)
 {

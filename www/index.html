@@ -54,10 +54,13 @@
             </div>
             <div class='collapse navbar-collapse bs-navbar-collapse' role='navigation'>
                 <div class="row">
-                    <div class="col-md-10 col-sm-10 col-xs-6">
-                        <ul class="nav navbar-nav">
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                        <ul class="nav navbar-nav navbar-nav-left">
                             <li ng-click='page=1'><a href="" class="a_header">Настройки</a></li>
                             <li ng-click='(page=2)&&getLogs()'><a href="" class="a_header">Логи</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-nav-right">
+                            <li ng-click='clearToken()'><a href="" class="a_header">Выход</a></li>
                         </ul>
                     </div>
                 </div>

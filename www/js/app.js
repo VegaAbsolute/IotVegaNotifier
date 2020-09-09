@@ -291,6 +291,7 @@ app.controller('AppController',function($scope,$interval,$timeout,$http){
     $scope.clearLog = function()
     {
         this.logs = {};
+        this.countLog = 0;
     }
     $scope.scrollLog = function()
     {

@@ -12,6 +12,17 @@ header
 {
     background-color: white;
 }
+.navbar-nav-right
+{
+    float: right;
+}
+@media (max-width:768px)
+{
+    .navbar-nav-right
+    {
+        float: left;
+    } 
+}
 /* .nav>li>a
 {
     
@@ -96,7 +107,7 @@ input[type='checkbox']
 }
 .table-logs-container
 {
-    max-height: 700px;
+    max-height: 680px;
     overflow: auto;
 }
 .help
