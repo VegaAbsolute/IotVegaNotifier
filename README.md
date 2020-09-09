@@ -21,16 +21,18 @@ or
 To exit the console, press CTRL+D
 
 # Описание API IotVega Notifier
+
 ## Web интерфейс
 Веб интерфейс приложения доступен по адресу
 [http://ip:port/](http://ip:port/)
 ip, port - настраиваются в приложении, по умолчанию:
 - ip=127.0.0.1
 - port=4040
+
 ## Описание API
+
 ### Авторизация
 ***МЕТОД:*** POST
-
 ***URL:*** [http://ip:port/authorization](http://ip:port/authorization)
 ***ПАРАМЕТРЫ:***
 > В формате JSON 
