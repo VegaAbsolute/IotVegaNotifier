@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <link rel="shortcut icon" href="favicon.ico?vega">
     <script src="./js/jquery.min.js"></script>
     <script src="./js/moment.min.js"></script>
     <script src="./js/moment-with-locales.js"></script>
@@ -18,7 +19,29 @@
     <script>
         moment.lang('ru');
     </script>
-    <header class="navbar navbar-static-top" role="banner">
+    <div class='container authorization' ng-show='page=="auth"'>
+        <div class="row">
+           
+            <div class="col-md-offset-3 col-md-6">
+                <div class="form-horizontal">
+                    <span class="heading">АВТОРИЗАЦИЯ</span>
+                    <div class="form-group">
+                        <input type="text" ng-model='login' class="form-control" id="inputEmail" placeholder="Логин">
+                        <i class="fa fa-user"></i>
+                    </div>
+                    <div class="form-group help">
+                        <input type="password" ng-model='password' class="form-control" id="inputPassword" placeholder="Пароль">
+                        <i class="fa fa-lock"></i>
+                    </div>
+                    <div class="form-group">
+                        <div class="btn btn-default" ng-click='authorization()'>ВХОД</div>
+                    </div>
+                </div>
+            </div>
+           
+        </div><!-- /.row -->
+    </div>
+    <header ng-show='page!="load"&&page!="auth"' class="navbar navbar-static-top" role="banner">
         <div class="container">
             <div class='navbar-header'>
                 <button class="navbar-toggle" type='button' data-toggle='collapse' data-target='.bs-navbar-collapse'>
@@ -41,6 +64,15 @@
             </div>
         </div>
     </header>
+    <section class='loader' ng-show='page=="load"'>
+        <div class="container">
+            <div class="📦"></div>
+            <div class="📦"></div>
+            <div class="📦"></div>
+            <div class="📦"></div>
+            <div class="📦"></div>
+          </div>
+    </section>
     <section ng-show='page==1'>
         <div class="container">
             <div class="row">
@@ -61,7 +93,7 @@
                 </div>
                 <div class="col-sm-9 col-md-9 col-xs-7">
                     <div class="btn-group button_settings">
-                        <button type="button" class="btn btn-danger">Сброс</button>
+                        <!-- <button type="button" class="btn btn-danger">Сброс</button> -->
                         <button type="button" class="btn btn-default" ng-click='getSettings()'>Текущие</button>
                         <button type="button" class="btn btn-success" ng-click='saveSettings()'>Сохранить</button>
                     </div>
@@ -80,7 +112,8 @@
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Пароль<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-model='edit_settings._ws.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
+                                <input ng-model='edit_settings._ws.password' type='{{show_ws_pass?"text":"password"}}' class="form-control" placeholder="Пароль"  title="Пароль">
+                                <span class='fa input_show_password' ng-class='show_ws_pass?"fa-eye":"fa-eye-slash"' ng-click='show_ws_pass=!show_ws_pass'></span>
                             </div>
                         </div>
                     </div>
@@ -99,6 +132,21 @@
                             <div class='col-sm-4 setting_form'>
                                 <label class="text-info">Порт<span class='required' title="Поле обязательное для заполнения"> *</span></label>
                                 <input ng-disabled='!edit_settings._http.status' ng-model='edit_settings._http.port' type="text" class="form-control" placeholder="4040"  title="Порт">
+                            </div>
+
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Пользователь<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._http.status' ng-model='edit_settings._http.login' type="text" class="form-control" placeholder="login"  title="Пользователь">
+                            </div>
+                            <div class='col-sm-6 setting_form'>
+                                <label class="text-info">Пароль<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._http.status' ng-model='edit_settings._http.password' type='{{show_http_pass?"text":"password"}}' class="form-control" placeholder="Пароль"  title="Пароль пользователя">
+                                <span class='fa input_show_password' ng-class='show_http_pass?"fa-eye":"fa-eye-slash"' ng-click='show_http_pass=!show_http_pass'></span>
+                            </div>
+                            <div class='col-sm-12 setting_form'>
+                                <label class="text-info">Секретный ключ сервера<span class='required' title="Поле обязательное для заполнения"> *</span></label>
+                                <input ng-disabled='!edit_settings._http.status' ng-model='edit_settings._http.key' type='{{show_http_key?"text":"password"}}' class="form-control" placeholder="Секретный ключ"  title="Секретный ключ">
+                                <span class='fa input_show_password' ng-class='show_http_key?"fa-eye":"fa-eye-slash"' ng-click='show_http_key=!show_http_key'></span>
                             </div>
                         </div>
                     </div>
@@ -124,7 +172,8 @@
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Пароль<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings._smtp.status' ng-model='edit_settings._smtp.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
+                                <input type='{{show_smtp_pass?"text":"password"}}' ng-disabled='!edit_settings._smtp.status' ng-model='edit_settings._smtp.password' class="form-control" placeholder="Пароль"  title="Пароль">
+                                <span class='fa input_show_password' ng-class='show_smtp_pass?"fa-eye":"fa-eye-slash"' ng-click='show_smtp_pass=!show_smtp_pass'></span>
                             </div>
                             <div class='col-sm-12' >
                                 <p ng-disabled='!edit_settings._smtp.status'  class="p_container_checkbox"><input ng-disabled='!edit_settings._smtp.status' ng-model='edit_settings._smtp.secure' type="checkbox"  id="smtp_secure"> <label class="text-info text-checkbox" for="smtp_secure">SMTP сервер защищен</p>
@@ -164,7 +213,8 @@
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Пароль пользователя SOCKS5</label>
-                                <input ng-disabled='!edit_settings._telegram.status||!edit_settings._telegram.proxy_status' ng-model='edit_settings._telegram.proxy_password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
+                                <input ng-disabled='!edit_settings._telegram.status||!edit_settings._telegram.proxy_status' ng-model='edit_settings._telegram.proxy_password' type='{{show_tel_proxy_pass?"text":"password"}}' class="form-control" placeholder="Пароль"  title="Пароль">
+                                <span class='fa input_show_password' ng-class='show_tel_proxy_pass?"fa-eye":"fa-eye-slash"' ng-click='show_tel_proxy_pass=!show_tel_proxy_pass'></span>
                             </div>
                         </div>
                     </div>
@@ -182,7 +232,8 @@
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Пароль API SMSC.ru<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings._smsc.status' ng-model='edit_settings._smsc.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
+                                <input ng-disabled='!edit_settings._smsc.status' ng-model='edit_settings._smsc.password' type='{{show_smsc_pass?"text":"password"}}' class="form-control" placeholder="Пароль"  title="Пароль">
+                                <span class='fa input_show_password' ng-class='show_smsc_pass?"fa-eye":"fa-eye-slash"' ng-click='show_smsc_pass=!show_smsc_pass'></span>
                             </div>
                             <div class='col-sm-6'>
                                 <label class="text-info">Голос</label>
@@ -223,7 +274,8 @@
                             </div>
                             <div class='col-sm-6 setting_form'>
                                 <label class="text-info">Пароль<span class='required' title="Поле обязательное для заполнения"> *</span></label>
-                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.password' type="password" class="form-control" placeholder="Пароль"  title="Пароль">
+                                <input ng-disabled='!edit_settings._smpp.status' ng-model='edit_settings._smpp.password' type='{{show_smpp_pass?"text":"password"}}' class="form-control" placeholder="Пароль"  title="Пароль">
+                                <span class='fa input_show_password' ng-class='show_smpp_pass?"fa-eye":"fa-eye-slash"' ng-click='show_smpp_pass=!show_smpp_pass'></span>
                             </div>
                             <div class='col-sm-12 setting_form'><hr></div>
                             <div class='col-sm-4 setting_form'>

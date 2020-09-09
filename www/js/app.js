@@ -1,5 +1,6 @@
 const LOGS_DELAY = 5000;
 const MAX_COUNT_LOGS = 500;
+const RELOAD_PAGE_MS = 10000;
 function downScroll(ScrollDom,PositionDom)
 {
     $(ScrollDom).scrollTop($(PositionDom).height());
@@ -120,14 +121,38 @@ class Settings
 }
 var app = angular
 .module('notifier',['ngSanitize'])
-app.controller('AppController',function($scope,$interval,$http){
-    $scope.page = 1;
+app.controller('AppController',function($scope,$interval,$timeout,$http){
+    //$scope.page = 1;
+    //$scope.page = 'auth';
     $scope.page_settings = 1;
     $scope.last_date_log = 0;
     $scope.logs = {};
     $scope.autoScrollLogs = true;
     $scope.settings = new Settings();
     $scope.edit_settings = {};
+    
+    
+    $scope.authorization = function()
+    {
+        $http.post('/authorization', {login:this.login,password:this.password})
+        .then((res)=>{
+            if(res.data.status)
+            {
+                $scope.page = 1;
+                localStorage.token = res.data.token;
+                $scope.getSettings();
+                $interval(()=>{
+                if($scope.page == 2) $scope.getLogs();
+                },LOGS_DELAY);
+                //alert('Успешная авторизация');
+                //$scope.reloadPage();
+            }
+            else
+            {
+                alert('Не удалось авторизоваться.');
+            }
+        });
+    }
     $scope.refresh_settings = function(conf)
     {
         this.settings.set_data_settings(conf);
@@ -171,18 +196,39 @@ app.controller('AppController',function($scope,$interval,$http){
     $scope.downloadLog = function()
     {
         var link = document.createElement('a');
-        link.setAttribute('href','/downloadLogFile');
+        link.setAttribute('href','/downloadLogFile?token='+localStorage.token);
         link.setAttribute('target','_blank');
         link.click();
         return false;
     }
+    $scope.clearToken = function()
+    {
+        delete localStorage.token;
+        this.reloadPage();
+    }
+    $scope.reloadPage = function()
+    {
+        $scope.page = 'load';
+        $timeout(()=>{
+            location.reload();
+        },RELOAD_PAGE_MS);
+
+    }
     $scope.saveSettings = function()
     {
+        this.edit_settings.token = localStorage.token;
         $http.post('/saveSettings', this.edit_settings)
         .then((res)=>{
-            if(res.data && typeof res.data === 'object' && res.data.status)
+            if(res.data && typeof res.data === 'object')
             {
-                alert('Настройки были успешно сохранены. Внимание приложение перезапустится через несколько секунд, интерфейс будет временно недоступен.');
+                if(res.data.status)
+                {
+                    alert('Настройки были успешно сохранены. Внимание приложение перезапустится через несколько секунд, интерфейс будет временно недоступен.');
+                    $scope.reloadPage();
+                }
+                else if(res.data.error === 'auth') $scope.clearToken();
+                else alert('Не удалось сохранить настройки. ERROR '+res.data.error);
+                
             }
             else
             {
@@ -192,11 +238,13 @@ app.controller('AppController',function($scope,$interval,$http){
     }
     $scope.getSettings = function()
     {
-        $http.get('/currentSettings')
+        $http.get('/currentSettings?token='+localStorage.token)
         .then((res)=>{
-            if(res.data && typeof res.data === 'object' && res.data.status)
+            if(res.data && typeof res.data === 'object')
             {
-                $scope.refresh_settings(res.data.data);
+                if(res.data.status) $scope.refresh_settings(res.data.data);
+                else if(res.data.error === 'auth') $scope.clearToken();
+                else alert('Не удалось запросить настройки. ERROR '+res.data.error);
             }
             else
             {
@@ -274,11 +322,13 @@ app.controller('AppController',function($scope,$interval,$http){
         {
             date_from = `&from=${this.last_date_log}`;
         }
-        $http.get('/getLogs?limit=1000'+date_from)
+        $http.get('/getLogs?limit=1000'+date_from+'&token='+localStorage.token)
         .then((res)=>{
-            if( typeof res.data === 'object' && res.data.status )
+            if( typeof res.data === 'object' )
             {
-                this.set_logs(res.data.data);
+                if(res.data.status) this.set_logs(res.data.data);
+                else if(res.data.error === 'auth') $scope.clearToken();
+                else alert('Не удалось запросить логи приложения. ERROR '+res.data.error);
             }
             else
             {
@@ -290,10 +340,23 @@ app.controller('AppController',function($scope,$interval,$http){
     {
         this.page_settings = page_settings;
     }
-    $scope.getSettings();
-    $interval(()=>{
-       if($scope.page == 2) $scope.getLogs();
-    },LOGS_DELAY);
+    $scope.init = function()
+    {
+        var token = localStorage.token;
+        if(!token)
+        {
+            $scope.page = 'auth';
+        }
+        else
+        {
+            this.page = 1;
+            this.getSettings();
+            $interval(()=>{
+            if($scope.page == 2) $scope.getLogs();
+            },LOGS_DELAY);
+        }
+    }
+    $scope.init();
 })
 .filter('filter_object',function(){
     return function(items)

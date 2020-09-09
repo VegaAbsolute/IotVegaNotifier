@@ -3,3 +3,4 @@ config.ini
 package-lock.json
 logs/*
 d-config.ini
+.vscode/*

@@ -1,5 +1,7 @@
 
+const VALID_TOKEN_MS = 24*60*1000;
 //app.js version 1.1.5 lite
+const crypto = require('crypto');
 const VegaSMPP = require('./vega_smpp.js');
 const VegaTelegram = require('./vega_telegram.js');
 const VegaSMTP = require('./vega_smtp.js');
@@ -17,6 +19,7 @@ const logger = require('./vega_logger.js');
 const url = require('url');
 const http = require('http');
 const bodyParser = require('body-parser');
+const pid = process.pid;
 
 //---
 // const { Console } = require('console');
@@ -1808,6 +1811,7 @@ function run(conf,homeDir)
         myHttpServer.get('/getLogs',getLogs);
         myHttpServer.get('/downloadLogFile',downloadLogFile);
         myHttpServer.post('/saveSettings',saveSettings);
+        myHttpServer.post('/authorization',authorization);
         http.createServer(myHttpServer).listen(config.http_port,config.http_ip,started);
       }
       smpp.on('free',free);
@@ -1883,22 +1887,42 @@ function started(err)
 }
 function getCurrentSettings(request,response)
 {
-  let res = {
-    cmd:'currentSettings',
-    status:true,
-    data:config
-  };
   response.setHeader('Content-Type','application/json');
   response.writeHead('200');
+  let params = url.parse(request.url,true).query;
+  let token = params.token;
+  let res = {
+    cmd:'currentSettings',
+    status:false
+  };
+  if(validToken(token))
+  {
+    res.status = true;
+    res.data = config;
+  }
+  else
+  {
+    res.error = 'auth';
+  }
   response.end(JSON.stringify(res));
 }
 function getLogs(request,response)
 {
+  response.setHeader('Content-Type','application/json');
+  response.writeHead('200');
   let params = url.parse(request.url,true).query;
+  let token = params.token;
   let result = {
     status:true,
     cmd:'getLogs'
   };
+  if(!validToken(token))
+  {
+    result.status = false;
+    result.error = 'auth';
+    response.end(JSON.stringify(result));
+    return;
+  }
   var option = {
     limit:params.limit,
     order:'desc'
@@ -1906,8 +1930,6 @@ function getLogs(request,response)
   if(params.from) option.from = parseInt(params.from);
   logger.query(option,(err,res)=>{
     result.data = res.file;
-    response.setHeader('Content-Type','application/json');
-    response.writeHead('200');
     response.end(JSON.stringify(result));
   });
 }
@@ -1924,16 +1946,141 @@ function parseSettings(settings)
   }
   return newSettings;
 }
+function cipherAes128cbc(key,val,iEnc,oEnc)
+{
+  //console.log(`cipherAes128cbc(${key},${val},${iEnc},${oEnc})`);
+  let result = {
+    status:false,
+    data:undefined
+  }
+  try
+  {
+    let data = crypto.createCipher('aes-128-cbc', key);
+    result.data = data.update(val,iEnc,oEnc);
+    result.data += data.final(oEnc);
+    result.status = true;
+  }
+  catch(e)
+  {
+    console.log(e);
+  }
+  finally
+  {
+    return result;
+  }
+}
+function decipherAes128cbc(key,val,iEnc,oEnc)
+{
+  let result = {
+    status:false,
+    data:undefined
+  }
+  try
+  {
+    let data = crypto.createDecipher('aes-128-cbc', key);
+    result.data = data.update(val,iEnc,oEnc);
+    result.data += data.final(oEnc);
+    result.status = true;
+  }
+  catch(e)
+  {
+    console.log(e);
+  }
+  finally
+  {
+    return result;
+  }
+}
+function createToken()
+{
+  let newToken = {
+    pid:pid,
+    time:new Date().getTime()
+  };
+  // let newToken = {
+  //     name:'leha',
+  //     age:28
+  //   };
+    
+  let jsonToken = JSON.stringify(newToken);
+  //console.log('jsonToken=',jsonToken);
+  let token = cipherAes128cbc(config.http_key,jsonToken,'utf8','hex');
+  console.log('token=',token);
+  return token.status?token.data:false;
+}
+function validToken(token)
+{
+  let validType = typeof token === 'string';
+  if(!validType) return false;
+  let validPid = false;
+  let validTime = false;
+  //console.log(`let decipherToken = decipherAes128cbc(${config.http_key},${token},'hex','utf8');`);
+  let decipherToken = decipherAes128cbc(config.http_key,token,'hex','utf8');
+  if(!decipherToken.status || typeof decipherToken.data !== 'string') return false;
+  try
+  {
+    let jsonToken = JSON.parse(decipherToken.data);
+    validPid = process.pid === jsonToken.pid;
+    let currentTime = new Date().getTime();
+    validTime = (currentTime-jsonToken.time) <= VALID_TOKEN_MS;
+  }
+  catch(e)
+  {
+    console.log(e);
+  }
+  finally
+  {
+    if(validPid&&validTime) return true;
+    return false;
+  }
+}
+function authorization(request,response)
+{ 
+  let result = {
+    cmd:'authorization',
+    status:false
+  };
+  let validLogin = request.body.login == config.http_login;
+  let validPassword = request.body.password == config.http_password;
+  if(validLogin && validPassword) 
+  {
+    console.log('valid');
+    let token = createToken();
+    if(token)
+    {
+      result.status = true; 
+      result.token = token;
+    }
+    // let str = decipherAes128cbc(config.http_key,token.data,'hex','utf8');
+    // console.log(str.data,'=ОБРАТНО');
+  }
+  response.setHeader('Content-Type','application/json');
+  response.writeHead('200');
+  response.end(JSON.stringify(result));
+}
 function saveSettings(request,response)
 { 
+  let token = undefined;
+  response.setHeader('Content-Type','application/json');
+  response.writeHead('200');
   let setting = {};
   let result = {
     cmd:'saveSettings',
     status:false
   };
   let newConfigIni = undefined;
+  var validReq = typeof request.body == 'object' && request.body.token;
+  if(validReq) token = request.body.token;
+  if(!validToken(token))
+  {
+    result.error = 'auth';
+    response.end(JSON.stringify(result));
+    return;
+  }
   try
   {
+    
+    delete request.body.token;
     setting = parseSettings(request.body);
     newConfigIni = ini.stringify(setting);
   }
@@ -1951,8 +2098,6 @@ function saveSettings(request,response)
   }
   finally
   {
-    response.setHeader('Content-Type','application/json');
-    response.writeHead('200');
     if(newConfigIni)
     {
       fss.writeFileSync('config.ini', newConfigIni);
@@ -1965,6 +2110,15 @@ function saveSettings(request,response)
 }
 function downloadLogFile(request,response)
 {
+  let params = url.parse(request.url,true).query;
+  let token = params.token;
+  if(!validToken(token)) 
+  {
+    response.setHeader('Content-Type','application/json');
+    response.writeHead(401);
+    response.end('Unauthorized!')
+    return;
+  }
   response.download(homeDirApp + '/logs/logs_notifier.log');
 }
 function get_home(request,response)

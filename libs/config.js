@@ -52,7 +52,10 @@ class Config
     this._http = {
       status: true,
       port:4040,
-      ip: '127.0.0.1'
+      ip: '127.0.0.1',
+      login: 'iotvega',
+      password: 'iotvega',
+      key:'0000-0000-0000-ffff'
     };
   }
   //setters-------------------------
@@ -87,6 +90,18 @@ class Config
   set http_ip(val)
   {
     this._http.ip = val;
+  }
+  set http_login(val)
+  {
+    this._http.login = val;
+  }
+  set http_password(val)
+  {
+    this._http.password = val;
+  }
+  set http_key(val)
+  {
+    this._http.key = val;
   }
   set http_port(val)
   {
@@ -272,23 +287,27 @@ class Config
   {
     this._telegram.chatId = val;
   }
-  set telegram_proxy_socks5_host(val)
+  set telegram_proxy_host(val)
   {
     this._telegram.proxy_host = val;
   }
-  set telegram_proxy_socks5_status(val)
+  set telegram_proxy_type(val)
+  {
+    this._telegram.proxy_type = val;
+  }
+  set telegram_proxy_status(val)
   {
     this._telegram.proxy_status = val;
   }
-  set telegram_proxy_socks5_port(val)
+  set telegram_proxy_port(val)
   {
     this._telegram.proxy_port = val;
   }
-  set telegram_proxy_socks5_name(val)
+  set telegram_proxy_name(val)
   {
     this._telegram.proxy_login = val;
   }
-  set telegram_proxy_socks5_password(val)
+  set telegram_proxy_password(val)
   {
     this._telegram.proxy_password = val;
   }
@@ -438,6 +457,18 @@ class Config
   get http_ip()
   {
     return this._http.ip;
+  }
+  get http_login()
+  {
+    return this._http.login;
+  }
+  get http_password()
+  {
+    return this._http.password;
+  }
+  get http_key()
+  {
+    return this._http.key;
   }
   get http_port()
   {
