@@ -30,6 +30,7 @@ ip, port - настраиваются в приложении, по умолча
 ## Описание API
 ### Авторизация
 ***МЕТОД:*** POST
+
 ***URL:*** [http://ip:port/authorization](http://ip:port/authorization)
 ***ПАРАМЕТРЫ:***
 > В формате JSON 
