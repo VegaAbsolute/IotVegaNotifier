@@ -21,3 +21,18 @@ or
 To exit the console, press CTRL+D
 
 [Description http API rus](api.md)
+
+## Support devices
+- TD-11
+- TP-11
+- SMART MC-0101
+- SMART AS-0101
+- SMART MS-0101
+- SMART SS-0101
+- UE
+- GM-2
+- GM-1
+- SMART HS-0101
+- SPBZIP
+- SMART UM-0101
+- SRS-1
