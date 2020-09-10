@@ -121,6 +121,18 @@ class Settings
 }
 var app = angular
 .module('notifier',['ngSanitize'])
+.directive('ngEnter',function(){
+    return function(scope,element,attrs){
+      element.bind('keydown keypress',function(event){
+          if(event.which==13){
+              scope.$apply(function(){
+                  scope.$eval(attrs.ngEnter,{'event':event});
+              });
+              event.preventDefault();
+          }
+      });  
+    };
+});
 app.controller('AppController',function($scope,$interval,$timeout,$http){
     //$scope.page = 1;
     //$scope.page = 'auth';
@@ -131,7 +143,12 @@ app.controller('AppController',function($scope,$interval,$timeout,$http){
     $scope.settings = new Settings();
     $scope.edit_settings = {};
     
-    
+    $scope.enter_input = function()
+    {
+        if(!this.login) return;
+        if(!this.password) return;
+        this.authorization();
+    }
     $scope.authorization = function()
     {
         $http.post('/authorization', {login:this.login,password:this.password})
