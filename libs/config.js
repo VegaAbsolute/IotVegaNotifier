@@ -354,10 +354,15 @@ class Config
   }
   get smsc_settings()
   {
-    return {
+    var res = {
       voice:this._smsc.voice,
       sender:this._smsc.sender
     };
+    for(var key in res)
+    {
+      if( res[key] === undefined ) delete res[key];
+    }
+    return res;
   }
   get smsc_auth()
   {
@@ -388,7 +393,7 @@ class Config
   }
   get smpp_info()
   {
-    return {
+    let res = {
       source_addr:this._smpp.source_addr,
       source_addr_ton:this._smpp.source_addr_ton,
       service_type:this._smpp.service_type,
@@ -405,11 +410,16 @@ class Config
       data_coding:this._smpp.data_coding,
       sm_default_msg_id:this._smpp.sm_default_msg_id,
     };
+    for(var key in res)
+    {
+      if( res[key] === undefined ) delete res[key];
+    }
+    return res;
   }
   get system_smpp()
   {
-    return {
-      id:this._smpp.id,
+    let res = {
+      system_id:this._smpp.system_id,
       password:this._smpp.password,
       type:this._smpp.type,
       interface_version:this._smpp.interface_version,
@@ -417,6 +427,11 @@ class Config
       addr_ton:this._smpp.addr_ton,
       addr_npi:this._smpp.addr_npi
     };
+    for(var key in res)
+    {
+      if( res[key] === undefined ) delete res[key];
+    }
+    return res;
   }
   get smpp()
   {
@@ -440,7 +455,7 @@ class Config
   }
   get telegram_proxy()
   {
-    return {
+    var res = {
       proxy_status:this._telegram.proxy_status,
       proxy_host:this._telegram.proxy_host,
       proxy_port:this._telegram.proxy_port,
@@ -448,7 +463,12 @@ class Config
       proxy_password:this._telegram.proxy_password,
       proxy_type:this._telegram.proxy_type
 
-    };
+    }
+    for(var key in res)
+    {
+      if( res[key] === undefined ) delete res[key];
+    }
+    return res;
   }
   get http()
   {

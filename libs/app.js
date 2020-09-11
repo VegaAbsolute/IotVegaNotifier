@@ -89,6 +89,48 @@ function isEmptyText(text)
 {
   return text === undefined || text === '' || text === ' ' || text === null;
 }
+//Функция генерации сообщений для администратора
+function generationMessageAdministrator(type,obj)
+{
+  let message = undefined;
+  if(typeof type !== 'string') return message;
+  if(typeof obj !== 'object') return message;
+  let messageGatewayChangedStatus = type === 'newGateway' || type === 'gatewayActive' || type === 'gatewayInActive';
+  if ( messageGatewayChangedStatus )
+  {
+    let gatewayId = 'Gateway ID: '+obj.gatewayId+'.';
+    let gatewayName = '';
+    let gatewayComment = '';
+    let extraInfo = obj.extraInfo;
+    try
+    {
+      extraInfo = JSON.parse(extraInfo);
+    }
+    catch(e)
+    {
+
+    }
+    if( typeof extraInfo === 'object' )
+    {
+      if ( typeof extraInfo.name === 'string' ) gatewayName = 'Имя: '+extraInfo.name+';\r\n';
+      if ( typeof extraInfo.comment === 'string' ) gatewayComment = 'Комментарий: '+extraInfo.comment+';\r\n';
+    }
+    if(type == 'gatewayActive')
+    {
+      message = `Базовая станция изменила свой статус на активный!\r\n${gatewayName}${gatewayComment}${gatewayId}`;
+    }
+    else if(type == 'gatewayInActive')
+    {
+      message = `Базовая станция изменила свой статус на не активный!\r\n${gatewayName}${gatewayComment}${gatewayId}`;
+    }
+    else if(type == 'newGateway')
+    {
+      message = `На сервере была зарегистрирована новая базовая станция\r\n${gatewayName}${gatewayComment}${gatewayId}`;
+    }
+  }
+
+  return message;
+}
 //Функция генерации сообщения формата notifier
 function generationMessageNotifier(channel,info,type)
 {
@@ -108,6 +150,10 @@ function generationMessageNotifier(channel,info,type)
   if(type == 'sms')
   {
     message = `Тревога! ${nameObject} ${room} ${name} ${reason}`;
+  }
+  else if (type == 'voice')
+  {
+    message = `Внимание! Произошло тревожное событие! ${nameObject} ${room} ${model} ${name} ${fcnt} ${reason}`;
   }
   else
   { 
@@ -270,6 +316,64 @@ function checkValidRXType(type)
     return false;
   }
 }
+//Функция отправки сообщений администратору
+function sendAlarmAdministrator(message)
+{
+  let validMessage = message && typeof message === 'string';
+  //Телефон администратора если невалидный будет false
+  let telephone = getValidTelephone(config.telephoneAdministrator);
+  let currentTime = new Date().getTime();
+  if(config.debugMOD) 
+  { 
+    console.log(moment().format('LLL')+': '+' Detected alarm for Administrator. Message: '+message);
+    logger.log({
+      level:'info',
+      message:'Detected alarm for Administrator. Message: '+message,
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
+    });
+  }
+  if(!validMessage) 
+  {
+    if(config.debugMOD) 
+    {
+      console.log(moment().format('LLL')+': '+'Dont valid Message: '+message);
+      logger.log({
+        level:'info',
+        message:'Dont valid Message: '+message,
+        module:'[APP]',
+        time:moment().format('LLL'),
+        timestamp:parseInt(moment().format('x')),
+        uuid:uuidv4()
+      });
+    }
+    return;
+  }
+
+  let sendedSMPP = telephone && config.smpp;
+  let sendedSMTP = config.smtp_user && config.smtp;
+  let sendedSMSC = telephone && config.smsc;
+  let sendedTelegram = config.telegram_admin_chatId && config.telegram;
+  
+  if(sendedSMPP)
+  {
+    smpp.pushSMS(message,telephone,currentTime);
+  }
+  if(sendedSMSC)
+  {
+    smsc.pushVoiceMessage(message,telephone,currentTime);
+  }
+  if(sendedTelegram)
+  {
+    telegram.pushMessage(message,config.telegram_admin_chatId,currentTime);
+  }
+  if(sendedSMTP)
+  {
+    smtp.pushMessage(message,config.smtp_user,currentTime);
+  }
+}
 //Функция отправки сообщений о тревогах
 function wasAlarm(time,channel,fcnt,devEui,otherInfo)
 {
@@ -351,7 +455,7 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
   let telephones = [];
   let voiceMess = channel.voice;
   let message = channel.voice_message;
-  let message_admin = generationMessageNotifier(channel,otherInfoDanger);
+  let message_admin = generationMessageNotifier(channel,otherInfoDanger,'voice');
   //Отправлять сообщение формата приложения.
   let sendMessageApp  = channel.app_message_danger === true;
   //Отправлять сообщение формата пользователя.
@@ -374,7 +478,7 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
           {
             if( sendMessageApp && sendMessageUser && !isEmptyText(message) )
             {
-              smsc.pushVoiceMessage(`${message_admin}\r\nПользовательское сообщение: ${message}`,telephone,new Date().getTime());
+              smsc.pushVoiceMessage(`${message_admin} Пользовательское сообщение: ${message}`,telephone,new Date().getTime());
             }
             else if ( sendMessageApp ) 
             {
@@ -393,7 +497,7 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
       }
       if(config.debugMOD&&config.telephoneAdministrator)
       {
-        smsc.pushVoiceMessage(voiceMessage_admin,config.telephoneAdministrator,new Date().getTime());
+        smsc.pushVoiceMessage(message_admin,config.telephoneAdministrator,new Date().getTime());
       }
     }
   }
@@ -645,6 +749,13 @@ function get_gateways_resp(obj)
             timestamp:parseInt(moment().format('x')),
             uuid:uuidv4()
           });
+          if(config.administrator)
+          {
+            let message = generationMessageAdministrator('newGateway',gateway);
+            sendAlarmAdministrator(message);
+            console.log('ТУТ НУЖНО ОТПРАВИТЬ СООБЩЕНИЕ АДМИНИСТРАТОРУ СЕТИ');
+            console.log('НАЙДЕНА НОВАЯ БС');
+          }
         }
         else if(gateways[gatewayId] != active) 
         {
@@ -657,6 +768,28 @@ function get_gateways_resp(obj)
             timestamp:parseInt(moment().format('x')),
             uuid:uuidv4()
           });
+          console.log('БАЗОВАЯ СТАНЦИЯ ИЗМЕНИЛА СВОЕ СОСТОЯНИЕ!');
+          if(active)
+          {
+            console.log('БАЗОВАЯ СТАНЦИЯ БЫЛА НЕ АКТИВНА, СТАЛА АКТИВНА');
+            if ( config.gateway_active )
+            {
+              let message = generationMessageAdministrator('gatewayActive',gateway);
+              sendAlarmAdministrator(message);
+              console.log('ТУТ НУЖНО ОТПРАВИТЬ СООБЩЕНИЕ АДМИНИСТРАТОРУ СЕТИ', "!!! ТЕПЕРЬ АКТИВНА !!!");
+
+            }
+          }
+          else
+          {
+            console.log('БАЗОВАЯ СТАНЦИЯ БЫЛА АКТИВНА, СТАЛА НЕ АКТИВНА');
+            if ( config.gateway_inactive )
+            {
+              let message = generationMessageAdministrator('gatewayInActive',gateway);
+              sendAlarmAdministrator(message);
+              console.log('ТУТ НУЖНО ОТПРАВИТЬ СООБЩЕНИЕ АДМИНИСТРАТОРУ СЕТИ', "!!! ТЕПЕРЬ НЕ АКТИВНА !!!");
+            }
+          }
         }
         // else console.log('Не изменилось',gatewayId);
         
@@ -1783,6 +1916,7 @@ function run(conf,homeDir)
 {
   homeDirApp = homeDir;
   config = conf;
+  console.log(config);
   if(config.valid())
   {
     if(config.auto_update)
@@ -2248,5 +2382,10 @@ setInterval(()=>{
     get_gateways_req();
   }
 }, 30000);
+
+process.on('uncaughtException',(err,o)=>{
+  console.log(err,o);
+});
+
 module.exports.config = config;
 module.exports.run = run;
