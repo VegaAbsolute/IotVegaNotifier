@@ -63,6 +63,7 @@ let initalizationMessage = {
   smpp: false,
   smtp: false
 };
+let countReloadServer = 0;
 let gateways = {};
 // logger.log({
 //   level:'info',
@@ -128,7 +129,10 @@ function generationMessageAdministrator(type,obj)
       message = `На сервере была зарегистрирована новая базовая станция\r\n${gatewayName}${gatewayComment}${gatewayId}`;
     }
   }
-
+  else if( type === 'noConnect' )
+  {
+    message = 'Программа IotVegaNotifier потеряла связь с IotVegaServer!';
+  }
   return message;
 }
 //Функция генерации сообщения формата notifier
@@ -409,6 +413,10 @@ function getValidTelephone(num)
     {
       telephone = telephone.replace(8,7);
     }
+    if( telephone[0] === '7' && telephone.length === 11 )
+    {
+      telephone = '+'+telephone;
+    }
     return telephone;
   }
   catch (e)
@@ -666,6 +674,7 @@ function sendSMTP(time,channel,otherInfoDanger)
 //------------------------------------------------------------------------------
 function auth_req()
 {
+  countReloadServer = 0;
   let message = {
       cmd:'auth_req',
       login:config.loginWS,
@@ -1863,6 +1872,7 @@ function emergencyExit()
   }
   process.exit(1);
 }
+
 function auth_resp(obj)
 {
   if(obj.status)
@@ -1911,9 +1921,22 @@ function initWS()
   ws.on('alter_user_resp',get_device_appdata_req);
   ws.on('get_device_appdata_resp',get_device_appdata_resp);
   ws.on('get_gateways_resp',get_gateways_resp);
+  ws.on('no_connect',serverNoConnect);
+}
+function serverNoConnect()
+{
+  if( countReloadServer == 3 )
+  {
+    let message = generationMessageAdministrator('noConnect',{});
+    sendAlarmAdministrator(message);
+    console.log('Пытаюсь отпрваить ',message);
+  }
+  console.log('serverNoConnect ',countReloadServer);
+  countReloadServer++;
 }
 function run(conf,homeDir)
 {
+  
   homeDirApp = homeDir;
   config = conf;
   console.log(config);
