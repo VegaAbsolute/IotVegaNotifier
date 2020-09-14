@@ -1,6 +1,5 @@
-
+//app.js version 2.0.0 lite
 const VALID_TOKEN_MS = 24*60*1000;
-//app.js version 1.1.5 lite
 const crypto = require('crypto');
 const VegaSMPP = require('./vega_smpp.js');
 const VegaTelegram = require('./vega_telegram.js');
@@ -22,7 +21,6 @@ const bodyParser = require('body-parser');
 const pid = process.pid;
 
 //---
-// const { Console } = require('console');
 const fss = require('fs');
 
 const fs = require('fs').promises;
@@ -30,17 +28,6 @@ const ini = require('ini');
 const express = require('express');
 let homeDirApp = undefined;
 let myHttpServer = {};
-
-
-// var stdout = ''; 
-// var stderr = '';
-// const stdout = fss.createWriteStream('./logs/stdout.log');
-// const stderr = fss.createWriteStream('./logs/stderr.log');
-// process.stdout.pipe(stdout);
-// process.stderr.pipe(stderr);
-// console2 = new Console({stdout:stdout,stderr:stderr});
-// console2.log('test');
-// console.log(stdout);
 //---
 const uuidv4 = require('uuid/v4');
 let moment = require( 'moment' );
@@ -65,23 +52,6 @@ let initalizationMessage = {
 };
 let countReloadServer = 0;
 let gateways = {};
-// logger.log({
-//   level:'info',
-//   message:'testlog',
-//   module:'[APP]'
-// });
-//logger.info('info222',33333);
-// logger.info('info222');
-// logger.error('error222');
-// logger.warn('warn22');
-// logger.info(VegaSMPP);
-// logger.query({limit:1,until:1593503131328},(err,res)=>{
-//   console.log('!!!!!',res)
-// })
-// logger.query({until:new Date()-1000*60*60*1},(err,res)=>{
-//   console.log('?????',err)  
-//   console.log('!!!!!',res)
-//   })
 //------------------------------------------------------------------------------
 //Логика
 //------------------------------------------------------------------------------
@@ -131,7 +101,6 @@ function generationMessageAdministrator(type,obj)
   }
   else if( type === 'noConnect' )
   {
-    //if ( typeMessage === 'sms' ) message = `Зарегистрирована новая базовая станция ${gatewayName}`;
     message = 'Программа IotVegaNotifier потеряла связь с IotVegaServer!';
   }
   return message;
@@ -154,6 +123,10 @@ function generationMessageNotifier(channel,info,type)
   if( !isEmptyText( info.model ) ) model = `Модель устройства: ${info.model};`;
   if(type == 'sms')
   {
+    if( !isEmptyText( channel.name_level_1 ) ) nameObject = `${channel.name_level_1};`;
+    if( !isEmptyText( channel.level_2 ) ) room = `${channel.level_2};`;
+    if( !isEmptyText( channel.name ) ) name = `${channel.name};`;
+    if( !isEmptyText( info.reasonText ) ) reason = `${info.reasonText}`;
     message = `Тревога! ${nameObject} ${room} ${name} ${reason}`;
   }
   else if (type == 'voice')
@@ -763,8 +736,6 @@ function get_gateways_resp(obj)
           {
             let message = generationMessageAdministrator('newGateway',gateway);
             sendAlarmAdministrator(message);
-            console.log('ТУТ НУЖНО ОТПРАВИТЬ СООБЩЕНИЕ АДМИНИСТРАТОРУ СЕТИ');
-            console.log('НАЙДЕНА НОВАЯ БС');
           }
         }
         else if(gateways[gatewayId] != active) 
@@ -778,31 +749,24 @@ function get_gateways_resp(obj)
             timestamp:parseInt(moment().format('x')),
             uuid:uuidv4()
           });
-          console.log('БАЗОВАЯ СТАНЦИЯ ИЗМЕНИЛА СВОЕ СОСТОЯНИЕ!');
           if(active)
           {
-            console.log('БАЗОВАЯ СТАНЦИЯ БЫЛА НЕ АКТИВНА, СТАЛА АКТИВНА');
             if ( config.gateway_active )
             {
               let message = generationMessageAdministrator('gatewayActive',gateway);
               sendAlarmAdministrator(message);
-              console.log('ТУТ НУЖНО ОТПРАВИТЬ СООБЩЕНИЕ АДМИНИСТРАТОРУ СЕТИ', "!!! ТЕПЕРЬ АКТИВНА !!!");
 
             }
           }
           else
           {
-            console.log('БАЗОВАЯ СТАНЦИЯ БЫЛА АКТИВНА, СТАЛА НЕ АКТИВНА');
             if ( config.gateway_inactive )
             {
               let message = generationMessageAdministrator('gatewayInActive',gateway);
               sendAlarmAdministrator(message);
-              console.log('ТУТ НУЖНО ОТПРАВИТЬ СООБЩЕНИЕ АДМИНИСТРАТОРУ СЕТИ', "!!! ТЕПЕРЬ НЕ АКТИВНА !!!");
             }
           }
         }
-        // else console.log('Не изменилось',gatewayId);
-        
       }
       gateways[gatewayId] = active;
     });
@@ -887,7 +851,6 @@ function rx(obj)
                 otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
                 otherInfo.num = num_channel;
                 otherInfo.value = currentSensor;
-                // reason = 'Был замкнут вход';
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
             }
@@ -1907,7 +1870,6 @@ function auth_resp(obj)
       uuid:uuidv4()
     });
     emergencyExit();
-  //  process.exit(1);
   }
 }
 //------------------------------------------------------------------------------
@@ -1930,9 +1892,7 @@ function serverNoConnect()
   {
     let message = generationMessageAdministrator('noConnect',{});
     sendAlarmAdministrator(message);
-    console.log('Пытаюсь отпрваить ',message);
   }
-  console.log('serverNoConnect ',countReloadServer);
   countReloadServer++;
 }
 function run(conf,homeDir)
@@ -1940,7 +1900,6 @@ function run(conf,homeDir)
   
   homeDirApp = homeDir;
   config = conf;
-  console.log(config);
   if(config.valid())
   {
     if(config.auto_update)
@@ -2107,7 +2066,6 @@ function parseSettings(settings)
 }
 function cipherAes128cbc(key,val,iEnc,oEnc)
 {
-  //console.log(`cipherAes128cbc(${key},${val},${iEnc},${oEnc})`);
   let result = {
     status:false,
     data:undefined
@@ -2121,7 +2079,15 @@ function cipherAes128cbc(key,val,iEnc,oEnc)
   }
   catch(e)
   {
-    console.log(e);
+    console.log(moment().format('LLL')+': '+' ERROR: 7891(cipher)',e);
+    logger.log({
+      level:'info',
+      message:' ERROR: 7891(cipher)',
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
+    });
   }
   finally
   {
@@ -2143,7 +2109,15 @@ function decipherAes128cbc(key,val,iEnc,oEnc)
   }
   catch(e)
   {
-    console.log(e);
+    console.log(moment().format('LLL')+': '+' ERROR: 7892(decipher)',e);
+    logger.log({
+      level:'info',
+      message:' ERROR: 7892(decipher)',
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
+    });
   }
   finally
   {
@@ -2156,15 +2130,8 @@ function createToken()
     pid:pid,
     time:new Date().getTime()
   };
-  // let newToken = {
-  //     name:'leha',
-  //     age:28
-  //   };
-    
   let jsonToken = JSON.stringify(newToken);
-  //console.log('jsonToken=',jsonToken);
   let token = cipherAes128cbc(config.http_key,jsonToken,'utf8','hex');
-  console.log('token=',token);
   return token.status?token.data:false;
 }
 function validToken(token)
@@ -2173,7 +2140,6 @@ function validToken(token)
   if(!validType) return false;
   let validPid = false;
   let validTime = false;
-  //console.log(`let decipherToken = decipherAes128cbc(${config.http_key},${token},'hex','utf8');`);
   let decipherToken = decipherAes128cbc(config.http_key,token,'hex','utf8');
   if(!decipherToken.status || typeof decipherToken.data !== 'string') return false;
   try
@@ -2185,7 +2151,15 @@ function validToken(token)
   }
   catch(e)
   {
-    console.log(e);
+    console.log(moment().format('LLL')+': '+' ERROR: 7893(validation token)',e);
+    logger.log({
+      level:'info',
+      message:' ERROR: 7893(validation token)',
+      module:'[APP]',
+      time:moment().format('LLL'),
+      timestamp:parseInt(moment().format('x')),
+      uuid:uuidv4()
+    });
   }
   finally
   {
@@ -2203,15 +2177,12 @@ function authorization(request,response)
   let validPassword = request.body.password == config.http_password;
   if(validLogin && validPassword) 
   {
-    console.log('valid');
     let token = createToken();
     if(token)
     {
       result.status = true; 
       result.token = token;
     }
-    // let str = decipherAes128cbc(config.http_key,token.data,'hex','utf8');
-    // console.log(str.data,'=ОБРАТНО');
   }
   response.setHeader('Content-Type','application/json');
   response.writeHead('200');
@@ -2280,8 +2251,6 @@ function downloadLogFile(request,response)
   }
   else
   {
-    //response.setHeader('Content-Type','application/json');
-    //response.writeHead(200);
     response.download(homeDirApp + '/logs/logs_notifier.log');
   }
 }
@@ -2408,7 +2377,15 @@ setInterval(()=>{
 }, 30000);
 
 process.on('uncaughtException',(err,o)=>{
-  console.log(err,o);
+  console.log(moment().format('LLL')+': '+'ERROR: 555(SYSTEM)',err,o);
+  logger.log({
+    level:'info',
+    message:'ERROR: 555(SYSTEM)',
+    module:'[APP]',
+    time:moment().format('LLL'),
+    timestamp:parseInt(moment().format('x')),
+    uuid:uuidv4()
+  });
 });
 
 module.exports.config = config;

@@ -1,3 +1,4 @@
+//channel.js version 2.0.0 lite
 class Channel
 {
   constructor()

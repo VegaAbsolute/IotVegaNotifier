@@ -1,3 +1,4 @@
+//devices.js version 2.0.0 lite
 const Device = require('./device.js');
 const EventEmitter = require('events');
 class Devices extends EventEmitter

@@ -1,4 +1,4 @@
-//new VegaSMTP(config.smtp,config.smtp_host,config.smtp_port,config.smtp_secure,config.smtp_user,config.smtp_password,config.debugMOD);
+//vega_smtp.js version 2.0.0 lite
 const uuidv4 = require('uuid/v4');
 const EventEmitter = require('events');
 const nodemailer = require('nodemailer');
@@ -204,8 +204,7 @@ class VegaSMTP extends EventEmitter
             from: '"IotVegaNotifier " <'+_self._user+'>', 
             to: data.email, 
             subject: 'IotVegaNotifier danger', // Subject line
-            text: data.mes,
-            //html: ''
+            text: data.mes
         })
         .then((res)=>{
             resolve({status:true,uuid:uuid});

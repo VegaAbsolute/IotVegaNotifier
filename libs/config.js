@@ -1,3 +1,4 @@
+//config.js version 2.0.0 lite
 let moment = require( 'moment' );
 const uuidv4 = require('uuid/v4');
 const logger = require('./vega_logger.js');

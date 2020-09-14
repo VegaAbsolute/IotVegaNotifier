@@ -1,4 +1,4 @@
-//vega_base_data.js version 1.1.5
+//vega_base_data.js version 2.0.0 lite
 var deviceTypes=[
     {
         id:1,

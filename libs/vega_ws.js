@@ -1,4 +1,4 @@
-//vega_ws.ini version 1.0.3
+//vega_ws.js version 2.0.0 lite
 const DELAY_MESSAGE = 10000;
 const DELAY_RECONNECT = 5000;
 const MAX_DELAY_PING = 120000;

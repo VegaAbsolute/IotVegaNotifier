@@ -1,4 +1,5 @@
 
+//vega_telegram.js version 2.0.0 lite
 process.env.NTBA_FIX_319 = 1;
 const uuidv4 = require('uuid/v4');
 const EventEmitter = require('events');

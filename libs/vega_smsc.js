@@ -1,4 +1,4 @@
-
+//vega_smsc.js version 2.0.0 lite
 var request = require('request');
 var http = require('http');
 const uuidv4 = require('uuid/v4');

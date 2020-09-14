@@ -1,4 +1,4 @@
-//vega_smpp.js version 1.1.5
+//vega_smpp.js version 2.0.0 lite
 const SMPP = require('smpp');
 const uuidv4 = require('uuid/v4');
 const EventEmitter = require('events');
@@ -10,7 +10,6 @@ class VegaSMPP extends EventEmitter
   constructor(address,system,info,status,debugMOD)
   {
     super();
-    //console.log(smsHelper.parts('Ololololo'));
     this._debugMOD = debugMOD;
     this._active = status;
     this._stack = [];
@@ -329,10 +328,8 @@ class VegaSMPP extends EventEmitter
       {
         to   = to.toString();
         let mess = {
-          //  source_addr: _self._info.sender,
             destination_addr: to,
-            short_message: text,
-            //source_addr_ton: _self._info.source_addr_ton
+            short_message: text
         };
         for(let key in _self._info)
         {

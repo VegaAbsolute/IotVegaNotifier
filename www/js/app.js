@@ -44,22 +44,6 @@ class Settings
         this.copyObject(conf._telegram,'_telegram');
         this.copyObject(conf._ws,'_ws');
         this.copyObject(conf._http,'_http');
-        // this.administrator.status = conf._administrator.status;
-        // this.system.debug = conf._debugMOD.status;
-        // this.system.auto_update = conf._system.auto_update;
-        // this.system.between_time_sms = conf._devices.betweenTimeSMS;
-        // this.telegram.status = conf._telegram.status;
-        // this.smpp.status = conf._smpp.status;
-        // this.smsc.status = conf._smsc.status;
-        // this.copyObject(conf._administrator.settings,'administrator');
-        // this.copyObject(conf._smpp.address,'smpp');
-        // this.copyObject(conf._smpp.info,'smpp');
-        // this.copyObject(conf._smpp.system,'smpp');
-        // this.copyObject(conf._smsc.settings,'smsc');
-        // this.copyObject(conf._smsc.system,'smsc');
-        // this.copyObject(conf._smtp,'smtp');
-        // this.copyObject(conf._telegram,'telegram');
-        // this.copyObject(conf._ws,'ws');
     }
     clone()
     {
@@ -134,8 +118,6 @@ var app = angular
     };
 });
 app.controller('AppController',function($scope,$interval,$timeout,$http){
-    //$scope.page = 1;
-    //$scope.page = 'auth';
     $scope.page_settings = 1;
     $scope.last_date_log = 0;
     $scope.logs = {};
@@ -161,8 +143,6 @@ app.controller('AppController',function($scope,$interval,$timeout,$http){
                 $interval(()=>{
                 if($scope.page == 2) $scope.getLogs();
                 },LOGS_DELAY);
-                //alert('Успешная авторизация');
-                //$scope.reloadPage();
             }
             else
             {

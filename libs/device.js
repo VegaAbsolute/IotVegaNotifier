@@ -1,3 +1,4 @@
+//device.js version 2.0.0 lite
 const Channel = require('./channel.js');
 let devicesInfo = require('./vega_base_data.js').devicesInfo; 
 class Device
