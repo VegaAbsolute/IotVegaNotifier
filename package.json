@@ -23,6 +23,7 @@
     "nodemailer": "^6.3.0",
     "request": "^2.85.0",
     "smpp": "^0.4.0",
+    "smshelper": "^0.1.0",
     "socks5-https-client": "^1.2.1",
     "uuid": "^3.2.1",
     "which": "^2.0.2",

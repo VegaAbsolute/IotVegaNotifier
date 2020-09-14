@@ -4,11 +4,13 @@ const uuidv4 = require('uuid/v4');
 const EventEmitter = require('events');
 let moment = require( 'moment' );
 const logger = require('./vega_logger.js');
+const smsHelper = require('smshelper');
 class VegaSMPP extends EventEmitter
 {
   constructor(address,system,info,status,debugMOD)
   {
     super();
+    //console.log(smsHelper.parts('Ololololo'));
     this._debugMOD = debugMOD;
     this._active = status;
     this._stack = [];
@@ -79,7 +81,19 @@ class VegaSMPP extends EventEmitter
   }
   pushSMS(message,telephone,time)
   {
-    this._stack.push({message:message,telephone:telephone,uuid:uuidv4(),status:false,firstTime:time});
+    if(smsHelper.parts(message) > 1)
+    {
+      while(message.length>0)
+      {
+        var currentMess = message.substr(0,70);
+        message = message.slice(70);
+        this._stack.push({message:currentMess,telephone:telephone,uuid:uuidv4(),status:false,firstTime:time});
+      }
+    }
+    else
+    {
+      this._stack.push({message:message,telephone:telephone,uuid:uuidv4(),status:false,firstTime:time});
+    }
   }
   checkStackSMS()
   {

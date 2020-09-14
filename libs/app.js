@@ -23,7 +23,7 @@ const pid = process.pid;
 
 //---
 // const { Console } = require('console');
- const fss = require('fs');
+const fss = require('fs');
 
 const fs = require('fs').promises;
 const ini = require('ini');
@@ -118,19 +118,20 @@ function generationMessageAdministrator(type,obj)
     }
     if(type == 'gatewayActive')
     {
-      message = `Базовая станция изменила свой статус на активный!\r\n${gatewayName}${gatewayComment}${gatewayId}`;
+      message = `Базовая станция активна!\r\n${gatewayName}${gatewayComment}${gatewayId}`;
     }
     else if(type == 'gatewayInActive')
     {
-      message = `Базовая станция изменила свой статус на не активный!\r\n${gatewayName}${gatewayComment}${gatewayId}`;
+      message = `Базовая станция не активна!\r\n${gatewayName}${gatewayComment}${gatewayId}`;
     }
     else if(type == 'newGateway')
     {
-      message = `На сервере была зарегистрирована новая базовая станция\r\n${gatewayName}${gatewayComment}${gatewayId}`;
+      message = `Новая базовая станция!\r\n${gatewayName}${gatewayComment}${gatewayId}`;
     }
   }
   else if( type === 'noConnect' )
   {
+    //if ( typeMessage === 'sms' ) message = `Зарегистрирована новая базовая станция ${gatewayName}`;
     message = 'Программа IotVegaNotifier потеряла связь с IotVegaServer!';
   }
   return message;
@@ -157,11 +158,11 @@ function generationMessageNotifier(channel,info,type)
   }
   else if (type == 'voice')
   {
-    message = `Внимание! Произошло тревожное событие! ${nameObject} ${room} ${model} ${name} ${fcnt} ${reason}`;
+    message = `Внимание! Тревога! ${nameObject} ${room} ${model} ${name} ${fcnt} ${reason}`;
   }
   else
   { 
-    message = `Внимание!\r\nПроизошло тревожное событие!\r\n${nameObject}\r\n${room}\r\n${model}\r\n${name}\r\n${fcnt}\r\n${reason}`;
+    message = `Внимание!\r\nТревога!\r\n${nameObject}\r\n${room}\r\n${model}\r\n${name}\r\n${fcnt}\r\n${reason}`;
   }
   return message;
 }
@@ -1837,7 +1838,8 @@ function SMPPStarted()
       timestamp:parseInt(moment().format('x')),
       uuid:uuidv4()
     });
-    smpp.pushSMS('Successfully started IotVega Notifier',config.telephoneAdministrator,new Date().getTime());
+    // smpp.pushSMS('Successfully started IotVega Notifier',config.telephoneAdministrator,new Date().getTime());
+    smpp.pushSMS("Тестовое сообщение. Русские символы. Пытаюсь понять сколько символов. 138 byte.",config.telephoneAdministrator,new Date().getTime());
   }
 }
 function telegramStarted()
