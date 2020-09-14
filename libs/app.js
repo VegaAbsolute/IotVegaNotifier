@@ -1838,8 +1838,7 @@ function SMPPStarted()
       timestamp:parseInt(moment().format('x')),
       uuid:uuidv4()
     });
-    // smpp.pushSMS('Successfully started IotVega Notifier',config.telephoneAdministrator,new Date().getTime());
-    smpp.pushSMS("Тестовое сообщение. Русские символы. Пытаюсь понять сколько символов. 138 byte.",config.telephoneAdministrator,new Date().getTime());
+    smpp.pushSMS('Successfully started IotVega Notifier',config.telephoneAdministrator,new Date().getTime());
   }
 }
 function telegramStarted()
