@@ -19,7 +19,7 @@
     "fs-copy-file": "^2.1.2",
     "ini": "^1.3.5",
     "moment": "^2.22.2",
-    "node-telegram-bot-api": "^0.30.0",
+    "node-telegram-bot-api": "^0.50.0",
     "nodemailer": "^6.3.0",
     "request": "^2.85.0",
     "smpp": "^0.4.0",
