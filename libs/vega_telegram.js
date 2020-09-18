@@ -78,6 +78,7 @@ class VegaTelegram extends EventEmitter
         }
     } 
     this._connect = new TelegramBot(this._token, polling);
+    this._connect._uuidConnect = uuidv4();
     this._connect._status = true;
     this._connect._timeLastUpdate = new Date().getTime();
     this._connect.on('polling_error',this._error);
@@ -123,6 +124,7 @@ class VegaTelegram extends EventEmitter
   }
   _error(err)
   {
+    console.log(this._uuidConnect);
     logger.log({
       level:'error',
       message:'Error '+err.code+' . '+err.message,
@@ -132,9 +134,9 @@ class VegaTelegram extends EventEmitter
       uuid:uuidv4()
     });
     console.log(moment().format('LLL')+': '+'[Telegram] Error '+err.code+' . '+err.message);
-    linkBot._status = false;  
-    linkBot._timeLastUpdate = new Date().getTime();
-    linkBot.stopPolling().then(()=>{
+    var oldConnect = this._uuidConnect !== linkBot._uuidConnect;
+    if(typeof err === 'object' && err.code === 'ETELEGRAM' && !oldConnect)  return;
+    this.stopPolling().then(()=>{
       logger.log({
         level:'warn',
         message:'Unavailable telegram',
@@ -145,6 +147,12 @@ class VegaTelegram extends EventEmitter
       });
       console.log(moment().format('LLL')+': '+'[Telegram] Unavailable telegram');
     });
+
+    if(oldConnect) return;
+
+    this._status = false;  
+    this._timeLastUpdate = new Date().getTime();
+    linkBot = undefined;
   }
   checkStackEmptiness()
   {
