@@ -124,7 +124,7 @@ class VegaTelegram extends EventEmitter
   }
   _error(err)
   {
-    console.log(this._uuidConnect);
+    //вывод информации об ошибке
     logger.log({
       level:'error',
       message:'Error '+err.code+' . '+err.message,
@@ -134,8 +134,12 @@ class VegaTelegram extends EventEmitter
       uuid:uuidv4()
     });
     console.log(moment().format('LLL')+': '+'[Telegram] Error '+err.code+' . '+err.message);
+    //Проверяем относится ли ошибка к текущему соединению
     var oldConnect = this._uuidConnect !== linkBot._uuidConnect;
+    //Если сообщение с кодом ETELEGRAM и оно не для старого коннекта
+    //то это соединение прерывать не стоит
     if(typeof err === 'object' && err.code === 'ETELEGRAM' && !oldConnect)  return;
+    //Остановим pilling
     this.stopPolling().then(()=>{
       logger.log({
         level:'warn',
@@ -147,9 +151,9 @@ class VegaTelegram extends EventEmitter
       });
       console.log(moment().format('LLL')+': '+'[Telegram] Unavailable telegram');
     });
-
+    //Если старый коннект, то больше ничего делать не стоит
     if(oldConnect) return;
-
+    
     this._status = false;  
     this._timeLastUpdate = new Date().getTime();
     linkBot = undefined;
