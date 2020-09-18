@@ -450,7 +450,7 @@ class Config
   {
     return this._telegram.token;
   }
-  get telegram_admin_chatId()
+  get telegram_chatId()
   {
     return this._telegram.chatId;
   }

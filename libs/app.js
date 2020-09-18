@@ -333,7 +333,7 @@ function sendAlarmAdministrator(message)
   let sendedSMPP = telephone && config.smpp;
   let sendedSMTP = config.smtp_user && config.smtp;
   let sendedSMSC = telephone && config.smsc;
-  let sendedTelegram = config.telegram_admin_chatId && config.telegram;
+  let sendedTelegram = config.telegram_chatId && config.telegram;
   
   if(sendedSMPP)
   {
@@ -345,7 +345,7 @@ function sendAlarmAdministrator(message)
   }
   if(sendedTelegram)
   {
-    telegram.pushMessage(message,config.telegram_admin_chatId,currentTime);
+    telegram.pushMessage(message,config.telegram_chatId,currentTime);
   }
   if(sendedSMTP)
   {
@@ -582,9 +582,9 @@ function sendTelegram(time,channel,otherInfoDanger)
           }
         }
       }
-      if(config.debugMOD&&config.telegram_admin_chatId)
+      if(config.debugMOD&&config.telegram_chatId)
       {
-        telegram.pushMessage(message_admin,config.telegram_admin_chatId,new Date().getTime());
+        telegram.pushMessage(message_admin,config.telegram_chatId,new Date().getTime());
       }
     }
   }
@@ -1755,7 +1755,7 @@ function rx(obj)
 }
 function testSendSMSC()
 {
-  if(config.telephoneAdministrator && config.debugMOD && !initalizationMessage.smsc)
+  if(config.telephoneAdministrator && config.test_startup_message && !initalizationMessage.smsc)
   {
     initalizationMessage.smsc = true;
     console.log(moment().format('LLL')+': '+'Send test message SMSC');
@@ -1772,7 +1772,7 @@ function testSendSMSC()
 }
 function SMTPStarted()
 {
-  if(config.smtp_user && config.debugMOD && !initalizationMessage.smtp)
+  if(config.smtp_user && config.test_startup_message && !initalizationMessage.smtp)
   {
     initalizationMessage.smtp = true;
     console.log(moment().format('LLL')+': '+'Send test message SMTP');
@@ -1789,7 +1789,7 @@ function SMTPStarted()
 }
 function SMPPStarted()
 {
-  if(config.telephoneAdministrator && config.debugMOD && !initalizationMessage.smpp)
+  if(config.telephoneAdministrator && config.test_startup_message && !initalizationMessage.smpp)
   {
     initalizationMessage.smpp = true;
     console.log(moment().format('LLL')+': '+'Send test message SMPP');
@@ -1806,7 +1806,7 @@ function SMPPStarted()
 }
 function telegramStarted()
 {
-  if(config.telegram_admin_chatId && config.debugMOD && !initalizationMessage.telegram)
+  if(config.telegram_chatId && config.test_startup_message && !initalizationMessage.telegram)
   {
     initalizationMessage.telegram = true;
     console.log(moment().format('LLL')+': '+'Send test message Telegram');
@@ -1818,7 +1818,7 @@ function telegramStarted()
       timestamp:parseInt(moment().format('x')),
       uuid:uuidv4()
     });
-    telegram.pushMessage('Successfully started IotVega Notifier',config.telegram_admin_chatId,new Date().getTime());
+    telegram.pushMessage('Successfully started IotVega Notifier',config.telegram_chatId,new Date().getTime());
   }
 }
 function free()
