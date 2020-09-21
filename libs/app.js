@@ -847,7 +847,7 @@ function rx(obj)
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
-                let currentSensor = dataDevice['sensor_'+num_channel];
+                let currentSensor = dataDevice['sensor_'+numChannel];
                 otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
                 otherInfo.num = num_channel;
                 otherInfo.value = currentSensor;
@@ -878,9 +878,9 @@ function rx(obj)
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
-                let currentSensor = dataDevice['sensor_'+num_channel];
+                let currentSensor = dataDevice['sensor_'+numChannel];
                 otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
-                otherInfo.num = num_channel;
+                otherInfo.num = numChannel;
                 otherInfo.value = currentSensor;
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
@@ -912,7 +912,7 @@ function rx(obj)
               if(validChannel&&dataDevice.type_package==2)
               {
                 dev.lastDateSMS = currentDate;
-                let currentSensor = dataDevice['sensor_'+num_channel];
+                let currentSensor = dataDevice['sensor_'+numChannel];
                 otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
                 otherInfo.num = originalNum;
                 otherInfo.value = currentSensor;
@@ -1289,9 +1289,9 @@ function rx(obj)
               if ( validChannel && dataDevice.type_package==2 )
               {
                 dev.lastDateSMS = currentDate;
-                let currentSensor = dataDevice['sensor_'+num_channel];
+                let currentSensor = dataDevice['sensor_'+numChannel];
                 otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
-                otherInfo.num = num_channel;
+                otherInfo.num = numChannel;
                 otherInfo.value = currentSensor;
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
@@ -1491,9 +1491,9 @@ function rx(obj)
                 if ( dataDevice.type_package==2 )
                 {
                   dev.lastDateSMS = currentDate;
-                  let currentSensor = dataDevice['sensor_'+num_channel];
+                  let currentSensor = dataDevice['sensor_'+numChannel];
                   otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
-                  otherInfo.num = num_channel;
+                  otherInfo.num = numChannel;
                   otherInfo.value = currentSensor;
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
                 }
@@ -1526,7 +1526,7 @@ function rx(obj)
               {
                 if ( dataDevice.type_package==5 )
                 {
-                  let currentSensor = dataDevice['sensor_'+num_channel];
+                  let currentSensor = dataDevice['sensor_'+numChannel];
                   otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
                   otherInfo.num = originalNum;
                   otherInfo.value = currentSensor;
@@ -1562,7 +1562,7 @@ function rx(obj)
               {
                 if ( dataDevice.type_package==5 )
                 {
-                  let currentSensor = dataDevice['sensor_'+num_channel];
+                  let currentSensor = dataDevice['sensor_'+numChannel];
                   otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
                   otherInfo.num = originalNum;
                   otherInfo.value = currentSensor;
