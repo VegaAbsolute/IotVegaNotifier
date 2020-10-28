@@ -849,7 +849,7 @@ function rx(obj)
                 dev.lastDateSMS = currentDate;
                 let currentSensor = dataDevice['sensor_'+numChannel];
                 otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
-                otherInfo.num = num_channel;
+                otherInfo.num = numChannel;
                 otherInfo.value = currentSensor;
                 wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
               }
