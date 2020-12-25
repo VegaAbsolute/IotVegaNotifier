@@ -10,13 +10,13 @@ or
 - Install npm
 `apt-get install npm` - Example for linux ubuntu
 or
-# Using Ubuntu
-curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-sudo apt-get install -y nodejs
+- Using Ubuntu
+`curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt-get install -y nodejs`
 
-# Using Debian, as root
-curl -sL https://deb.nodesource.com/setup_14.x | bash -
-apt-get install -y nodejs
+- Using Debian, as root
+`curl -sL https://deb.nodesource.com/setup_14.x | bash -
+apt-get install -y nodejs`
 
 - Install the Nodejs Application Task Manager PM2 `npm install pm2 -g`
 - Install git (examle for ubuntu `apt-get install git`)
