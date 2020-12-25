@@ -12,7 +12,7 @@ or
 - Install the Nodejs Application Task Manager PM2 `npm install pm2 -g`
 - Install git (examle for ubuntu `apt-get install git`)
 #### Installing and running the application
-- Make a clone of the repository IotVegaNotifier `git clone https://github.com/VegaAbsolute/IotVegaNotifier.git -b lite`
+- Make a clone of the repository IotVegaNotifier `git clone https://github.com/VegaAbsolute/IotVegaNotifier.git -b lite_dev`
 - Go to the Applications folder IotVegaNotifier `cd IotVegaNotifier`
 - Running the application `pm2 start npm -- start`
 - Configure IotVegaNotifier. Edit the config.ini file.
