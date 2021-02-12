@@ -48,6 +48,7 @@ class Config
       gateway_inactive: false,
       server_not_available: false,
       test_startup_message: false,
+      low_battery: false,
       phone: undefined
     };
     this._http = {
@@ -75,6 +76,10 @@ class Config
   set administrator_server_not_available(val)
   {
     this._administrator.server_not_available = val;
+  }
+  set administrator_low_battery(val)
+  {
+    this._administrator.low_battery = val;
   }
   set administrator_test_startup_message(val)
   {
@@ -514,6 +519,10 @@ class Config
   get test_startup_message()
   {
     return this._administrator.test_startup_message;
+  }
+  get low_battery()
+  {
+    return this._administrator.low_battery;
   }
   //methods
   setFromConfig(config)

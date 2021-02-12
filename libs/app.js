@@ -31,6 +31,7 @@ let myHttpServer = {};
 //---
 const uuidv4 = require('uuid/v4');
 let moment = require( 'moment' );
+const { version } = require('moment');
 let devices = new Devices();
 let config = {};
 let statusAuth = false;
@@ -64,8 +65,8 @@ function isEmptyText(text)
 function generationMessageAdministrator(type,obj)
 {
   let message = undefined;
-  if(typeof type !== 'string') return message;
-  if(typeof obj !== 'object') return message;
+  if (typeof type !== 'string') return message;
+  if (typeof obj !== 'object') return message;
   let messageGatewayChangedStatus = type === 'newGateway' || type === 'gatewayActive' || type === 'gatewayInActive';
   if ( messageGatewayChangedStatus )
   {
@@ -81,25 +82,25 @@ function generationMessageAdministrator(type,obj)
     {
 
     }
-    if( typeof extraInfo === 'object' )
+    if ( typeof extraInfo === 'object' )
     {
       if ( typeof extraInfo.name === 'string' ) gatewayName = 'Имя: '+extraInfo.name+';\r\n';
       if ( typeof extraInfo.comment === 'string' ) gatewayComment = 'Комментарий: '+extraInfo.comment+';\r\n';
     }
-    if(type == 'gatewayActive')
+    if (type == 'gatewayActive')
     {
       message = `Базовая станция активна!\r\n${gatewayName}${gatewayComment}${gatewayId}`;
     }
-    else if(type == 'gatewayInActive')
+    else if (type == 'gatewayInActive')
     {
       message = `Базовая станция не активна!\r\n${gatewayName}${gatewayComment}${gatewayId}`;
     }
-    else if(type == 'newGateway')
+    else if (type == 'newGateway')
     {
       message = `Новая базовая станция!\r\n${gatewayName}${gatewayComment}${gatewayId}`;
     }
   }
-  else if( type === 'noConnect' )
+  else if ( type === 'noConnect' )
   {
     message = 'Программа IotVegaNotifier потеряла связь с IotVegaServer!';
   }
@@ -115,18 +116,18 @@ function generationMessageNotifier(channel,info,type)
     , name = ''
     , model = ''
     , fcnt = '';
-  if( !isEmptyText( channel.name_level_1 ) ) nameObject = `Объект: ${channel.name_level_1};`;
-  if( !isEmptyText( channel.level_2 ) ) room = `Помещение: ${channel.level_2};`;
-  if( !isEmptyText( channel.name ) ) name = `Устройство: ${channel.name};`;
-  if( !isEmptyText( info.reasonText ) ) reason = `Причина: ${info.reasonText}`;
-  if( !isEmptyText( info.fcnt ) ) fcnt = `№ пакета: ${info.fcnt};`;
-  if( !isEmptyText( info.model ) ) model = `Модель устройства: ${info.model};`;
-  if(type == 'sms')
+  if ( !isEmptyText( channel.name_level_1 ) ) nameObject = `Объект: ${channel.name_level_1};`;
+  if ( !isEmptyText( channel.level_2 ) ) room = `Помещение: ${channel.level_2};`;
+  if ( !isEmptyText( channel.name ) ) name = `Устройство: ${channel.name};`;
+  if ( !isEmptyText( info.reasonText ) ) reason = `Причина: ${info.reasonText}`;
+  if ( !isEmptyText( info.fcnt ) ) fcnt = `№ пакета: ${info.fcnt};`;
+  if ( !isEmptyText( info.model ) ) model = `Модель устройства: ${info.model};`;
+  if (type == 'sms')
   {
-    if( !isEmptyText( channel.name_level_1 ) ) nameObject = `${channel.name_level_1};`;
-    if( !isEmptyText( channel.level_2 ) ) room = `${channel.level_2};`;
-    if( !isEmptyText( channel.name ) ) name = `${channel.name};`;
-    if( !isEmptyText( info.reasonText ) ) reason = `${info.reasonText}`;
+    if ( !isEmptyText( channel.name_level_1 ) ) nameObject = `${channel.name_level_1};`;
+    if ( !isEmptyText( channel.level_2 ) ) room = `${channel.level_2};`;
+    if ( !isEmptyText( channel.name ) ) name = `${channel.name};`;
+    if ( !isEmptyText( info.reasonText ) ) reason = `${info.reasonText}`;
     message = `Тревога! ${nameObject} ${room} ${name} ${reason}`;
   }
   else if (type == 'voice')
@@ -189,6 +190,31 @@ function parseReason(typeDev,version,reason,channel)
   {
     if ( reason === 0 || reason === '0' ) return 'По времени';
     else if ( reason === 1 ) return 'Задымление';
+  }
+  else if ( typeDev == 'mercury' )
+  {
+    if ( reason === 1 ) return 'По времени';
+    else if ( reason === 2 ) return 'Вскрытие клеммной крышки';
+    else if ( reason === 3 ) return 'Вскрытие корпуса';
+    else if ( reason === 4 ) return 'Магнитное воздействие';
+    else if ( reason === 5 ) return 'Потеря фазы';
+    else if ( reason === 6 ) return 'Инверсия фазы';
+    else if ( reason === 7 ) return 'Сработало реле ограничения';
+    else if ( reason === 8 ) return 'Превышение напряжения по фазе 1';
+    else if ( reason === 9 ) return 'Превышение напряжения по фазе 2';
+    else if ( reason === 10 ) return 'Превышение напряжения по фазе 3';
+    else if ( reason === 11 ) return 'Превышение лимита мощности';
+    else if ( reason === 12 ) return 'Превышение лимита активной мощности';
+    else if ( reason === 13 ) return 'Превышение лимита энергии по тарифу 1';
+    else if ( reason === 14 ) return 'Превышение лимита энергии по тарифу 2';
+    else if ( reason === 15 ) return 'Превышение лимита энергии по тарифу 3';
+    else if ( reason === 16 ) return 'Превышение лимита энергии по тарифу 4';
+    else if ( reason === 17 ) return 'Разряд встроенной батареи';
+    else if ( reason === 18 ) return 'Отключение электропитания электросчетчика';
+    else if ( reason === 19 ) return 'По запросу';
+    else if ( reason === 20 ) return 'Включение электропитания электросчетчика';
+    else if ( reason === 21 ) return 'Закрытие клеммной крышки';
+    else if ( reason === 22 ) return 'Закрытие корпуса';
   }
   else if ( typeDev == 'ue' )
   {
@@ -281,9 +307,9 @@ function checkValidRXType(type)
   try
   {
     let validType = typeof type === 'string';
-    if(!validType) return false;
+    if (!validType) return false;
     let types = type.split('+');
-    if( types.indexOf( 'UNCONF_UP' ) > -1 || types.indexOf( 'CONF_UP' ) > -1 )
+    if ( types.indexOf( 'UNCONF_UP' ) > -1 || types.indexOf( 'CONF_UP' ) > -1 )
     {
       return true;
     }
@@ -301,7 +327,7 @@ function sendAlarmAdministrator(message)
   //Телефон администратора если невалидный будет false
   let telephone = getValidTelephone(config.telephoneAdministrator);
   let currentTime = new Date().getTime();
-  if(config.debugMOD) 
+  if ( config.debugMOD ) 
   { 
     console.log(moment().format('LLL')+': '+' Detected alarm for Administrator. Message: '+message);
     logger.log({
@@ -313,9 +339,9 @@ function sendAlarmAdministrator(message)
       uuid:uuidv4()
     });
   }
-  if(!validMessage) 
+  if (!validMessage) 
   {
-    if(config.debugMOD) 
+    if ( config.debugMOD ) 
     {
       console.log(moment().format('LLL')+': '+'Dont valid Message: '+message);
       logger.log({
@@ -335,19 +361,19 @@ function sendAlarmAdministrator(message)
   let sendedSMSC = telephone && config.smsc;
   let sendedTelegram = config.telegram_chatId && config.telegram;
   
-  if(sendedSMPP)
+  if (sendedSMPP)
   {
     smpp.pushSMS(message,telephone,currentTime);
   }
-  if(sendedSMSC)
+  if (sendedSMSC)
   {
     smsc.pushVoiceMessage(message,telephone,currentTime);
   }
-  if(sendedTelegram)
+  if (sendedTelegram)
   {
     telegram.pushMessage(message,config.telegram_chatId,currentTime);
   }
-  if(sendedSMTP)
+  if (sendedSMTP)
   {
     smtp.pushMessage(message,config.smtp_user,currentTime);
   }
@@ -355,8 +381,8 @@ function sendAlarmAdministrator(message)
 //Функция отправки сообщений о тревогах
 function wasAlarm(time,channel,fcnt,devEui,otherInfo)
 {
-  if(!channel.enable_danger) return; //Если отправка тревожных событий отключена то следует прекратить выполнение данного сценария.
-  if(config.debugMOD) 
+  if (!channel.enable_danger) return; //Если отправка тревожных событий отключена то следует прекратить выполнение данного сценария.
+  if ( config.debugMOD ) 
   { 
     console.log(moment().format('LLL')+': '+' Detected alarm DevEui',devEui,'  fcnt:',fcnt);
     logger.log({
@@ -379,15 +405,15 @@ function getValidTelephone(num)
   try
   {
     let validNum = num&&num.length>0?true:false;
-    if(!validNum) return false;
+    if (!validNum) return false;
     telephone = num.replace(/[^-0-9]/gim,'');
     let validTelephone = telephone&&telephone.length>0?true:false;
-    if(!validTelephone) return false;
-    if(telephone.length === 11 && telephone[0] == 8)
+    if (!validTelephone) return false;
+    if (telephone.length === 11 && telephone[0] == 8)
     {
       telephone = telephone.replace(8,7);
     }
-    if( telephone[0] === '7' && telephone.length === 11 )
+    if ( telephone[0] === '7' && telephone.length === 11 )
     {
       telephone = '+'+telephone;
     }
@@ -405,9 +431,9 @@ function getValidEmail(email)
   {
     var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
     let validEmail = email&&email.length>0?true:false;
-    if(!validEmail) return false;
+    if (!validEmail) return false;
     email = email.replace(/\s+/g, '');
-    if(!reg.test(email)) return false;
+    if (!reg.test(email)) return false;
     return email;
   }
   catch (e)
@@ -421,10 +447,10 @@ function getValidChat(val)
   try
   {
     let valid = val&&val.length>0?true:false;
-    if(!valid) return false;
+    if (!valid) return false;
     chat = val.replace(/[^-0-9]/gim,'');
     let validChat = chat&&chat.length>0?true:false;
-    if(!validChat) return false;
+    if (!validChat) return false;
     return chat;
   }
   catch (e)
@@ -442,23 +468,23 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
   let sendMessageApp  = channel.app_message_danger === true;
   //Отправлять сообщение формата пользователя.
   let sendMessageUser = channel.user_message_danger === true || channel.user_message_danger === undefined ;
-  if(isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
-  if(channel.telephones)
+  if (isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
+  if (channel.telephones)
   {
     telephones = channel.telephones.split(',');
   }
-  if(voiceMess)
+  if (voiceMess)
   {
-    if(smsc.active)
+    if (smsc.active)
     {
-      if(telephones.length>0)
+      if (telephones.length>0)
       {
         for (let i = 0 ; i < telephones.length; i++)
         {
           let telephone = getValidTelephone(telephones[i]);
-          if(telephone!==false)
+          if (telephone!==false)
           {
-            if( sendMessageApp && sendMessageUser && !isEmptyText(message) )
+            if ( sendMessageApp && sendMessageUser && !isEmptyText(message) )
             {
               smsc.pushVoiceMessage(`${message_admin} Пользовательское сообщение: ${message}`,telephone,new Date().getTime());
             }
@@ -477,7 +503,7 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
           }
         }
       }
-      if(config.debugMOD&&config.telephoneAdministrator)
+      if (config.debugMOD&&config.telephoneAdministrator)
       {
         smsc.pushVoiceMessage(message_admin,config.telephoneAdministrator,new Date().getTime());
       }
@@ -486,7 +512,7 @@ function sendVoiceMessage(time,channel,otherInfoDanger)
 }
 function sendSMS(time,channel,otherInfoDanger)
 {
-  if(smpp.active)
+  if (smpp.active)
   {
     let telephones = [];
     let sms = channel.sms;
@@ -497,19 +523,19 @@ function sendSMS(time,channel,otherInfoDanger)
     //Отправлять сообщение формата пользователя.
     let sendMessageUser = channel.user_message_danger === true || channel.user_message_danger === undefined ;
 
-    if(isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
-    if(channel.telephones)
+    if (isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
+    if (channel.telephones)
     {
       telephones = channel.telephones.split(',');
     }
-    if(sms)
+    if (sms)
     {
-      if(telephones.length>0)
+      if (telephones.length>0)
       {
         for (let i = 0 ; i < telephones.length; i++)
         {
           let telephone = getValidTelephone(telephones[i]);
-          if(telephone!==false)
+          if (telephone!==false)
           {
             let countSendMessage = 0;
             if ( sendMessageApp ) 
@@ -530,7 +556,7 @@ function sendSMS(time,channel,otherInfoDanger)
           }
         }
       }
-      if(config.debugMOD&&config.telephoneAdministrator)
+      if (config.debugMOD&&config.telephoneAdministrator)
       {
         smpp.pushSMS(message_admin,config.telephoneAdministrator,new Date().getTime());
       }
@@ -539,10 +565,10 @@ function sendSMS(time,channel,otherInfoDanger)
 }
 function sendTelegram(time,channel,otherInfoDanger)
 {
-  if(telegram.active)
+  if (telegram.active)
   {
     let chats = [];
-    if(channel.telegram_chats)
+    if (channel.telegram_chats)
     {
       chats = channel.telegram_chats.split(',');
     }
@@ -553,17 +579,17 @@ function sendTelegram(time,channel,otherInfoDanger)
     let sendMessageApp  = channel.app_message_danger === true;
     //Отправлять сообщение формата пользователя.
     let sendMessageUser = channel.user_message_danger === true || channel.user_message_danger === undefined ;
-    if(isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
-    if(mytelegram)
+    if (isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
+    if (mytelegram)
     {
-      if(chats.length>0)
+      if (chats.length>0)
       {
         for (let i = 0 ; i < chats.length; i++)
         {
           let chat = getValidChat(chats[i]);
-          if(chat!==false)
+          if (chat!==false)
           {
-            if( sendMessageApp && sendMessageUser && !isEmptyText(message) )
+            if ( sendMessageApp && sendMessageUser && !isEmptyText(message) )
             {
               telegram.pushMessage(`${message_admin}\r\nПользовательское сообщение: ${message}`,chat,new Date().getTime());
             }
@@ -582,7 +608,7 @@ function sendTelegram(time,channel,otherInfoDanger)
           }
         }
       }
-      if(config.debugMOD&&config.telegram_chatId)
+      if (config.debugMOD&&config.telegram_chatId)
       {
         telegram.pushMessage(message_admin,config.telegram_chatId,new Date().getTime());
       }
@@ -591,10 +617,10 @@ function sendTelegram(time,channel,otherInfoDanger)
 }
 function sendSMTP(time,channel,otherInfoDanger)
 {
-  if(smtp.active)
+  if (smtp.active)
   {
     let emails = [];
-    if(channel.emails)
+    if (channel.emails)
     {
       emails = channel.emails.split(',');
     }
@@ -607,17 +633,17 @@ function sendSMTP(time,channel,otherInfoDanger)
     //Отправлять сообщение формата пользователя.
     let sendMessageUser = channel.user_message_danger === true || channel.user_message_danger === undefined ;
     
-    if(isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
-    if(mysmtp)
+    if (isEmptyText(message_admin)) message_admin = 'Тревога! IotVegaNotifier.';
+    if (mysmtp)
     {
-      if(emails.length>0)
+      if (emails.length>0)
       {
         for (let i = 0 ; i < emails.length; i++)
         {
           let email = getValidEmail(emails[i]);
-          if(email!==false)
+          if (email!==false)
           {
-            if( sendMessageApp && sendMessageUser && !isEmptyText(message) )
+            if ( sendMessageApp && sendMessageUser && !isEmptyText(message) )
             {
               smtp.pushMessage(`${message_admin}\r\nПользовательское сообщение: ${message}`,email,new Date().getTime());
             }
@@ -636,7 +662,7 @@ function sendSMTP(time,channel,otherInfoDanger)
           }
         }
       }
-      if(config.debugMOD&&config.smtp_user)
+      if (config.debugMOD&&config.smtp_user)
       {
         smtp.pushMessage(message_admin,config.smtp_user,new Date().getTime());
       }
@@ -682,9 +708,9 @@ function get_device_appdata_resp(obj)
 {
   let devices_list = obj.devices_list;
   let validDevicesList = typeof devices_list==='object'&&devices_list.length>0;
-  if(validDevicesList)
+  if (validDevicesList)
   {
-    if(config.debugMOD) 
+    if ( config.debugMOD ) 
     {
       console.log(moment().format('LLL')+': '+'devices list updated');
       logger.log({
@@ -701,10 +727,10 @@ function get_device_appdata_resp(obj)
 }
 function get_gateways_resp(obj)
 {
-  if(obj.status)
+  if (obj.status)
   {
     let firstList = Object.keys(gateways).length === 0;
-    if(config.debugMOD) 
+    if ( config.debugMOD ) 
     {
       console.log(moment().format('LLL')+': '+'List of gateways successfully updated!');
       logger.log({
@@ -719,7 +745,7 @@ function get_gateways_resp(obj)
     obj.gateway_list.forEach(gateway => {
       let gatewayId = gateway.gatewayId;
       let active = gateway.active;
-      if(!firstList)
+      if (!firstList)
       {
         if ( gateways[gatewayId] === undefined ) 
         {
@@ -732,13 +758,13 @@ function get_gateways_resp(obj)
             timestamp:parseInt(moment().format('x')),
             uuid:uuidv4()
           });
-          if(config.administrator)
+          if (config.administrator)
           {
             let message = generationMessageAdministrator('newGateway',gateway);
             sendAlarmAdministrator(message);
           }
         }
-        else if(gateways[gatewayId] != active) 
+        else if (gateways[gatewayId] != active) 
         {
           console.log('Gateway status changed! GatewayID =',gatewayId);
           logger.log({
@@ -749,7 +775,7 @@ function get_gateways_resp(obj)
             timestamp:parseInt(moment().format('x')),
             uuid:uuidv4()
           });
-          if(active)
+          if (active)
           {
             if ( config.gateway_active )
             {
@@ -786,7 +812,7 @@ function get_gateways_resp(obj)
 }
 function rx(obj)
 {
-  if(!(obj.type&&checkValidRXType(obj.type))) return;
+  if (!(obj.type&&checkValidRXType(obj.type))) return;
   try
   {
     //cmd      gatewayId   data       rssi
@@ -808,7 +834,7 @@ function rx(obj)
       unit: undefined,
       fcnt: undefined
     }
-    if(dev.valid)
+    if (dev.valid)
     {
       let dataDevice = new Parser(dev.type,data,port,dev.version);
       let currentDate = new Date().getTime();
@@ -816,18 +842,31 @@ function rx(obj)
       let validBetweenTime =  (dev.lastDateSMS===undefined||(currentDate-lastDateSMS)>config.devices_betweenTimeSMS);
       let validNumChannel = dataDevice.num_channel!==undefined;
       let numChannel = validNumChannel?parseInt(dataDevice.num_channel):1;
-
+      let currentVersion = -1;
+      let version = dev.version!==undefined?dev.version.toString():dev.version;
       otherInfo.timeDevice = dataDevice.time;
       otherInfo.fcnt = obj.fcnt;
-
       validNumChannel = validNumChannel&&!isNaN(numChannel);
-      if(validBetweenTime)
+      let channel = undefined;
+      if (!isNaN(version)) currentVersion = version;
+
+      if(config.low_battery)
+      {
+        let charge = dataDevice.charge;
+        var validCharge = typeof charge == 'number' && !isNaN(charge);
+        if ( validCharge &&  charge<=10 )
+        {
+          eventLowBattery(dev.devEui,charge);
+        }
+      }
+
+      if (validBetweenTime)
       {
         switch (dev.type)
         {
           case 1:
           {
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device SI11');
               logger.log({
@@ -840,11 +879,11 @@ function rx(obj)
               });
             }
             otherInfo.model = 'SI-11';
-            if(validNumChannel)
+            if (validNumChannel)
             {
-              let channel = dev.get_channel(numChannel);
-              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-              if(validChannel&&dataDevice.type_package==2)
+              channel = dev.get_channel(numChannel);
+              let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+              if ( validChannel && dataDevice.type_package == 2 )
               {
                 dev.lastDateSMS = currentDate;
                 let currentSensor = dataDevice['sensor_'+numChannel];
@@ -858,7 +897,7 @@ function rx(obj)
           }
           case 2:
           {
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device SI12');
               logger.log({
@@ -871,11 +910,11 @@ function rx(obj)
               });
             }
             otherInfo.model = 'SI-12';
-            if(validNumChannel)
+            if (validNumChannel)
             {
-              let channel = dev.get_channel(numChannel);
-              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-              if(validChannel&&dataDevice.type_package==2)
+              channel = dev.get_channel(numChannel);
+              let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+              if ( validChannel && dataDevice.type_package == 2 )
               {
                 dev.lastDateSMS = currentDate;
                 let currentSensor = dataDevice['sensor_'+numChannel];
@@ -890,7 +929,7 @@ function rx(obj)
 
           case 3:
           {
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             { 
               console.log(moment().format('LLL')+': '+'data from device SI13');
               logger.log({
@@ -903,13 +942,13 @@ function rx(obj)
               });
             }
             otherInfo.model = 'SI-13';
-            if(validNumChannel)
+            if (validNumChannel)
             {
               let originalNum = numChannel;
               numChannel = numChannel + 6;
-              let channel = dev.get_channel(numChannel);
-              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-              if(validChannel&&dataDevice.type_package==2)
+              channel = dev.get_channel(numChannel);
+              let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+              if ( validChannel && dataDevice.type_package == 2 )
               {
                 dev.lastDateSMS = currentDate;
                 let currentSensor = dataDevice['sensor_'+numChannel];
@@ -924,7 +963,7 @@ function rx(obj)
           case 4:
           {
             otherInfo.model = 'TD-11';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device TD11');
               logger.log({
@@ -936,10 +975,10 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if( port !== 2 ) return;
-            let channel = dev.get_channel(1);
-            let validChannel = dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if( validChannel )
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
               otherInfo.value = dataDevice.temperature;
               otherInfo.reasonText = '';
@@ -951,11 +990,11 @@ function rx(obj)
                 let checkTemperature = dataDevice.limit_exceeded;
                 if ( checkEvent || checkTemperature )
                 {
-                  if(checkEvent)
+                  if (checkEvent)
                   {
                     otherInfo.reasonText += parseReason('td11', dev.version, otherInfo.reason, channel)+'. ';
                   }
-                  if(checkTemperature && dataDevice.reason != 5 )
+                  if (checkTemperature && dataDevice.reason != 5 )
                   {
                     otherInfo.reasonText += 'Отклонение температуры. ';
                   }
@@ -970,13 +1009,13 @@ function rx(obj)
                 let t_max = channel.max_t;
                 let t_min = channel.min_t;
                 let checkTemperature = t<=t_min||t>=t_max;
-                if(checkEvent||checkTemperature)
+                if (checkEvent||checkTemperature)
                 {
-                  if(checkEvent)
+                  if (checkEvent)
                   {
                     otherInfo.reasonText += parseReason('td11', dev.version, otherInfo.reason, channel)+'. ';
                   }
-                  if(checkTemperature && dataDevice.reason != 5 )
+                  if (checkTemperature && dataDevice.reason != 5 )
                   {
                     otherInfo.reasonText += 'Отклонение температуры. ';
                   }
@@ -986,7 +1025,7 @@ function rx(obj)
               }
               else
               {
-                if(config.debugMOD) 
+                if ( config.debugMOD ) 
                 {
                   console.log(moment().format('LLL')+': '+' An unknown version of the device device TD11');
                   logger.log({
@@ -1005,7 +1044,7 @@ function rx(obj)
           case 5:
           {
             otherInfo.model = 'TP-11';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device TP11');
               logger.log({
@@ -1017,10 +1056,10 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if( port !== 2 ) return;
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel && dataDevice.type_package == 1)
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if (validChannel && dataDevice.type_package == 1)
             {
               otherInfo.reasonText = '';
               otherInfo.reason = dataDevice.reason;
@@ -1036,7 +1075,7 @@ function rx(obj)
                   let min_v = parseFloat(channel.min_v);
                   let max_v = parseFloat(channel.max_v);
                   let newvalue = min_v+(((max_v-min_v)*(s-4))/16);
-                  if(typeof newvalue === 'number' && !isNaN(newvalue) ) otherInfo.value = newvalue;
+                  if (typeof newvalue === 'number' && !isNaN(newvalue) ) otherInfo.value = newvalue;
                   
 
                   wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
@@ -1052,19 +1091,19 @@ function rx(obj)
                 let max = parseFloat(channel.max_normal_v);
                 let min_v = parseFloat(channel.min_v);
                 let max_v = parseFloat(channel.max_v);
-                if(validValue&&!isNaN(min)&&!isNaN(max)&&!isNaN(min_v)&&!isNaN(max_v))
+                if (validValue && !isNaN(min) && !isNaN(max) && !isNaN(min_v) && !isNaN(max_v))
                 {
-                    if(s===0)
+                    if (s===0)
                     {
                         sensorEvent = true;
                     }
-                    else if(s<=20&&s>=4)
+                    else if (s<=20&&s>=4)
                     {
                         let newvalue = min_v+(((max_v-min_v)*(s-4))/16);
-                        if( typeof newvalue === 'number' && !isNaN(newvalue) )
+                        if ( typeof newvalue === 'number' && !isNaN(newvalue) )
                         {
                           otherInfo.value = newvalue;
-                          if(newvalue<=min||newvalue>=max)
+                          if (newvalue<=min||newvalue>=max)
                           {
                               sensorEvent = true;
                           }
@@ -1075,7 +1114,7 @@ function rx(obj)
                       sensorEvent = true;
                     }
                 }
-                if(sensorEvent||dangerEvent)
+                if (sensorEvent||dangerEvent)
                 {
                     otherInfo.reasonText += parseReason('tp11', dev.version, otherInfo.reason, channel)+'. ';
                     if ( sensorEvent ) otherInfo.reasonText += 'Отклонение показаний. ';
@@ -1087,7 +1126,7 @@ function rx(obj)
               }
               else
               {
-                if(config.debugMOD) 
+                if ( config.debugMOD ) 
                 {
                   console.log(moment().format('LLL')+': '+' An unknown version of the device device TP11');
                   logger.log({
@@ -1106,7 +1145,7 @@ function rx(obj)
           case 6:
           {
             otherInfo.model = 'MC-0101';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device MC');
               logger.log({
@@ -1118,10 +1157,10 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if( port !== 2 ) return;
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel )
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if (validChannel )
             {
               otherInfo.reasonText = '';
               otherInfo.reason = dataDevice.reason;
@@ -1138,7 +1177,7 @@ function rx(obj)
           case 7:
           {
             otherInfo.model = 'AS-0101';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device AS');
               logger.log({
@@ -1150,10 +1189,10 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if( port !== 2 ) return;
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
               otherInfo.reasonText = '';
               otherInfo.reason = dataDevice.reason;
@@ -1170,7 +1209,7 @@ function rx(obj)
           case 8:
           {
             otherInfo.model = 'MS-0101';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device MS');
               logger.log({
@@ -1182,10 +1221,10 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if( port !== 2 ) return;
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
               otherInfo.reasonText = '';
               otherInfo.reason = dataDevice.reason;
@@ -1202,7 +1241,7 @@ function rx(obj)
           case 9:
           {
             otherInfo.model = 'Водосчетчик';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device СВЭ-1');
               logger.log({
@@ -1214,13 +1253,13 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if( port !== 2 ) return;
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
-              let danger = dataDevice.state_display||dataDevice.leaking||dataDevice.breakthrough||dataDevice.hall_1;
-              if (danger)
+              let danger = dataDevice.state_display || dataDevice.leaking || dataDevice.breakthrough || dataDevice.hall_1;
+              if ( danger )
               {
                 otherInfo.unit = 'м³';
                 otherInfo.value = dataDevice.sensorKB;
@@ -1238,7 +1277,7 @@ function rx(obj)
           case 10:
           {
             otherInfo.model = 'SS-0101';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device SS ');
               logger.log({
@@ -1250,10 +1289,10 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if( port !== 2 ) return;
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
               otherInfo.reasonText = '';
               otherInfo.reason = dataDevice.reason;
@@ -1270,7 +1309,7 @@ function rx(obj)
           case 11:
           {
             otherInfo.model = 'SI-21';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device SI21');
               logger.log({
@@ -1282,26 +1321,73 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if(validNumChannel)
+            if ( currentVersion >= 2 )
             {
-              let channel = dev.get_channel(numChannel);
-              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-              if ( validChannel && dataDevice.type_package==2 )
+              var reason = dataDevice.reason;
+              if (reason >= 1 && reason <= 4 ) 
               {
-                dev.lastDateSMS = currentDate;
-                let currentSensor = dataDevice['sensor_'+numChannel];
-                otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
-                otherInfo.num = numChannel;
-                otherInfo.value = currentSensor;
-                wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+                channel = dev.get_channel(reason);
+                let validChannel = dataDevice.isObject(channel) && channel.name!==undefined;
+                if ( validChannel )
+                {
+                  dev.lastDateSMS = currentDate;
+                  let currentSensor = dataDevice['sensor_'+reason];
+                  otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
+                  otherInfo.num = reason;
+                  otherInfo.value = currentSensor;
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+                }
+              }
+              else if ( reason == 5 )
+              { 
+                if(typeof dev._channels === 'object')
+                {
+                  for(var key = 0; key <= dev._channels.length; key++)
+                  {
+                      channel = dev._channels[key];
+                      var validChannel = channel!==undefined && channel.name!==undefined;
+                      if ( validChannel )
+                      {
+                        dev.lastDateSMS = currentDate;
+                        let currentSensor = dataDevice['sensor_'+channel.num_channel];
+                        otherInfo.reasonText = `Температура вышла за пороги, ${dataDevice.temperature}°C`;
+                        otherInfo.num = numChannel;
+                        otherInfo.value = currentSensor;
+                        wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+                      }
+                  }
+                }
+                else
+                {
+                  console.log(dev);
+                }
+              }
+
+            }
+            else 
+            {
+              if (validNumChannel)
+              {
+                channel = dev.get_channel(numChannel);
+                let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+                if ( validChannel && dataDevice.type_package == 2 )
+                {
+                  dev.lastDateSMS = currentDate;
+                  let currentSensor = dataDevice['sensor_'+numChannel];
+                  otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
+                  otherInfo.num = numChannel;
+                  otherInfo.value = currentSensor;
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+                }
               }
             }
+            
             break;
           }
           case 12:
           {
             otherInfo.model = 'Электросчетчик';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device UE');
               ({
@@ -1310,11 +1396,11 @@ function rx(obj)
                 module:'[APP]'
               });
             }
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
-              let info = dataDevice.type_package==1;
+              let info = dataDevice.type_package == 1;
               let validEvent = dataDevice.event !== undefined;
               let danger = info && validEvent && dataDevice.event != 1 && dataDevice.event != 19;
               otherInfo.reasonText = '';
@@ -1333,7 +1419,7 @@ function rx(obj)
           case 13:
           {
             otherInfo.model = 'GM-2';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device GM-2 ');
               logger.log({
@@ -1345,10 +1431,10 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if( port !== 2 ) return;
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason > 0;
               otherInfo.reasonText = '';
@@ -1367,7 +1453,7 @@ function rx(obj)
           case 14:
           {
             otherInfo.model = 'LM-1';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device LM-1 ');
               logger.log({
@@ -1379,13 +1465,13 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if( port !== 2 ) return;
-            let channel = dev.get_channel(1);
-            let validChannel = dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
               otherInfo.reasonText = '';
-              if(dataDevice.alarm)
+              if (dataDevice.alarm)
               {
                   otherInfo.reasonText = 'Тревога. ';
                   dev.lastDateSMS = currentDate;
@@ -1397,7 +1483,7 @@ function rx(obj)
           case 15:
           {
             otherInfo.model = 'TL-11';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device TL-11');
               logger.log({
@@ -1409,10 +1495,10 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if( port !== 2 ) return;
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
               let checkEvent = dataDevice.reason!=='00';
               let t = parseFloat(dataDevice.temperature);
@@ -1421,7 +1507,7 @@ function rx(obj)
               let t_min = channel.min_t;
               let checkTemperature = t<=t_min||t>=t_max;
               let checkTemperature_2 = t2<=t_min||t2>=t_max;
-              if(checkEvent||checkTemperature||checkTemperature_2)
+              if (checkEvent||checkTemperature||checkTemperature_2)
               {
                 if ( checkEvent ) otherInfo.reasonText += 'Вскрытие корпуса. ';
                 if ( checkTemperature ) otherInfo.reasonText += 'Отклонение температуры 1 ('+dataDevice.temperature+'℃). ';
@@ -1435,7 +1521,7 @@ function rx(obj)
           case 17:
           {
             otherInfo.model = 'GM-1';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device GM-1 ');
               logger.log({
@@ -1447,17 +1533,17 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if( port !== 2 ) return;
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason!=1;
               otherInfo.reasonText = '';
               otherInfo.reason = dataDevice.reason;
               otherInfo.value = dataDevice.sensor_rate_sum;
               otherInfo.unit = 'м³';
-              if(danger)
+              if ( danger )
               {
                 
                 dev.lastDateSMS = currentDate;
@@ -1470,7 +1556,7 @@ function rx(obj)
           case 18:
           {
             otherInfo.model = 'SI-22';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device SI-22 ');
               logger.log({
@@ -1482,13 +1568,56 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if(validNumChannel)
+            if ( currentVersion >= 2 )
             {
-              let channel = dev.get_channel(numChannel);
-              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-              if(validChannel)
+              var reason = dataDevice.reason;
+              if (reason >= 1 && reason <= 4 ) 
               {
-                if ( dataDevice.type_package==2 )
+                channel = dev.get_channel(reason);
+                let validChannel = dataDevice.isObject(channel) && channel.name!==undefined;
+                if ( validChannel )
+                {
+                  dev.lastDateSMS = currentDate;
+                  let currentSensor = dataDevice['sensor_'+reason];
+                  otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
+                  otherInfo.num = reason;
+                  otherInfo.value = currentSensor;
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+                }
+              }
+              else if (reason == 5 )
+              { 
+                if ( typeof dev._channels === 'object' )
+                {
+                  for(var key = 0; key <= dev._channels.length; key++)
+                  {
+                      channel = dev._channels[key];
+                      var validChannel = channel!==undefined && channel.name!==undefined;
+                      if ( validChannel )
+                      {
+                        dev.lastDateSMS = currentDate;
+                        let currentSensor = dataDevice['sensor_'+channel.num_channel];
+                        otherInfo.reasonText = `Температура вышла за пороги, ${dataDevice.temperature}°C`;
+                        otherInfo.num = numChannel;
+                        otherInfo.value = currentSensor;
+                        wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+                      }
+                  }
+                }
+                else
+                {
+                  console.log(dev);
+                }
+                
+              }
+            }
+            else 
+            {
+              if (validNumChannel)
+              {
+                channel = dev.get_channel(numChannel);
+                let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+                if ( validChannel && dataDevice.type_package == 2 )
                 {
                   dev.lastDateSMS = currentDate;
                   let currentSensor = dataDevice['sensor_'+numChannel];
@@ -1504,7 +1633,7 @@ function rx(obj)
           case 20:
           {
             otherInfo.model = 'M-BUS-1';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device MBUS-1 ');
               logger.log({
@@ -1516,15 +1645,15 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if(validNumChannel)
+            if ( validNumChannel )
             {
               let originalNum = numChannel;
               numChannel = numChannel + 10;
-              let channel = dev.get_channel(numChannel);
-              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-              if(validChannel)
+              channel = dev.get_channel(numChannel);
+              let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+              if ( validChannel )
               {
-                if ( dataDevice.type_package==5 )
+                if ( dataDevice.type_package == 5 )
                 {
                   let currentSensor = dataDevice['sensor_'+numChannel];
                   otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
@@ -1540,7 +1669,7 @@ function rx(obj)
           case 21:
           {
             otherInfo.model = 'M-BUS-2';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device MBUS-2 ');
               logger.log({
@@ -1552,15 +1681,15 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if(validNumChannel)
+            if (validNumChannel)
             {
               let originalNum = numChannel;
               numChannel = numChannel + 10;
-              let channel = dev.get_channel(numChannel);
-              let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-              if(validChannel)
+              channel = dev.get_channel(numChannel);
+              let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+              if ( validChannel )
               {
-                if ( dataDevice.type_package==5 )
+                if ( dataDevice.type_package == 5 )
                 {
                   let currentSensor = dataDevice['sensor_'+numChannel];
                   otherInfo.reasonText = currentSensor == 1 ? 'Был замкнут вход' : 'Был разомкнут вход';
@@ -1576,7 +1705,7 @@ function rx(obj)
           case 23:
           {
             otherInfo.model = 'HS-0101';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device HS ');
               logger.log({
@@ -1588,13 +1717,13 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            if( port !== 2 ) return;
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            if ( port !== 2 ) return;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason!=1;
-              if(danger)
+              if ( danger )
               {
                 dev.lastDateSMS = currentDate;
                 otherInfo.reasonText = '';
@@ -1609,7 +1738,7 @@ function rx(obj)
           case 24:
           {
             otherInfo.model = 'SPBZIP 2726/2727';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device SPBZIP 2726/2727');
               logger.log({
@@ -1621,14 +1750,14 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
             otherInfo.reasonText = '';
             otherInfo.reason = dataDevice.event;
-            if(validChannel)
+            if ( validChannel )
             {
               let danger = dataDevice.event !== undefined && dataDevice.event !== 1 && dataDevice.event !== 19;
-              if ( dataDevice.type_package==1 && danger )
+              if ( dataDevice.type_package == 1 && danger )
               {
                   dev.lastDateSMS = currentDate;
                   otherInfo.unit = 'кВт⋅ч';
@@ -1642,7 +1771,7 @@ function rx(obj)
           case 25:
           {
             otherInfo.model = 'UM-0101';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device UM ');
               logger.log({
@@ -1654,9 +1783,9 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason !== 1;
               otherInfo.reasonText = '';
@@ -1673,7 +1802,7 @@ function rx(obj)
           case 26:
           {
             otherInfo.model = 'SRC-1';
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device SRC ');
               logger.log({
@@ -1685,9 +1814,9 @@ function rx(obj)
                 uuid:uuidv4()
               });
             }
-            let channel = dev.get_channel(1);
-            let validChannel =dataDevice.isObject(channel)&&channel.num_channel!==undefined&&channel.name!==undefined;
-            if(validChannel)
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            if ( validChannel )
             {
               let danger = dataDevice.reason !== undefined && dataDevice.reason !== 1;
               otherInfo.reasonText = '';
@@ -1701,9 +1830,85 @@ function rx(obj)
             }
             break;
           }
+          case 27:
+          {
+            otherInfo.model = 'Mercury';
+            if ( config.debugMOD ) 
+            {
+              console.log(moment().format('LLL')+': '+'data from device Mercury');
+              logger.log({
+                level:'info',
+                message:'data from device Mercury',
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
+              });
+            }
+            channel = dev.get_channel(1);
+            let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+            otherInfo.reasonText = '';
+            otherInfo.reason = dataDevice.event;
+            if ( validChannel )
+            {
+              let danger = dataDevice.event !== undefined && dataDevice.event !== 1 && dataDevice.event !== 19;
+              if ( dataDevice.type_package == 1 && danger )
+              {
+                  dev.lastDateSMS = currentDate;
+                  otherInfo.unit = 'кВт⋅ч';
+                  otherInfo.value = dataDevice.sensor_rate_sum;
+                  otherInfo.reasonText += parseReason('mercury', dev.version, dataDevice.event, channel)+'. ';
+                  wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+              }
+            }
+            break;
+          }
+          case 28:
+          {
+            otherInfo.model = 'SH-02';
+            if ( config.debugMOD ) 
+            {
+              console.log(moment().format('LLL')+': '+'data from device SH-02 ');
+              logger.log({
+                level:'info',
+                message:'data from device SH-02',
+                module:'[APP]',
+                time:moment().format('LLL'),
+                timestamp:parseInt(moment().format('x')),
+                uuid:uuidv4()
+              });
+            }
+            let detectDanger = false;
+            let originalNum = numChannel;
+            if ( dataDevice.reason == 2 ) 
+            {
+              numChannel = 1;
+              detectDanger = true;
+            }
+            if ( dataDevice.reason == 3 ) 
+            {
+              numChannel = 2;
+              detectDanger = true;
+            }
+            validNumChannel = !isNaN(numChannel);
+            if (validNumChannel)
+            {
+              numChannel = numChannel + 10;
+              channel = dev.get_channel(numChannel);
+              let validChannel = dataDevice.isObject(channel) && channel.num_channel!==undefined && channel.name!==undefined;
+              if ( validChannel && detectDanger )
+              {
+                otherInfo.reasonText = 'Тревога!';
+                otherInfo.num = originalNum;
+                dev.lastDateSMS = currentDate;
+                wasAlarm(timeServerMs,channel,obj.fcnt,devEui,otherInfo);
+              }
+            }
+            break;
+          }
           default:
           {
-            if(config.debugMOD) 
+            if ( config.debugMOD ) 
             {
               console.log(moment().format('LLL')+': '+'data from device unknown');
               logger.log({
@@ -1721,7 +1926,7 @@ function rx(obj)
       }
       else
       {
-        if(config.debugMOD) 
+        if ( config.debugMOD ) 
         {
           console.log(moment().format('LLL')+': '+'Do not put in the queue');
           logger.log({
@@ -1755,7 +1960,7 @@ function rx(obj)
 }
 function testSendSMSC()
 {
-  if(config.telephoneAdministrator && config.test_startup_message && !initalizationMessage.smsc)
+  if (config.telephoneAdministrator && config.test_startup_message && !initalizationMessage.smsc)
   {
     initalizationMessage.smsc = true;
     console.log(moment().format('LLL')+': '+'Send test message SMSC');
@@ -1772,7 +1977,7 @@ function testSendSMSC()
 }
 function SMTPStarted()
 {
-  if(config.smtp_user && config.test_startup_message && !initalizationMessage.smtp)
+  if (config.smtp_user && config.test_startup_message && !initalizationMessage.smtp)
   {
     initalizationMessage.smtp = true;
     console.log(moment().format('LLL')+': '+'Send test message SMTP');
@@ -1789,7 +1994,7 @@ function SMTPStarted()
 }
 function SMPPStarted()
 {
-  if(config.telephoneAdministrator && config.test_startup_message && !initalizationMessage.smpp)
+  if (config.telephoneAdministrator && config.test_startup_message && !initalizationMessage.smpp)
   {
     initalizationMessage.smpp = true;
     console.log(moment().format('LLL')+': '+'Send test message SMPP');
@@ -1806,7 +2011,7 @@ function SMPPStarted()
 }
 function telegramStarted()
 {
-  if(config.telegram_chatId && config.test_startup_message && !initalizationMessage.telegram)
+  if (config.telegram_chatId && config.test_startup_message && !initalizationMessage.telegram)
   {
     initalizationMessage.telegram = true;
     console.log(moment().format('LLL')+': '+'Send test message Telegram');
@@ -1823,14 +2028,14 @@ function telegramStarted()
 }
 function free()
 {
-  if(waitingReboot)
+  if (waitingReboot)
   {
     emergencyExit();
   }
 }
 function emergencyExit()
 {
-  if(smpp.employment||smsc.employment||telegram.employment||smtp.employment)
+  if (smpp.employment||smsc.employment||telegram.employment||smtp.employment)
   {
     return;
   }
@@ -1839,7 +2044,7 @@ function emergencyExit()
 
 function auth_resp(obj)
 {
-  if(obj.status)
+  if (obj.status)
   {
     for(let i = 0 ; i<obj.command_list.length;i++)
     {
@@ -1886,23 +2091,32 @@ function initWS()
   ws.on('get_gateways_resp',get_gateways_resp);
   ws.on('no_connect',serverNoConnect);
 }
+
 function serverNoConnect()
 {
-  if( countReloadServer == 3 )
+  if ( countReloadServer == 3 )
   {
     let message = generationMessageAdministrator('noConnect',{});
     sendAlarmAdministrator(message);
   }
   countReloadServer++;
 }
+function eventLowBattery(devEui,charge)
+{
+  if(devEui)
+  {
+    let message = `Низкий заряд батареи!\r\ndevEui:${devEui};\r\nЗаряд ${charge}%`;
+    sendAlarmAdministrator(message);
+  }
+}
 function run(conf,homeDir)
 {
   
   homeDirApp = homeDir;
   config = conf;
-  if(config.valid())
+  if (config.valid())
   {
-    if(config.auto_update)
+    if (config.auto_update)
     {
       updating();
       new CronJob({
@@ -1918,7 +2132,7 @@ function run(conf,homeDir)
       smsc = new SMSCru(config.smsc_auth,config.smsc,config.smsc_settings,config.debugMOD);
       telegram = new VegaTelegram(config.telegram_token,config.telegram,config.telegram_proxy,config.debugMOD);
       smtp = new VegaSMTP(config.smtp,config.smtp_host,config.smtp_port,config.smtp_secure,config.smtp_user,config.smtp_password,config.debugMOD);
-      if(config.http)
+      if (config.http)
       {
         myHttpServer = express();
         myHttpServer.use(express.static(homeDirApp+'/www'));
@@ -1941,7 +2155,7 @@ function run(conf,homeDir)
       smtp.on('SMTPStarted',SMTPStarted);
       smsc.on('testSendSMSC',testSendSMSC);
       Which('npm', function(error, path){ 
-          if(error) 
+          if (error) 
           {
             console.log(moment().format('LLL')+': '+'[SYSTEM ERROR]',error);
             logger.log({
@@ -1978,7 +2192,7 @@ function run(conf,homeDir)
 }
 function started(err)
 {
-  if(err)
+  if (err)
   {
       console.log(moment().format('LLL')+': '+'Error running http server, ip='+config.http_ip+', port='+config.http_port+' . ',err);
       logger.log({
@@ -2013,7 +2227,7 @@ function getCurrentSettings(request,response)
     cmd:'currentSettings',
     status:false
   };
-  if(validToken(token))
+  if (validToken(token))
   {
     res.status = true;
     res.data = config;
@@ -2034,7 +2248,7 @@ function getLogs(request,response)
     status:true,
     cmd:'getLogs'
   };
-  if(!validToken(token))
+  if (!validToken(token))
   {
     result.status = false;
     result.error = 'auth';
@@ -2045,7 +2259,7 @@ function getLogs(request,response)
     limit:params.limit,
     order:'desc'
   }
-  if(params.from) option.from = parseInt(params.from);
+  if (params.from) option.from = parseInt(params.from);
   logger.query(option,(err,res)=>{
     result.data = res.file;
     response.end(JSON.stringify(result));
@@ -2057,7 +2271,7 @@ function parseSettings(settings)
   for(var key in settings)
   {
     let setting = settings[key];
-    if(key[0] === '_')
+    if (key[0] === '_')
     {
       newSettings[key.slice(1)] = setting;
     }
@@ -2137,11 +2351,11 @@ function createToken()
 function validToken(token)
 {
   let validType = typeof token === 'string';
-  if(!validType) return false;
+  if (!validType) return false;
   let validPid = false;
   let validTime = false;
   let decipherToken = decipherAes128cbc(config.http_key,token,'hex','utf8');
-  if(!decipherToken.status || typeof decipherToken.data !== 'string') return false;
+  if (!decipherToken.status || typeof decipherToken.data !== 'string') return false;
   try
   {
     let jsonToken = JSON.parse(decipherToken.data);
@@ -2163,7 +2377,7 @@ function validToken(token)
   }
   finally
   {
-    if(validPid&&validTime) return true;
+    if (validPid&&validTime) return true;
     return false;
   }
 }
@@ -2175,10 +2389,10 @@ function authorization(request,response)
   };
   let validLogin = request.body.login == config.http_login;
   let validPassword = request.body.password == config.http_password;
-  if(validLogin && validPassword) 
+  if (validLogin && validPassword) 
   {
     let token = createToken();
-    if(token)
+    if (token)
     {
       result.status = true; 
       result.token = token;
@@ -2200,8 +2414,8 @@ function saveSettings(request,response)
   };
   let newConfigIni = undefined;
   var validReq = typeof request.body == 'object' && request.body.token;
-  if(validReq) token = request.body.token;
-  if(!validToken(token))
+  if (validReq) token = request.body.token;
+  if (!validToken(token))
   {
     result.error = 'auth';
     response.end(JSON.stringify(result));
@@ -2228,7 +2442,7 @@ function saveSettings(request,response)
   }
   finally
   {
-    if(newConfigIni)
+    if (newConfigIni)
     {
       fss.writeFileSync('config.ini', newConfigIni);
       result.status = true;
@@ -2242,7 +2456,7 @@ function downloadLogFile(request,response)
 {
   let params = url.parse(request.url,true).query;
   let token = params.token;
-  if(!validToken(token)) 
+  if (!validToken(token)) 
   {
     response.setHeader('Content-Type','application/json');
     response.writeHead(401);
@@ -2267,9 +2481,9 @@ function updating()
 {
     //тут нужно проверить что программа не чем не занята
   exec('"git" pull', (err, stdout, stderr) => {
-    if(stdout&&(stdout.indexOf('Already up to date')>-1||stdout.indexOf('Already up-to-date')>-1)||stdout.indexOf('Уже обновлено')>-1)
+    if (stdout&&(stdout.indexOf('Already up to date')>-1||stdout.indexOf('Already up-to-date')>-1)||stdout.indexOf('Уже обновлено')>-1)
     {
-      if(config.debugMOD) 
+      if ( config.debugMOD ) 
       {
         console.log(moment().format('LLL')+': '+'Updates not detected');
         logger.log({
@@ -2293,7 +2507,7 @@ function updating()
         uuid:uuidv4()
       });
       exec('"git" reset --hard HEAD', (err, stdout, stderr) => {
-        if(config.debugMOD) 
+        if ( config.debugMOD ) 
         {
           console.log(moment().format('LLL')+': '+'Error updating IotVegaNotifier, restart',err);
           logger.log({
@@ -2312,19 +2526,19 @@ function updating()
     {
       spawn_update = spawn(npm, ['install']);
       spawn_update.stdout.on('data',(data)=>{
-        if(config.debugMOD)  
+        if ( config.debugMOD )  
         {
           console.log(moment().format('LLL')+': '+data);
         }
       });
       spawn_update.stderr.on('data',(data)=>{
-        if(config.debugMOD)  
+        if ( config.debugMOD )  
         {
           console.log(moment().format('LLL')+': '+data);
         }
       });
       spawn_update.on('close',(code)=>{
-        if(code == 0)
+        if (code == 0)
         {
           console.log(moment().format('LLL')+': The IotVegaNotifier is reinstall success');
           logger.log({
@@ -2340,7 +2554,7 @@ function updating()
         }
         else
         {
-          if(config.debugMOD) 
+          if ( config.debugMOD ) 
           {
             logger.log({
               level:'info',
@@ -2369,7 +2583,7 @@ function updating()
   });
 }
 setInterval(()=>{
-  if(ws.status&&statusAuth)
+  if (ws.status&&statusAuth)
   {
     get_device_appdata_req();
     get_gateways_req();
