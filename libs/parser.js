@@ -4,7 +4,7 @@
 //за исключением того что функция isObject в данном классе метод
 class Parser
 {
-    constructor(dt,data,port,version)
+    constructor(dt,data,port,version,key_map)
     {
         this.type_package;
         this.comment;
@@ -133,6 +133,10 @@ class Parser
             this[`tariff_schedule_hour_end_${i}_zone`] = undefined;
             this[`tariff_schedule_number_${i}_zone`] = undefined;
         }
+        for(var i = 1; i<=10; i++)
+        {
+            this[`temperature_1wire_${i}`] = undefined;
+        }
         this.version_soft_device;
         this.code_error_1;
         this.code_error_2;
@@ -184,6 +188,11 @@ class Parser
         this.power_factor_summary;
         this.frequency_network;
         this.status_state;
+        this.mv;
+        for(var i = 0; i<=12; i++)
+        {
+            this[`temperature_num_${i}`] = undefined;
+        }
         for(var i = 1; i<=31; i++)
         {
             this[`special_day_d_${i}`] = undefined;
@@ -220,13 +229,12 @@ class Parser
         this.size_data_package;
         this.num_package;
         this.port = port;
-        this.validParse=this.set_data(data);
+        this.validParse=this.set_data(data,key_map);
     }
     isObject(obj)
     {
         return typeof obj === 'object' && obj !== null;
     }
-    
     _set_last_time()
     {
         try
@@ -366,7 +374,7 @@ class Parser
                        hex = this.hex_array[IndexByteBegin]+hex;
                        IndexByteBegin++;
                     }
-                    this.sensors['sensor_'+i] = parseInt(hex);
+                    this.sensors['sensor_'+i] = parseInt(hex,16);
                 }
             }
             else
@@ -391,7 +399,7 @@ class Parser
             this.sensors.sensor_1=parseInt(this.hex_array[begin_byte+3]+this.hex_array[begin_byte+2]+this.hex_array[begin_byte+1]+this.hex_array[begin_byte],16);
             this.sensors.sensor_2=parseInt(this.hex_array[begin_byte+7]+this.hex_array[begin_byte+6]+this.hex_array[begin_byte+5]+this.hex_array[begin_byte+4],16);
             this.sensors.sensor_3=parseInt(this.hex_array[begin_byte+11]+this.hex_array[begin_byte+10]+this.hex_array[begin_byte+9]+this.hex_array[begin_byte+8],16);
-            this.sensors.sensor_4=parseInt(this.hex_array[begin_byte+15]+this.hex_array[begin_byte+4]+this.hex_array[begin_byte+13]+this.hex_array[begin_byte+12],16);
+            this.sensors.sensor_4=parseInt(this.hex_array[begin_byte+15]+this.hex_array[begin_byte+14]+this.hex_array[begin_byte+13]+this.hex_array[begin_byte+12],16);
             return true;
         }
         catch(err)
@@ -467,6 +475,7 @@ class Parser
             return false;
         }
     }
+
     _set_status(indexByte)
     {
         try
@@ -1079,15 +1088,55 @@ class Parser
             return false;
         }
     }
-    _set_data_b(before)
+    _set_1wire(begin,end)
     {
+        if( end === undefined ) end = this.hex_array.length-1;
+        try
+        {
+            var num_temperature = 0;
+            for( var i = begin; i<=end; i = i + 2 )
+            {
+                var b1 = this.hex_array[i+1];
+                var b2 = this.hex_array[i];
+                var valid_b1 = typeof b1 === 'string' && b1.length === 2;
+                var valid_b2 = typeof b2 === 'string' && b2.length === 2;
+                if( valid_b1 && valid_b2 )
+                {
+                    var temperature = this._get_universal_float_negative([i,i+1],10);
+                    num_temperature++;
+                    this[`temperature_1wire_${num_temperature}`] = temperature;
+                }
+            }
+            return true;
+        }
+        catch(e)
+        {
+            return false;
+        }
+    }
+    _set_data_b(before,end)
+    {
+        if( end === undefined ) end = this.hex_array.length-1;
         try
         {
             this.data_b = [];
-            for(var i = this.hex_array.length-1; i>=before;i--)
+            for(var i = end; i>=before;i--)
             {
                 this.data_b.push(this.hex_array[i]);
             }
+            return true;
+        }
+        catch(e)
+        {
+            return false;
+        }
+    }
+    _set_data_b_rev(before,end)
+    {
+        if( end === undefined ) end = this.hex_array.length-1;
+        try
+        {
+            this.data_b = this.hex_array.slice(before,end);
             return true;
         }
         catch(e)
@@ -1439,6 +1488,14 @@ class Parser
             return result;
         }
     }
+    _get_universal_float_negative(arr_b,divider)
+    {
+        this.temp = undefined;
+        this._set_universal_float_negative(arr_b,divider,'temp');
+        var res = this.temp;
+        this.temp = undefined;
+        return res;
+    }
     _get_universal_float_negative_noFF(arr_b,divider)
     {
         this.temp = undefined;
@@ -1471,6 +1528,14 @@ class Parser
         this.temp = undefined;
         return res;
     }
+    _get_universal_int_negative(arr_b)
+    {
+        this.temp = undefined;
+        this._set_universal_int_negative(arr_b,'temp');
+        var res = this.temp;
+        this.temp = undefined;
+        return res;
+    }
     _get_universal_int_negative_noFF(arr_b)
     {
         this.temp = undefined;
@@ -1478,7 +1543,6 @@ class Parser
         var res = this.temp;
         this.temp = undefined;
         return res;
-        
     }
     _set_universal_int_noFF(arr_b,param)
     {
@@ -1904,6 +1968,32 @@ class Parser
             return false;
         }
     }
+    // _set_status_electronic_meter(arr_b)
+    // {
+    //     var valid_arr = this.isObject(arr_b) && arr_b.length;
+    //     try
+    //     {
+    //         if(valid_arr)
+    //         {
+    //             var validB1 = this.hex_array[arr_b[1]]!==undefined;
+    //             var validB0 = this.hex_array[arr_b[0]]!==undefined;
+    //             if(validB1&&validB0)
+    //             {
+    //                 // var sw= parseInt(this.hex_array[2],16).toString(2).split('' ).reverse().splice(0,6);
+    //                 // this.version_soft_device = parseInt(this.hex_array[arr_b[1]],16)+'.'+parseInt(this.hex_array[arr_b[0]],16);
+    //                 return true;
+    //             }
+    //         }
+    //         else
+    //         {
+    //             return false;
+    //         }
+    //     }
+    //     catch(e)
+    //     {
+    //         return false;
+    //     }
+    // }
     _set_universal_hex(arr_b,param)
     {
         try
@@ -2098,7 +2188,20 @@ class Parser
          return true;
     }
 
-
+    si_21_or_22_package_rev3()
+    {
+        var res = true;
+        res = res && this._set_universal_int( [0],'reason' );
+        res = res && this._set_universal_int( [1],'charge' );
+        res = res && this._set_time(2,3,4,5);
+        res = res && this._set_universal_float_negative( [6,7],10,'temperature' );
+        res = res && this._set_sensors(8);
+        res = res && this._set_universal_boolean(24,'limit_exceeded' );
+        res = res && this._set_universal_int_negative( [25],'min_temperature' );
+        res = res && this._set_universal_int_negative( [26],'max_temperature' );
+        //24
+        return res;
+    }
     si_21_or_22_package_1_rev2()
     {
         var res = true;
@@ -2125,7 +2228,7 @@ class Parser
         if ( this.result === undefined ) this.result = {};
         this.result.count_reboot_power = this._get_universal_int_noFF([0]);
         this.result.count_reboot_soft = this._get_universal_int_noFF([1]);
-        this.result.count_reboot = this._get_universal_int_noFF([2]);
+        this.result.count_reboot_sum = this._get_universal_int_noFF([2]);
         this.result.charge = this._get_universal_int_noFF([3]);
         this.result.count_reboot = this._get_universal_hex_noFF([4]);
         return res;
@@ -2202,6 +2305,25 @@ class Parser
         res = res && this._set_switch_device();
         res = res && this._set_status_sensor_out(3,4);
         res = res && this._set_time(5,6,7,8);
+        return res;
+    }
+    sh02_package()
+    {
+        var res = true;
+        res = res && this._set_universal_int( [1], 'reason' );
+        res = res && this._set_universal_int( [2], 'charge' );
+        res = res && this._set_time(3,4,5,6);
+        res = res && this._set_temperature(7);
+        if( this.type_package == 1 ) this._set_1wire(8,27);
+        if( this.type_package == 9 ) this._set_data_b(8,27);
+        res = res && this._set_universal_int( [28,29,30,31],'sensor_1' ); //цифровой
+        res = res && this._set_universal_int( [32,33,34,35],'sensor_2' ); //цифровой
+        res = res && this._set_universal_int( [36,37],'sensor_3' ); //Аналоговый
+        res = res && this._set_universal_int( [38,39],'sensor_4' ); //Аналоговый
+        this.sensors.sensor_1=this.sensor_1;
+        this.sensors.sensor_2=this.sensor_2;
+        this.sensors.sensor_3=this.sensor_3;
+        this.sensors.sensor_4=this.sensor_4;
         return res;
     }
     si_13_package_1()
@@ -3422,6 +3544,25 @@ class Parser
         res = res && this._set_universal_hex( [33,34],'UUID' );
         return res;
     }
+    ue_package_1_merc()
+    {
+        var res = true;
+        res = res && this._set_serial();
+        res = res && this._set_time(5,6,7,8);
+        res = res && this._set_model();
+        res = res && this._set_count_phase(10);
+        res = res && this._set_count_rate();
+        res = res && this._set_relay_state();
+        res = res && this._set_release_date();
+        res = res && this._set_version_soft();
+        res = res && this._set_kt();
+        res = res && this._set_universal_float_noFF( [23,24,25,26],1000,'sensor_rate_sum' );
+        res = res && this._set_temperature(27);
+        res = res && this._set_state();
+        res = res && this._set_universal_int( [32],'event' );
+        res = res && this._set_universal_hex( [33,34],'UUID' );
+        return res;
+    }
     ue_package_2()
     {
         var res = true;
@@ -3446,7 +3587,30 @@ class Parser
         res = res && this._set_universal_hex( [49,50],'UUID' );
         return res;
     }
-    
+    ue_package_2_merc()
+    {
+        var res = true;
+        res = res && this._set_serial();
+        res = res && this._set_time(5,6,7,8);
+        res = res && this._set_count_phase(9);
+        res = res && this._set_universal_float_noFF( [10,11],100,'B_1' );
+        res = res && this._set_universal_float_noFF( [12,13],100,'B_2' );
+        res = res && this._set_universal_float_noFF( [14,15],100,'B_3' );
+        res = res && this._set_universal_float_noFF( [16,17],1000,'A_1' );
+        res = res && this._set_universal_float_noFF( [18,19],1000,'A_2' );
+        res = res && this._set_universal_float_noFF( [20,21],1000,'A_3' );
+        res = res && this._set_universal_float_negative_noFF( [22,23,24,25],100,'P_1' );
+        res = res && this._set_universal_float_negative_noFF( [26,27,28,29],100,'P_2' );
+        res = res && this._set_universal_float_negative_noFF( [30,31,32,33],100,'P_3' );
+        res = res && this._set_universal_float_negative_noFF( [34,35,36,37],100,'Q_1' );
+        res = res && this._set_universal_float_negative_noFF( [38,39,40,41],100,'Q_2' );
+        res = res && this._set_universal_float_negative_noFF( [42,43,44,45],100,'Q_3' );
+        res = res && this._set_universal_float_noFF( [46],100,'S_1' );
+        res = res && this._set_universal_float_noFF( [47],100,'S_2' );
+        res = res && this._set_universal_float_noFF( [48],100,'S_3' );
+        res = res && this._set_universal_hex( [49,50],'UUID' );
+        return res;
+    }
     ue_package_3()
     {
         var res = true;
@@ -3958,6 +4122,73 @@ class Parser
         }
         return res;
     }
+    si_13_therm_package_1(key_map)
+    {
+        var res = true;
+        res = res && this._set_time(1,2,3,4);
+        res = res && this._set_universal_hex( [10,9,8,7,6,5], 'address' );
+        res = res && this._set_universal_int_negative( [11],'rssi_sensor' );
+        res = res && this._set_universal_int( [12],'size_data' );
+        res = res && this._set_data_b_rev(13,13+this.size_data);
+        // парсим данные от самого датчика
+        this.data_therm_1 = this.data_b.slice(0,5);
+        this.data_therm_2 = this.data_b.slice(5,7);
+        if( this.data_therm_2.join('') != '9205' ) res = false;
+        this.data_therm_3 = this.data_b.slice(7,13); //mac
+        this.data_therm_4 = this.data_b.slice(13,15); //type
+        this.data_type = this.data_therm_4.join('');
+        if( this.data_type != '0100' ) res = false;
+        this.data_sensor = this.data_b.slice(15);
+        if(res)
+        {
+            var mac = this.address.toLowerCase();
+            var key = key_map[mac];
+            if(key)
+            {
+                var dataEncrypt = this.data_sensor.join('');
+                var my_convert =  new vega_converter();
+                var resDecode = my_convert.decodeAes(dataEncrypt,key);
+                if(resDecode.status && typeof resDecode.data === 'string')
+                {
+                    var data = my_convert.hexToBytes(resDecode.data);
+                    var val1 = data.slice(0,3).join('');
+                    var intVal1 = parseInt(val1,16);
+                    var binaryVal1 = intVal1.toString(2);
+                    while (binaryVal1.length < 24) binaryVal1 = '0'+binaryVal1;
+                    var val1_bin1 = binaryVal1.slice(0,12);
+                    var val1_bin2 = binaryVal1.slice(12,24);
+                    var s = parseInt(val1_bin1,2);
+                    var u = parseInt(val1_bin2,2);
+                    if(isNaN(s)||isNaN(u)) res = false;
+                    this.mv = u;
+                    this.num_package = s;
+                    for(var i = 0; i<=12; i++)
+                    {
+                        this[`temperature_num_${i}`] = parseInt(data[3+i]);
+                        if(isNaN(this[`temperature_num_${i}`])) res = false;
+                    }
+                    
+                    //parseInt(temp1.slice(0,3).join(''),16).toString(2).length
+                    //var val1 = 
+                    //напряжение 012 mv
+                    //счетчик 012  num_package  
+                    //температура 3
+                    //console.log(data,u,s,t0);
+                }
+                else
+                {
+                    res = false;
+                }
+            }
+            else 
+            {
+                res = false;
+            }
+        }
+        //data_therm_1 4 data_type data_sensor
+        //if(!res) console.log('Брак!');
+        return res;
+    }
     tp_11rev2_package_1()
     {
         var res = true;
@@ -4049,8 +4280,9 @@ class Parser
         this.comment=text;
         return true;
     }
-    set_data(hex)
+    set_data(hex,key_map)
     {
+        var currentVersion = parseInt(this.version);
         switch (this.device_type) {
             case 1:
                 if (this._set_hex(hex))
@@ -4160,6 +4392,25 @@ class Parser
                         else if( port == 85 ) 
                         {
                             return this.si_21_or_22_package_85_rev2();
+                        }
+                    }
+                    else if ( currentVersion === 2  )
+                    {
+                        if( port == 2 )
+                        {
+                            return this.si_21_or_22_package_rev3();
+                        }
+                        else if( port == 195 && this.type_package == 195 ) 
+                        {
+                            return this.si_21_or_22_package_195_rev2();
+                        }
+                        else if( port == 85 ) 
+                        {
+                            return this.si_21_or_22_package_85_rev2();
+                        }
+                        else if( port == 4 ) 
+                        {
+                            if(this.type_package == 255) return this.package_correction_time();
                         }
                     }
                  }
@@ -4605,6 +4856,25 @@ class Parser
                             return this.si_21_or_22_package_85_rev2();
                         }
                     }
+                    else if ( currentVersion === 2  )
+                    {
+                        if( port == 2 )
+                        {
+                            return this.si_21_or_22_package_rev3(); 
+                        }
+                        else if( port == 195 && this.type_package == 195 ) 
+                        {
+                            return this.si_21_or_22_package_195_rev2();
+                        }
+                        else if( port == 85 ) 
+                        {
+                            return this.si_21_or_22_package_85_rev2();
+                        }
+                        else if( port == 4 ) 
+                        {
+                            if(this.type_package == 255) return this.package_correction_time();
+                        }
+                    }
                  }
                  else
                  {
@@ -4766,11 +5036,86 @@ class Parser
                     return false;
                 }
                 break;
+            case 27:
+               // console.log('Данные УЭ меркурий' );
+                if (this._set_hex(hex))
+                {
+                     switch(this.type_package) {
+                        case 1: 
+                           return this.ue_package_1_merc();
+                        break;
+                        case 2:  
+                           return this.ue_package_2_merc();
+                        break;
+                        case 3:  
+                           return this.ue_package_3();
+                        case 4:  
+                           return this.ue_package_4();
+                        break;
+                        case 5:  
+                           return this.ue_package_5();
+                        break;
+                        case 6:  
+                           return this.ue_package_6();
+                        break;
+                        default:
+                            return false;
+                        break;
+                     }
+                 }
+                 else
+                 {
+                    return false;
+                 }
+                break;
+            case 28:
+                // console.log('Данные sh-02' );
+                    if (this._set_hex(hex))
+                    {
+                        if( this.type_package == 1 || this.type_package == 9 ) return this.sh02_package();
+                    }
+                    return false;
+                    break;
+            case 30:
+                //  console.log('Данные си13 therm' );
+                if (this._set_hex(hex))
+                {
+                    let port = this.port;
+                    if( port == 4 )
+                    {
+                        if(this.type_package == 255) return this.package_correction_time();
+                    }
+                    else if( port == 3 )
+                    {
+                        if(this.type_package == 0) return this.package_settings();
+                    }
+                    else if( port == 195 && this.type_package == 195 ) 
+                    {
+                        return this.si_21_or_22_package_195_rev2();
+                    }
+                    else if( port == 85 ) 
+                    {
+                        return this.si_21_or_22_package_85_rev2();
+                    }
+                    else if ( port == 2 && this.type_package == 1)
+                    {
+                        return this.si_13_therm_package_1(key_map);
+                        
+                    }
+                    return false;
+                 }
+                 else
+                 {
+                    return false;
+                 }
+                break;
             default:
                 console.log('Данные неизвестного для типа' );
                 return false;
                 break;
         }
     }
+    
+    
 }
 module.exports = Parser;
