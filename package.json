@@ -1,10 +1,10 @@
 {
   "name": "iot_vega_notifier_lite",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "Iot Vega Notifier application to send notifications to Iot Vega server users.",
   "author": "Vega-Absolute",
   "main": "index.js",
-  "repository": "https://github.com/VegaAbsolute/IotVegaNotifier.git",
+  "repository": "https://github.com/VegaAbsolute/IotVegaNotifierLite.git",
   "license": "MIT",
   "scripts": {
     "prestart": "git pull && npm install",

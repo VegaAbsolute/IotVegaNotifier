@@ -48,7 +48,7 @@ To exit the console, press CTRL+D
 - TD-11
 - TP-11
 - LM-1
-- TL-1
+- TL-11
 - SRC-1
 - M-BUS-1
 - M-BUS-2
@@ -59,7 +59,19 @@ To exit the console, press CTRL+D
 - SMART SS-0101
 - SMART UM-0101
 - SPBZIP 2726/2727
+- Mercury
+- SH-02
 
+## Support events
+- dangers device
+- low battery
+- gateway active
+- gateway inactive
+- server not available
+- startup notifire
+
+## Maximum version compatibility:
+1.0.0 with IotVegaPulse v1.1.11b 
 
 
 

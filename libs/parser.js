@@ -4019,7 +4019,7 @@ class Parser
         var res = true;
         res = res && this._set_universal_int( [1], 'charge' );
         res = res && this._set_switch_device_mbus();
-        res = res && this._set_universal_boolean(2,'state_energy' );
+        res = res && this._set_universal_boolean(3,'state_energy' );
         return res;
     }
     mbus_1_package_5()
