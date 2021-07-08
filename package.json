@@ -1,6 +1,6 @@
 {
   "name": "iot_vega_notifier_lite",
-  "version": "1.0.0",
+  "version": "1.0.1_g",
   "description": "Iot Vega Notifier application to send notifications to Iot Vega server users.",
   "author": "Vega-Absolute",
   "main": "index.js",
